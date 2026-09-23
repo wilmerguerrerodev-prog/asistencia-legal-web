@@ -47,10 +47,12 @@ import 'package:getdash/feature/media_library/media_library_screen.dart';
 import 'package:getdash/feature/support/support_screen.dart';
 import 'package:getdash/feature/users/add_user_screen.dart';
 import 'package:getdash/feature/users/all_users.dart';
+import 'package:getdash/feature/conductor/sos_conductor_view.dart';
 import 'package:getdash/feature/users/user_profile_screen.dart';
 
 class RouteHelper {
   static const String initial = '/';
+  static const String sosConductorScreen = '/sos';
   static const String forgotPassword = '/forgot-password';
   static const String supportScreen = '/help-and-support';
   static const String couponScreen = '/couponScreen';
@@ -155,6 +157,7 @@ class RouteHelper {
 
   static List<GetPage> routes = [
     GetPage(name: initial, page: () => const DashboardScreen()),
+    GetPage(name: sosConductorScreen, page: () => const SosConductorView()),
     GetPage(name: dashboardScreen1, page:()=> const DashboardScreen1()),
     GetPage(name: dashboardScreen2, page:()=> const DashboardDemoScreen2()),
     GetPage(name: dashboardScreen3, page:()=> const DashboardDemoScreen3()),

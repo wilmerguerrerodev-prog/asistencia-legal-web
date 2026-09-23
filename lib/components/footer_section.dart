@@ -15,7 +15,7 @@ class FooterSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("All rights reserved By @GetDash 2023",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7)),),
+            Text("All rights reserved By @LegalTech",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7)),),
             if(!ResponsiveHelper.isMobile(context))
             Row(
               children: [

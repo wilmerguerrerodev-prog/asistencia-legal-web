@@ -66,14 +66,57 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
                       title: Row(
                         children: [
-                          if(menuModel.icon != null)
-                          Image.asset(menuModel.icon!, color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),scale: 4,),
-                          if(menuModel.icon != null)
-                          const SizedBox(width: Dimensions.paddingSizeDefault,),
-                          Text(menuModel.menuTitle!.tr,style: ubuntuMedium.copyWith(
-                            color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!,
-                            fontSize: Dimensions.fontSizeSmall,
-                          ),),
+                          if (menuModel.iconData != null)
+                            Icon(
+                              menuModel.iconData,
+                              size: 20,
+                              color: selected
+                                  ? Theme.of(context).secondaryHeaderColor
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .color!
+                                      .withValues(alpha: .5),
+                            )
+                          else if (menuModel.icon != null)
+                            Image.asset(
+                              menuModel.icon!,
+                              color: selected
+                                  ? Theme.of(context).secondaryHeaderColor
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium!
+                                      .color!
+                                      .withValues(alpha: .5),
+                              scale: 4,
+                              errorBuilder: (context, error, stackTrace) => Icon(
+                                Icons.circle_outlined,
+                                size: 20,
+                                color: selected
+                                    ? Theme.of(context).secondaryHeaderColor
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .color!
+                                        .withValues(alpha: .5),
+                              ),
+                            ),
+                          if (menuModel.iconData != null || menuModel.icon != null)
+                            const SizedBox(
+                              width: Dimensions.paddingSizeDefault,
+                            ),
+                          Expanded(
+                            child: Text(
+                              menuModel.menuTitle!.tr,
+                              style: ubuntuMedium.copyWith(
+                                color: selected
+                                    ? Theme.of(context).secondaryHeaderColor
+                                    : Theme.of(context).textTheme.bodyMedium!.color!,
+                                fontSize: Dimensions.fontSizeSmall,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
 
@@ -104,10 +147,33 @@ class _MenuDrawerState extends State<MenuDrawer> {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 30),
       child: ListTile(
-        leading: isExpanded ? const FlutterLogo() : null,
-        title:isExpanded ? Text( "GetDash",
-          style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodyMedium!.color),
-        ) :   const FlutterLogo(),
+        leading: isExpanded
+            ? Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.gavel_rounded, color: Theme.of(context).primaryColor, size: 22),
+              )
+            : null,
+        title: isExpanded
+            ? Text(
+                "LegalTech",
+                style: ubuntuBold.copyWith(
+                  color: Theme.of(context).textTheme.bodyMedium!.color,
+                  fontSize: Dimensions.fontSizeLarge,
+                  letterSpacing: 0.5,
+                ),
+              )
+            : Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.gavel_rounded, color: Theme.of(context).primaryColor, size: 22),
+              ),
         onTap: Get.find<MenuDrawerController>().toggleMenuDrawer,
       ),
     );
@@ -135,7 +201,24 @@ class _MenuDrawerState extends State<MenuDrawer> {
                     child: Container(
                       height: 45,
                       alignment: Alignment.center,
-                      child:menuList[index].icon !=  null ?  Image.asset(menuList[index].icon!, color:selected ? Theme.of(context).primaryColor: Colors.white,scale: 3,): Container(),
+                      child: menuList[index].iconData != null
+                          ? Icon(
+                              menuList[index].iconData,
+                              size: 22,
+                              color: selected ? Theme.of(context).primaryColor : Colors.white,
+                            )
+                          : (menuList[index].icon != null
+                              ? Image.asset(
+                                  menuList[index].icon!,
+                                  color: selected ? Theme.of(context).primaryColor : Colors.white,
+                                  scale: 3,
+                                  errorBuilder: (context, error, stackTrace) => Icon(
+                                    Icons.circle_outlined,
+                                    size: 20,
+                                    color: selected ? Theme.of(context).primaryColor : Colors.white,
+                                  ),
+                                )
+                              : Container()),
                     ),
                   );
                 }),

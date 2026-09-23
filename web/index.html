@@ -6,62 +6,49 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A multi-vendor service providing app.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="LegalTech - Asistencia Legal en Carretera para Taxistas">
+  <meta name="theme-color" content="#DC2626">
 
   <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="GetDash">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LegalTech">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>GetDash</title>
+  <title>LegalTech - Asistencia Legal</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 <!--  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD6ToXeb6P0NkorrEh5QOO9C-yydafSo-4"></script>-->
 <!--  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGFRelTRtPB6QNGOQcT6xE1eMLHHLylY0"></script>-->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiDGVR1GnClPIXcsOOvAniamtAmS-MHjY"></script>
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-<!-- This script installs service_worker.js to provide PWA functionality to
-     application. For more information, see:
-     https://developers.google.com/web/fundamentals/primers/service-workers -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDiDGVR1GnClPIXcsOOvAniamtAmS-MHjY"></script>
+
+
+
 <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      });
-      window.addEventListener('flutter-first-frame', function () {
-        navigator.serviceWorker.register('flutter_service_worker.js');
-      });
+    if (typeof firebase !== 'undefined') {
+      var firebaseConfig = {
+         apiKey: "AIzaSyDPTgIi5A_NbCtdvwtaIT5DqOFFRm9hSos",
+         authDomain: "get-dash-7237b.firebaseapp.com",
+         projectId: "get-dash-7237b",
+         storageBucket: "get-dash-7237b.appspot.com",
+         messagingSenderId: "77949901400",
+         appId: "1:77949901400:web:296c7ecd69d110f934882d",
+         measurementId: "G-VEH674P20B"
+      };
+      firebase.initializeApp(firebaseConfig);
     }
-  </script>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
-
-<div class="center">
-  <img src="logo.png" alt = "logo" height="250" width="250px" />
-  <br>
-  <div class="loader" style="width:250px;text-align: center;"><div class="classic-10"></div></div>
-</div>
-
-
-<script>
-    var firebaseConfig = {
-       apiKey: "AIzaSyDPTgIi5A_NbCtdvwtaIT5DqOFFRm9hSos",
-       authDomain: "get-dash-7237b.firebaseapp.com",
-       projectId: "get-dash-7237b",
-       storageBucket: "get-dash-7237b.appspot.com",
-       messagingSenderId: "77949901400",
-       appId: "1:77949901400:web:296c7ecd69d110f934882d",
-       measurementId: "G-VEH674P20B"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
   </script>
 
 <script src="main.dart.js?version=1" type="application/javascript"></script>

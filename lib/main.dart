@@ -22,17 +22,7 @@ Future<void> main() async {
     HttpOverrides.global = MyHttpOverrides();
   }
 
-  if (GetPlatform.isLinux || GetPlatform.isWeb) {
-    await Firebase.initializeApp(
-        options: const FirebaseOptions(
-            apiKey: "AIzaSyDP6eaZUIlOlWWo9s3gYLP4oc-38D2LRbE",
-            appId: "1:77949901400:web:296c7ecd69d110f934882d",
-            messagingSenderId: '361171276071',
-            projectId: 'get-dash-7237b')
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+  _initFirebaseInBackground();
 
   Map<String, Map<String, String>> languages = await di.init();
   runApp(MyApp(languages: languages));
@@ -63,7 +53,7 @@ class MyApp extends StatelessWidget {
           initialRoute: RouteHelper.getInitialRoute(),
           getPages: RouteHelper.routes,
           defaultTransition: Transition.topLevel,
-          transitionDuration: const Duration(milliseconds: 500),
+          transitionDuration: const Duration(milliseconds: 250),
         );
       });
     });
@@ -78,3 +68,21 @@ class MyHttpOverrides extends HttpOverrides {
           (X509Certificate cert, String host, int port) => true;
   }
 }
+
+void _initFirebaseInBackground() async {
+  try {
+    if (GetPlatform.isLinux || GetPlatform.isWeb) {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: "AIzaSyDP6eaZUIlOlWWo9s3gYLP4oc-38D2LRbE",
+          appId: "1:77949901400:web:296c7ecd69d110f934882d",
+          messagingSenderId: '361171276071',
+          projectId: 'get-dash-7237b',
+        ),
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
+  } catch (_) {}
+}
+
