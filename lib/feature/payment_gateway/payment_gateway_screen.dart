@@ -10,7 +10,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class PaymentGatewayScreen extends StatefulWidget {
-  const PaymentGatewayScreen({Key? key}) : super(key: key);
+  const PaymentGatewayScreen({super.key});
 
   @override
   State<PaymentGatewayScreen> createState() => _AllUsersScreenState();

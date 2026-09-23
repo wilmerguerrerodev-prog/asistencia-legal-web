@@ -17,7 +17,7 @@ class DepositHistorySearchSection extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
               ),
               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),
             ),
@@ -32,18 +32,18 @@ class DepositHistorySearchSection extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+              color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
             ),
             borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),
           ),
           child: IntrinsicHeight(
             child: Row(children: [
               Container(padding: const EdgeInsets.all(Dimensions.paddingSizeRadius),child: const Text("Export As")),
-              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),thickness: 2),
+              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),thickness: 2),
               Container(padding: const EdgeInsets.all(Dimensions.paddingSizeRadius),child: CustomButton(buttonText: "Excel",width: 40,fontSize: Dimensions.fontSizeExtraSmall)),
-              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),thickness: 2),
+              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),thickness: 2),
               Container(padding: const EdgeInsets.all(Dimensions.paddingSizeRadius),child: CustomButton(buttonText: "CSV",width: 40,fontSize: Dimensions.fontSizeExtraSmall)),
-              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),thickness: 2),
+              VerticalDivider(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),thickness: 2),
               Container(padding: const EdgeInsets.all(Dimensions.paddingSizeRadius),child: CustomButton(buttonText: "PDF",width: 40,fontSize: Dimensions.fontSizeExtraSmall)),
             ]),
           ),

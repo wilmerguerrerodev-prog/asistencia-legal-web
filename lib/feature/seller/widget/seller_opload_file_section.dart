@@ -14,21 +14,21 @@ class SellerUploadFileSection extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Profile Image",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+            Text("Profile Image",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
             const SizedBox(height: Dimensions.paddingSizeSmall),
             Container(
                 height: 140,
                 width: 140,
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
-                child: DottedBorder(borderType: BorderType.RRect,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),padding: EdgeInsets.zero,radius: const Radius.circular(Dimensions.radiusDefault),dashPattern: const [8,4],
+                child: DottedBorder(borderType: BorderType.RRect,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),padding: EdgeInsets.zero,radius: const Radius.circular(Dimensions.radiusDefault),dashPattern: const [8,4],
                   child:  Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
                     Icon(
                       Icons.cloud_upload,
                       size: Dimensions.iconSizeMedium,
-                      color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                      color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                     ),
                     const SizedBox(height: Dimensions.paddingSizeSmall),
-                    Text("Upload File",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                    Text("Upload File",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                   ])),
                 )),
           ],),
@@ -36,7 +36,7 @@ class SellerUploadFileSection extends StatelessWidget {
         SizedBox(
             width: 220,
             child:  Text("Image format -  jpg, png, jpeg, gif Image Size -  maximum size 2 MB Image Ratio - 1:1",
-              style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.5),),))
+              style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.5),),))
 
       ],
     );

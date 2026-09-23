@@ -8,10 +8,10 @@ class DayViewWidget extends StatelessWidget {
   final double? width;
 
   const DayViewWidget({
-    Key? key,
+    super.key,
     this.state,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class DayViewWidget extends StatelessWidget {
       width: width,
       headerStyle: HeaderStyle(
           decoration: BoxDecoration(
-            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.03),
+            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.03),
           )
       ),
       startDuration: const Duration(hours: 8),

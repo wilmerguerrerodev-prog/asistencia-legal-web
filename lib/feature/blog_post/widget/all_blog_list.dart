@@ -4,7 +4,7 @@ import 'blog_data_source.dart';
 
 
 class AllBlogList extends StatefulWidget {
-  const AllBlogList({Key? key}) : super(key: key);
+  const AllBlogList({super.key});
 
   @override
   State<AllBlogList> createState() => _AllUserListState();

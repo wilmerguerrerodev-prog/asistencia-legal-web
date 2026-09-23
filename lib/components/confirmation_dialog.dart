@@ -12,7 +12,7 @@ class ConfirmationDialog extends StatelessWidget {
   final bool? isLogOut;
   final Function? onNoPressed;
   final Widget? widget;
-  const ConfirmationDialog({super.key, @required this.icon, this.title, @required this.description, @required this.onYesPressed,
+  const ConfirmationDialog({super.key, required this.icon, this.title, required this.description, required this.onYesPressed,
     this.isLogOut = false, this.onNoPressed, this.widget});
 
   @override
@@ -48,7 +48,7 @@ class ConfirmationDialog extends StatelessWidget {
             Expanded(child: TextButton(
               onPressed: () => isLogOut! ? onYesPressed!() : onNoPressed != null ? onNoPressed!() : Get.back(),
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).disabledColor.withOpacity(0.3), minimumSize: const Size(Dimensions.webMaxWidth, 40), padding: EdgeInsets.zero,
+                backgroundColor: Theme.of(context).disabledColor.withValues(alpha: 0.3), minimumSize: const Size(Dimensions.webMaxWidth, 40), padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
               ),
               child: Text(

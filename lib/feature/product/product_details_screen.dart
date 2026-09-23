@@ -91,11 +91,11 @@ class ProductDetailsScreen extends StatelessWidget {
                                                   child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.end,
                                                       children: [
-                                                        Icon(Icons.favorite,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),size: Dimensions.iconSizeSmall),
+                                                        Icon(Icons.favorite,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),size: Dimensions.iconSizeSmall),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall, ),
-                                                        Icon(Icons.share,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),),
+                                                        Icon(Icons.share,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall, ),
-                                                        Icon(Icons.facebook,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),),
+                                                        Icon(Icons.facebook,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall),
                                                         Image.asset(Images.pinterestImage,height: Dimensions.paddingSizeLarge,width: Dimensions.paddingSizeLarge,),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall),
@@ -110,11 +110,11 @@ class ProductDetailsScreen extends StatelessWidget {
                                                   child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.start,
                                                       children: [
-                                                        Icon(Icons.favorite,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),size: Dimensions.iconSizeSmall),
+                                                        Icon(Icons.favorite,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),size: Dimensions.iconSizeSmall),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall, ),
-                                                        Icon(Icons.share,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),),
+                                                        Icon(Icons.share,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall, ),
-                                                        Icon(Icons.facebook,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.5),),
+                                                        Icon(Icons.facebook,size: Dimensions.iconSizeSmall, color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.5),),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall),
                                                         Image.asset(Images.pinterestImage,height: Dimensions.paddingSizeLarge,width: Dimensions.paddingSizeLarge,),
                                                         const SizedBox(width: Dimensions.paddingSizeSmall),
@@ -156,9 +156,9 @@ class ProductDetailsScreen extends StatelessWidget {
                                               Row(
                                                   mainAxisAlignment: MainAxisAlignment.start,
                                                   children: [
-                                                    Text("\$650",style: TextStyle(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),decoration: TextDecoration.lineThrough)),
+                                                    Text("\$650",style: TextStyle(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),decoration: TextDecoration.lineThrough)),
                                                     const SizedBox(width: Dimensions.paddingSizeExtraSmall),
-                                                    Text("30% off",style: ubuntuMedium.copyWith(color:Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),fontSize: Dimensions.fontSizeExtraSmall))
+                                                    Text("30% off",style: ubuntuMedium.copyWith(color:Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),fontSize: Dimensions.fontSizeExtraSmall))
                                                   ]
                                               ),
                                               const SizedBox(height: Dimensions.paddingSizeLarge),
@@ -170,7 +170,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     Text("available".tr,style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
                                                     const Text(":"),
                                                     const SizedBox(width: Dimensions.paddingSizeExtraLarge),
-                                                    Text("in_stock".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),fontSize: Dimensions.fontSizeExtraSmall))
+                                                    Text("in_stock".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),fontSize: Dimensions.fontSizeExtraSmall))
                                                   ]
                                               ),
                                               const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -180,7 +180,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     Text("shipping".tr,style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
                                                     const Text(":"),
                                                     const SizedBox(width: Dimensions.paddingSizeExtraLarge),
-                                                    Text("free".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),fontSize: Dimensions.fontSizeExtraSmall))
+                                                    Text("free".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),fontSize: Dimensions.fontSizeExtraSmall))
                                                   ]
                                               ),
                                               const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -192,7 +192,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     const SizedBox(width: Dimensions.paddingSizeExtraLarge),
                                                     Row(children: [
                                                       Container(
-                                                          color: Theme.of(context).primaryColor.withOpacity(0.06),
+                                                          color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
                                                           padding: const EdgeInsets.all(Dimensions.paddingSizeSmall,),
                                                           child: const Icon(Icons.remove),
                                                       ),
@@ -200,7 +200,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                       Text("1",style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeLarge)),
                                                       const SizedBox(width: Dimensions.paddingSizeDefault),
                                                       Container(
-                                                        color: Theme.of(context).primaryColor.withOpacity(0.06),
+                                                        color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
                                                         padding: const EdgeInsets.all(Dimensions.paddingSizeSmall,),
                                                         child: const Icon(Icons.add),
                                                       ),
@@ -216,13 +216,13 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     const SizedBox(width: Dimensions.paddingSizeDoubleExtraLarge),
                                                     Row(children: [
                                                       Container(
-                                                        color: Theme.of(context).primaryColor.withOpacity(0.06),
+                                                        color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
                                                         padding: const EdgeInsets.only(left: Dimensions.paddingSizeLarge,right: Dimensions.paddingSizeLarge,top: Dimensions.paddingSizeSmall,bottom: Dimensions.paddingSizeSmall),
                                                         child: Text("L",style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
                                                       ),
                                                       const SizedBox(width: Dimensions.paddingSizeDefault),
                                                       Container(
-                                                        color: Theme.of(context).primaryColor.withOpacity(0.06),
+                                                        color: Theme.of(context).primaryColor.withValues(alpha: 0.06),
                                                         padding: const EdgeInsets.only(left: Dimensions.paddingSizeLarge,right: Dimensions.paddingSizeLarge,top: Dimensions.paddingSizeSmall,bottom: Dimensions.paddingSizeSmall),
                                                         child: Text("M",style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
                                                       ),
@@ -236,7 +236,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     Text("category".tr,style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
                                                     const Text(":"),
                                                     const SizedBox(width: Dimensions.paddingSizeExtraLarge),
-                                                    Text("furniture".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),fontSize: Dimensions.fontSizeExtraSmall))
+                                                    Text("furniture".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),fontSize: Dimensions.fontSizeExtraSmall))
                                                   ]
                                               ),
                                               const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -246,7 +246,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     Text("tags".tr,style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
                                                     const Text(":"),
                                                     const SizedBox(width: Dimensions.paddingSizeExtraMoreLarge),
-                                                    Text("Blue,Green,Light".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),fontSize: Dimensions.fontSizeExtraSmall))
+                                                    Text("Blue,Green,Light".tr,style: ubuntuBold.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),fontSize: Dimensions.fontSizeExtraSmall))
                                                   ]
                                               ),
                                               const SizedBox(height: Dimensions.paddingSizeLarge),

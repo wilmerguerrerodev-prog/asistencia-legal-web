@@ -16,9 +16,9 @@ class AddEventDialog extends StatefulWidget {
   final void Function(CalendarEventData<Event>)? onEventAdd;
 
   const AddEventDialog({
-    Key? key,
+    super.key,
     this.onEventAdd,
-  }) : super(key: key);
+  });
 
   @override
   AddEventWidgetState createState() => AddEventWidgetState();

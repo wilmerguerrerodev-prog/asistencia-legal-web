@@ -8,7 +8,7 @@ class CircularBorder extends StatelessWidget {
   final double width;
   final Widget? widget;
 
-  const CircularBorder({Key? key, this.color = Colors.blue, this.size = 70, this.width = 7.0, this.widget}) : super(key: key);
+  const CircularBorder({super.key, this.color = Colors.blue, this.size = 70, this.width = 7.0, this.widget});
 
   @override
   Widget build(BuildContext context) {

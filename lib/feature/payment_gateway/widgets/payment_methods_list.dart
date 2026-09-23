@@ -4,7 +4,7 @@ import 'package:getdash/feature/payment_gateway/widgets/payment_methods_data_sou
 
 
 class PaymentMethodsList extends StatefulWidget {
-  const PaymentMethodsList({Key? key}) : super(key: key);
+  const PaymentMethodsList({super.key});
 
   @override
   State<PaymentMethodsList> createState() => _AllUserListState();

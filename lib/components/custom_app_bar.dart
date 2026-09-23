@@ -7,7 +7,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? selectedItem = 'Awade Harren';
 
 
-  CustomAppBar({Key? key}) : super(key: key);
+  CustomAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

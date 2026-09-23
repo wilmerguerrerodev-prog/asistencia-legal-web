@@ -9,14 +9,14 @@ class CommonAddSection extends StatelessWidget {
   final String addBtnTitle;
   final bool isBtnActive;
   final String navigationPage;
-  const CommonAddSection({Key? key, required this.title, this.isBtnActive = true, this.navigationPage = '', this.addBtnTitle = ''}) : super(key: key);
+  const CommonAddSection({super.key, required this.title, this.isBtnActive = true, this.navigationPage = '', this.addBtnTitle = ''});
 
   @override
   Widget build(BuildContext context) {
     return Container(
         height: 65,
         decoration: BoxDecoration(
-            border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+            border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
             ),
             color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
         child: Padding(

@@ -61,7 +61,7 @@ class _ActivitiesState extends State<Activities> {
                  const SizedBox(
                     width: 5,
                   ),
-                  Text(Data[0]),
+                  Text(data[0]),
                 ],
               ),
               Row(
@@ -80,7 +80,7 @@ class _ActivitiesState extends State<Activities> {
                  const SizedBox(
                     width: 5,
                   ),
-                  Text(Data[1]),
+                  Text(data[1]),
                 ],
               ),
               Row(
@@ -99,7 +99,7 @@ class _ActivitiesState extends State<Activities> {
                  const SizedBox(
                     width: 5,
                   ),
-                  Text(Data[2]),
+                  Text(data[2]),
                 ],
               ),
               Row(
@@ -118,7 +118,7 @@ class _ActivitiesState extends State<Activities> {
                  const SizedBox(
                     width: 5,
                   ),
-                  Text(Data[3]),
+                  Text(data[3]),
                 ],
               ),
               Row(
@@ -137,7 +137,7 @@ class _ActivitiesState extends State<Activities> {
                  const SizedBox(
                     width: 5,
                   ),
-                  Text(Data[4]),
+                  Text(data[4]),
                 ],
               ),
             ],
@@ -147,7 +147,7 @@ class _ActivitiesState extends State<Activities> {
     );
   }
 
-  List Data = [
+  List<String> data = [
     "Identify the purpose of the product card.",
     "Collect essential product details,pricing.",
     "Create high quality image in different angles.",

@@ -90,7 +90,7 @@ class SalesRevenue extends StatelessWidget {
                   height: 60,
                   width: 60,
                   decoration: BoxDecoration(
-                      color: Color(0xFFD8D8FE),
+                      color: const Color(0xFFD8D8FE),
                       borderRadius: BorderRadius.circular(15)),
                   child: Image.asset(
                     Images.googledemo3,

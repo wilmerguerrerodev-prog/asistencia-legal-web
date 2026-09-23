@@ -70,16 +70,16 @@ class Users extends StatelessWidget {
       horizontalMargin: 0.0,
       minWidth: 700,
       columnSpacing: 15.0,
-      headingRowColor: MaterialStateColor.resolveWith(
+      headingRowColor: WidgetStateColor.resolveWith(
         (states) {
-          if (states.contains(MaterialState.selected)) {
-            return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+          if (states.contains(WidgetState.selected)) {
+            return Theme.of(context).colorScheme.primary.withValues(alpha: 0.08);
           }
           return Colors.grey
-              .withOpacity(0.1); // Adjust the opacity and color as needed
+              .withValues(alpha: 0.1); // Adjust the opacity and color as needed
         },
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           //color: Colors.blueGrey
           ),
       columns: <DataColumn>[

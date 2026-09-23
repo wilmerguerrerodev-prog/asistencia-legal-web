@@ -134,7 +134,7 @@ class RecentOrderDataSource extends DataTableSource {
     final bankAccountInfo = desserts[index];
     return DataRow.byIndex(
       index: index,
-      color: MaterialStateProperty.all(Theme.of(context).cardColor),
+      color: WidgetStateProperty.all(Theme.of(context).cardColor),
       onSelectChanged: (value) {
         if (bankAccountInfo.selected != value) {
           _selectedCount += value! ? 1 : -1;

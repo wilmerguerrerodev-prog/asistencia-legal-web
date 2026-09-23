@@ -132,9 +132,9 @@ class TransactionDataSource extends DataTableSource {
       index: index,
       // selected: dessert.selected,
       color: color != null
-          ? MaterialStateProperty.all(color)
+          ? WidgetStateProperty.all(color)
           : (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).highlightColor)
+          ? WidgetStateProperty.all(Theme.of(context).highlightColor)
           : null),
       onSelectChanged: (value) {
         if (dessert.selected != value) {

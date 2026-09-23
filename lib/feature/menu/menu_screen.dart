@@ -10,7 +10,7 @@ import 'model/menu_model.dart';
 
 
 class MenuDrawer extends StatefulWidget {
-  const MenuDrawer({Key? key}) : super(key: key);
+  const MenuDrawer({super.key});
 
   @override
   State<MenuDrawer> createState() => _MenuDrawerState();
@@ -67,7 +67,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                       title: Row(
                         children: [
                           if(menuModel.icon != null)
-                          Image.asset(menuModel.icon!, color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),scale: 4,),
+                          Image.asset(menuModel.icon!, color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),scale: 4,),
                           if(menuModel.icon != null)
                           const SizedBox(width: Dimensions.paddingSizeDefault,),
                           Text(menuModel.menuTitle!.tr,style: ubuntuMedium.copyWith(
@@ -79,7 +79,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
                       trailing: menuModel.subMenus == null ? const SizedBox() : Icon(
                         selected ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),
+                        color: selected ?Theme.of(context).secondaryHeaderColor: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),
                       ),
 
                       children: menuModel.subMenus == null
@@ -159,7 +159,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
         child: Text(
            subMenu.subMenuTitle!.tr,
           style: ubuntuRegular.copyWith(
-              color: Get.find<MenuDrawerController>().subMenuSelectedTitle == subMenu.subMenuTitle ? Theme.of(context).secondaryHeaderColor:Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5)),
+              color: Get.find<MenuDrawerController>().subMenuSelectedTitle == subMenu.subMenuTitle ? Theme.of(context).secondaryHeaderColor:Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5)),
         ),
       ),
     );

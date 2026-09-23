@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class CouponScreen extends StatefulWidget {
-  const CouponScreen({Key? key}) : super(key: key);
+  const CouponScreen({super.key});
 
   @override
   State<CouponScreen> createState() => _AllUsersScreenState();

@@ -10,11 +10,11 @@ class LanguageWidget extends StatelessWidget {
   final LanguageModel languageModel;
   final LocalizationController localizationController;
   final int index;
-  const LanguageWidget({Key? key,
+  const LanguageWidget({super.key,
     required this.languageModel,
     required this.localizationController,
     required this.index,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class LanguageWidget extends StatelessWidget {
         width: 300,
         padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
         decoration: BoxDecoration(
-          border:  localizationController.selectedIndex == index ? Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.2), width: 1) : null,
+          border:  localizationController.selectedIndex == index ? Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: .2), width: 1) : null,
           borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
         ),
         child: Center(child: Text(languageModel.languageName!, style: ubuntuRegular)),

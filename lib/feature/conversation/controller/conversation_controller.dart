@@ -26,13 +26,13 @@ class ConversationController extends GetxController implements GetxService{
   int? get messageOffset => _messageOffset;
 
   int? _pageSize;
-  int? _offset = 1;
-  bool? _isLoading = false;
+  final int _offset = 1;
+  final bool _isLoading = false;
   bool? get isLoading => _isLoading;
-  String? _name='';
-  String get name => _name!;
-  final String? _image='';
-  String get image => _image!;
+  final String _name='';
+  String get name => _name;
+  final String _image='';
+  String get image => _image;
 
 
   List<ChannelData>? _channelList;

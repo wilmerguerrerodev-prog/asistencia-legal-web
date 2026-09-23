@@ -9,7 +9,7 @@ import 'package:getdash/feature/conversation/widgets/channel_item.dart';
 class ChannelList extends GetView<ConversationController> {
   final List<ChannelData>? channelList;
 
-  const ChannelList({Key? key, required this.channelList}) : super(key: key);
+  const ChannelList({super.key, required this.channelList});
   @override
   Widget build(BuildContext context) {
 

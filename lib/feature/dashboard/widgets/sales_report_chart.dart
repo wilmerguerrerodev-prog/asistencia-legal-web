@@ -44,7 +44,7 @@ class _LineChart extends StatelessWidget {
   LineTouchData get lineTouchData1 => LineTouchData(
     handleBuiltInTouches: true,
     touchTooltipData: LineTouchTooltipData(
-      tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+      getTooltipColor: (_) => Colors.blueGrey.withValues(alpha: 0.8),
     ),
   );
 
@@ -52,10 +52,10 @@ class _LineChart extends StatelessWidget {
     bottomTitles: AxisTitles(
       sideTitles: bottomTitles,
     ),
-    rightTitles:  AxisTitles(
+    rightTitles:  const AxisTitles(
       sideTitles: SideTitles(showTitles: false),
     ),
-    topTitles:  AxisTitles(
+    topTitles:  const AxisTitles(
       sideTitles: SideTitles(showTitles: false),
     ),
     leftTitles: AxisTitles(
@@ -68,7 +68,7 @@ class _LineChart extends StatelessWidget {
     lineChartBarData1_2,
   ];
 
-  LineTouchData get lineTouchData2 =>  LineTouchData(
+  LineTouchData get lineTouchData2 =>  const LineTouchData(
     enabled: false,
   );
 
@@ -76,10 +76,10 @@ class _LineChart extends StatelessWidget {
     bottomTitles: AxisTitles(
       sideTitles: bottomTitles,
     ),
-    rightTitles:  AxisTitles(
+    rightTitles:  const AxisTitles(
       sideTitles: SideTitles(showTitles: false),
     ),
-    topTitles:  AxisTitles(
+    topTitles:  const AxisTitles(
       sideTitles: SideTitles(showTitles: false),
     ),
     leftTitles: AxisTitles(
@@ -179,13 +179,13 @@ class _LineChart extends StatelessWidget {
     getTitlesWidget: bottomTitleWidgets,
   );
 
-  FlGridData get gridData =>  FlGridData(show: false);
+  FlGridData get gridData =>  const FlGridData(show: false);
 
   FlBorderData get borderData => FlBorderData(
     show: true,
     border: Border(
       bottom:
-      BorderSide(color: Theme.of(Get.context!).primaryColor.withOpacity(0.2), width: 4),
+      BorderSide(color: Theme.of(Get.context!).primaryColor.withValues(alpha: 0.2), width: 4),
       left: const BorderSide(color: Colors.transparent),
       right: const BorderSide(color: Colors.transparent),
       top: const BorderSide(color: Colors.transparent),
@@ -197,7 +197,7 @@ class _LineChart extends StatelessWidget {
     color: Colors.green,
     barWidth: 2,
     isStrokeCapRound: true,
-    dotData:  FlDotData(show: false),
+    dotData:  const FlDotData(show: false),
     belowBarData: BarAreaData(show: false),
     spots: const [
       FlSpot(1, 1),
@@ -215,10 +215,10 @@ class _LineChart extends StatelessWidget {
     color: Colors.pink,
     barWidth: 2,
     isStrokeCapRound: true,
-    dotData:  FlDotData(show: false),
+    dotData:  const FlDotData(show: false),
     belowBarData: BarAreaData(
       show: false,
-      color: Colors.pink.withOpacity(0),
+      color: Colors.pink.withValues(alpha: 0),
     ),
     spots: const [
       FlSpot(1, 1),
@@ -234,10 +234,10 @@ class _LineChart extends StatelessWidget {
   LineChartBarData get lineChartBarData2_1 => LineChartBarData(
     isCurved: true,
     curveSmoothness: 0,
-    color: Colors.green.withOpacity(0.5),
+    color: Colors.green.withValues(alpha: 0.5),
     barWidth: 4,
     isStrokeCapRound: true,
-    dotData:  FlDotData(show: false),
+    dotData:  const FlDotData(show: false),
     belowBarData: BarAreaData(show: false),
     spots: const [
       FlSpot(1, 1),
@@ -252,13 +252,13 @@ class _LineChart extends StatelessWidget {
 
   LineChartBarData get lineChartBarData2_2 => LineChartBarData(
     isCurved: true,
-    color: Colors.pink.withOpacity(0.5),
+    color: Colors.pink.withValues(alpha: 0.5),
     barWidth: 4,
     isStrokeCapRound: true,
-    dotData:  FlDotData(show: false),
+    dotData:  const FlDotData(show: false),
     belowBarData: BarAreaData(
       show: true,
-      color: Colors.pink.withOpacity(0.2),
+      color: Colors.pink.withValues(alpha: 0.2),
     ),
     spots: const [
       FlSpot(1, 1),
@@ -273,10 +273,10 @@ class _LineChart extends StatelessWidget {
   LineChartBarData get lineChartBarData2_3 => LineChartBarData(
     isCurved: true,
     curveSmoothness: 0,
-    color: Colors.cyan.withOpacity(0.5),
+    color: Colors.cyan.withValues(alpha: 0.5),
     barWidth: 2,
     isStrokeCapRound: true,
-    dotData: FlDotData(show: true),
+    dotData: const FlDotData(show: true),
     belowBarData: BarAreaData(show: false),
     spots: const [
       FlSpot(1, 3.8),
@@ -354,7 +354,7 @@ class LineChartSample1State extends State<LineChartSample1> {
           IconButton(
             icon: Icon(
               Icons.refresh,
-              color: Colors.white.withOpacity(isShowingMainData ? 1.0 : 0.5),
+              color: Colors.white.withValues(alpha: isShowingMainData ? 1.0 : 0.5),
             ),
             onPressed: () {
               setState(() {

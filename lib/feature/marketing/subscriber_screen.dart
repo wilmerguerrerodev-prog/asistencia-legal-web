@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class SubscriberScreen extends StatefulWidget {
-  const SubscriberScreen({Key? key}) : super(key: key);
+  const SubscriberScreen({super.key});
 
   @override
   State<SubscriberScreen> createState() => _AllUsersScreenState();

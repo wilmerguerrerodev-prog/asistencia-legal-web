@@ -48,7 +48,7 @@ class _PushNotificationSettingScreenState extends State<PushNotificationSettingS
                           Row(children: [
                             Text("activation".tr,style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeDefault)),
                             const SizedBox(width: Dimensions.paddingSizeSmall),
-                            CupertinoSwitch(trackColor: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),activeColor: Theme.of(context).primaryColor,value: value1, onChanged: (newValue){
+                            CupertinoSwitch(inactiveTrackColor: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),activeTrackColor: Theme.of(context).primaryColor,value: value1, onChanged: (newValue){
                               onChangedMethod(newValue);
                             }),
                           ]),
@@ -78,7 +78,7 @@ Widget pushNotificationInputItem({
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border.all(
-          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: const Padding(

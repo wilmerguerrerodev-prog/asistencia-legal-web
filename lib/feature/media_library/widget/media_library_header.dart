@@ -8,7 +8,7 @@ import 'package:getdash/utils/styles.dart';
 
 class MediaLibraryHeader extends StatelessWidget {
   final String? title;
-  const MediaLibraryHeader({super.key,@required this.title});
+  const MediaLibraryHeader({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,9 @@ class MediaLibraryHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(title!,style: ubuntuMedium.copyWith(fontSize: 20,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.7))),
+                      Text(title!,style: ubuntuMedium.copyWith(fontSize: 20,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7))),
                       const SizedBox(height: Dimensions.paddingSizeExtraSmall,),
-                      Text("2422 image assets",style: ubuntuMedium.copyWith(fontSize: 16,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.7))),
+                      Text("2422 image assets",style: ubuntuMedium.copyWith(fontSize: 16,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7))),
                     ],
                   ),
                   SizedBox(width: ResponsiveHelper.isDesktop(context)?  Get.width/4: Dimensions.paddingSizeLarge,),
@@ -31,7 +31,7 @@ class MediaLibraryHeader extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
                         ),
                         borderRadius: const BorderRadius.all(
                             Radius.circular(Dimensions.paddingSizeExtraSmall)),

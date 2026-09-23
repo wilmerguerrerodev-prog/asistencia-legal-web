@@ -13,7 +13,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class SalesReportScreen extends StatefulWidget {
-  const SalesReportScreen({Key? key}) : super(key: key);
+  const SalesReportScreen({super.key});
 
   @override
   State<SalesReportScreen> createState() => _AllUsersScreenState();

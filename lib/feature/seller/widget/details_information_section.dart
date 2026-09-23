@@ -4,7 +4,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class DetailsInformationSection extends StatelessWidget {
-  const DetailsInformationSection({Key? key}) : super(key: key);
+  const DetailsInformationSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class DetailsInformationSection extends StatelessWidget {
       height: 200,
       width: (MediaQuery.of(context).size.width - 75) / 4,
       decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center,children: [
 

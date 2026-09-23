@@ -9,7 +9,7 @@ import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 
 class AllPageScreen extends StatefulWidget {
-  const AllPageScreen({Key? key}) : super(key: key);
+  const AllPageScreen({super.key});
 
   @override
   State<AllPageScreen> createState() => _AllUsersScreenState();

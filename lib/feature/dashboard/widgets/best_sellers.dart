@@ -5,7 +5,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class BestSellers extends StatelessWidget {
-  const BestSellers({Key? key}) : super(key: key);
+  const BestSellers({super.key});
 
   @override
   Widget build(BuildContext context) {

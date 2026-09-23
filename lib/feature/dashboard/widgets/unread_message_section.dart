@@ -4,7 +4,7 @@ import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 
 class UnreadMessageSection extends StatelessWidget {
-  const UnreadMessageSection({Key? key}) : super(key: key);
+  const UnreadMessageSection({super.key});
 
   @override
   Widget build(BuildContext context) {

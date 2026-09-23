@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class WithdrawRequestScreen extends StatefulWidget {
-  const WithdrawRequestScreen({Key? key}) : super(key: key);
+  const WithdrawRequestScreen({super.key});
 
   @override
   State<WithdrawRequestScreen> createState() => _AllUsersScreenState();

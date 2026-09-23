@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:getdash/utils/styles.dart';
 
 class SellerDetailsScreen extends StatefulWidget {
-  const SellerDetailsScreen({Key? key}) : super(key: key);
+  const SellerDetailsScreen({super.key});
 
   @override
   State<SellerDetailsScreen> createState() => _SellerDetailsScreenState();
@@ -49,14 +49,14 @@ class _SellerDetailsScreenState extends State<SellerDetailsScreen> with TickerPr
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(.3),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: .3),
                       width: 1.0,
                     ),
                   ),
                 ),
                 tabBar: TabBar(
                   padding: const EdgeInsets.only(top: 3),
-                  unselectedLabelColor: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.4),
+                  unselectedLabelColor: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.4),
                   controller: _tabController,
                   labelColor:Get.isDarkMode? Colors.white : Theme.of(context).primaryColor,
                   labelStyle: ubuntuBold,

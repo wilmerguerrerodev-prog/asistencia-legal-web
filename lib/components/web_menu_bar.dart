@@ -56,7 +56,7 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
 class MenuButtonWebIcon extends StatelessWidget {
   final String? icon;
   final Function() onTap;
-  const MenuButtonWebIcon({super.key, @required this.icon, required this.onTap});
+  const MenuButtonWebIcon({super.key, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class MenuButtonWeb extends StatelessWidget {
   final bool isCart;
   final Function() onTap;
 
-  const MenuButtonWeb({super.key, @required this.title, this.isCart = false, required this.onTap});
+  const MenuButtonWeb({super.key, required this.title, this.isCart = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

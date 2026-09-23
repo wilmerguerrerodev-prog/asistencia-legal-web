@@ -85,7 +85,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                   Text(DateConverter.dateTimeStringToDateTime(DateTime.now().toString()),
                                                     style: ubuntuMedium.copyWith(
                                                         fontSize: Dimensions.fontSizeSmall,
-                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                                 ],
                                               )),),
                                               conversationList.isNotEmpty ?
@@ -165,7 +165,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                   right: Dimensions.paddingSizeSmall,
                                                   bottom: Dimensions.paddingSizeSmall),
                                               decoration: BoxDecoration(
-                                                  border: Border.all(color: Colors.grey.withOpacity(0.5)),
+                                                  border: Border.all(color: Colors.grey.withValues(alpha: 0.5)),
                                                   boxShadow: const [
                                                     BoxShadow(
                                                       color: Colors.black12,
@@ -186,13 +186,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                       controller: conversationController.conversationController,
                                                       textCapitalization: TextCapitalization.sentences,
                                                       cursorColor: Theme.of(context).hintColor,
-                                                      style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color:Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.8)),
+                                                      style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeLarge, color:Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.8)),
                                                       keyboardType: TextInputType.multiline,
                                                       maxLines: null,
                                                       decoration: InputDecoration(
                                                         border: InputBorder.none,
                                                         hintText: "write_here".tr,
-                                                        hintStyle: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.8), fontSize: 16),),
+                                                        hintStyle: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.8), fontSize: 16),),
                                                     ),
                                                   ),
                                                   Row(
@@ -204,7 +204,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                             Images.image,
                                                             width: 20.0,
                                                             height: 20.0,
-                                                            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.6),
+                                                            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .6),
                                                           ),
                                                         ),
                                                       ),
@@ -213,7 +213,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                           Images.file,
                                                           width: 20.0,
                                                           height: 20.0,
-                                                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.6),
+                                                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .6),
                                                         ),
                                                         onTap: () => conversationController.pickOtherFile(false),
                                                       ),

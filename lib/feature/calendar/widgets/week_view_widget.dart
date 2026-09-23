@@ -7,14 +7,14 @@ class WeekViewWidget extends StatelessWidget {
   final GlobalKey<WeekViewState>? state;
   final double? width;
 
-  const WeekViewWidget({Key? key, this.state, this.width}) : super(key: key);
+  const WeekViewWidget({super.key, this.state, this.width});
 
   @override
   Widget build(BuildContext context) {
     return WeekView<Event>(
       headerStyle: HeaderStyle(
           decoration: BoxDecoration(
-            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.03),
+            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.03),
           )
       ),
       key: state,

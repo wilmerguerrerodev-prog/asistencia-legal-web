@@ -12,7 +12,7 @@ import 'package:getdash/utils/responsive.dart';
 
 
 class AllSellerScreen extends StatefulWidget {
-  const AllSellerScreen({Key? key}) : super(key: key);
+  const AllSellerScreen({super.key});
 
   @override
   State<AllSellerScreen> createState() => _AllSellerScreenState();

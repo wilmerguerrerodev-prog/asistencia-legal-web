@@ -139,7 +139,7 @@ class CalendarHomePageState extends State<CalendarHomePage> {
             width:ResponsiveHelper.isMobile(context) ? Get.width :screenWidth < 900 ? screenWidth / 2 : screenWidth/3,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-              color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.03),
+              color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.03),
             ),
             child: Theme(
               data: ThemeData(),
@@ -155,7 +155,7 @@ class CalendarHomePageState extends State<CalendarHomePage> {
               height: 400,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-                color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.03),
+                color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.03),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeDefault),

@@ -125,9 +125,9 @@ class EmployeeDataSource extends DataTableSource {
       index: index,
       selected: dessert.selected,
       color: color != null
-          ? MaterialStateProperty.all(color)
+          ? WidgetStateProperty.all(color)
           : (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).highlightColor)
+          ? WidgetStateProperty.all(Theme.of(context).highlightColor)
           : null),
 
       cells: [
@@ -136,10 +136,10 @@ class EmployeeDataSource extends DataTableSource {
           child: Text("Cameron Williamson",style: ubuntuRegular.copyWith(fontSize: Dimensions.fontSizeExtraSmall)),
         )),
         DataCell(Text(dessert.phone,style: ubuntuRegular.copyWith(
-            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
             fontSize: Dimensions.fontSizeExtraSmall)),),
         DataCell(Text(dessert.role,style: ubuntuRegular.copyWith(
-          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
             fontSize: Dimensions.fontSizeExtraSmall)),),
         DataCell(customSwitch(dessert.status, (){},context),),
         const DataCell(Center(
@@ -238,7 +238,7 @@ List<EmployeeInfoModel> _desserts = <EmployeeInfoModel>[
 Widget customSwitch(bool val, Function onChangedMethod,context){
   return Transform.scale(
     scale: 0.6,
-    child: CupertinoSwitch(trackColor: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),activeColor: Theme.of(context).primaryColor,value: val, onChanged: (newValue){
+    child: CupertinoSwitch(inactiveTrackColor: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),activeTrackColor: Theme.of(context).primaryColor,value: val, onChanged: (newValue){
       onChangedMethod(newValue);
     }),
   );

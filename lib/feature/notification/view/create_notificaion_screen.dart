@@ -119,7 +119,7 @@ class CreateNotificationScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge),
@@ -133,7 +133,7 @@ class CreateNotificationScreen extends StatelessWidget {
               value: value,
               child: Text(value,style: ubuntuRegular.copyWith(
                   fontSize: Dimensions.fontSizeSmall,
-                  color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),);}).toList(),
+                  color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),);}).toList(),
           onChanged: (value) {
             selectedDuration = value!;
           },),

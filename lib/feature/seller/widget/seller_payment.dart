@@ -13,7 +13,7 @@ class SellerPayment extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
       decoration: BoxDecoration(
-          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child: Column(children: [
         Row(children: [
@@ -23,7 +23,7 @@ class SellerPayment extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               border: Border.all(
-                color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
               ),
               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
             child: Padding(
@@ -88,7 +88,7 @@ Widget paymentInputSectionItem({
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border.all(
-          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: const Padding(

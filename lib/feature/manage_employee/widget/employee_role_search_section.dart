@@ -6,7 +6,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 class EmployeeRoleSearchSection extends StatelessWidget {
   final double screenWidth;
-  const EmployeeRoleSearchSection({Key? key, required this.screenWidth}) : super(key: key);
+  const EmployeeRoleSearchSection({super.key, required this.screenWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class EmployeeRoleSearchSection extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
               ),
               borderRadius: const BorderRadius.all(
                   Radius.circular(Dimensions.paddingSizeExtraSmall)),

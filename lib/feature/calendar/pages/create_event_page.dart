@@ -8,8 +8,7 @@ import '../widgets/add_event_widget.dart';
 class CreateEventPage extends StatefulWidget {
   final bool withDuration;
 
-  const CreateEventPage({Key? key, this.withDuration = false})
-      : super(key: key);
+  const CreateEventPage({super.key, this.withDuration = false});
 
   @override
   CreateEventPageState createState() => CreateEventPageState();

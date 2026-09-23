@@ -4,7 +4,7 @@ import 'package:getdash/feature/order_refunds/data_source/refund_data_source.dar
 
 
 class RefundList extends StatefulWidget {
-  const RefundList({Key? key}) : super(key: key);
+  const RefundList({super.key});
 
   @override
   State<RefundList> createState() => _AllUserListState();

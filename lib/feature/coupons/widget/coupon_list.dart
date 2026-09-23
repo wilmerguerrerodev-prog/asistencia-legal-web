@@ -5,7 +5,7 @@ import 'coupon_data_source.dart';
 
 
 class CouponList extends StatefulWidget {
-  const CouponList({Key? key}) : super(key: key);
+  const CouponList({super.key});
 
   @override
   State<CouponList> createState() => _AllUserListState();

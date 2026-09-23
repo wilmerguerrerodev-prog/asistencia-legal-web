@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class DeliveryManEarningScreen extends StatefulWidget {
-  const DeliveryManEarningScreen({Key? key}) : super(key: key);
+  const DeliveryManEarningScreen({super.key});
 
   @override
   State<DeliveryManEarningScreen> createState() => _AllUsersScreenState();

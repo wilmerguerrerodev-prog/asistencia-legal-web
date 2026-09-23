@@ -12,7 +12,7 @@ class CustomExpansionTile extends StatefulWidget {
 
 
   const CustomExpansionTile({
-    Key? key,
+    super.key,
     this.leading,
     required this.title,
     this.subtitle,
@@ -36,8 +36,7 @@ class CustomExpansionTile extends StatefulWidget {
         expandedCrossAxisAlignment != CrossAxisAlignment.baseline,
         'CrossAxisAlignment.baseline is not supported since the expanded children '
             'are aligned in a column, not a row. Try to use another constant.',
-        ),
-        super(key: key);
+        );
 
 
   final Widget? leading;
@@ -151,7 +150,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
                      Icon( _isExpanded == true ?
                         Icons.remove_circle:
                         Icons.add_circle_outlined,
-                        color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.6),),
+                        color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: .6),),
                     Gaps.horizontalGapOf(10.0),
                     Expanded(
                       child: widget.title,

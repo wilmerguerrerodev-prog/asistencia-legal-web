@@ -4,7 +4,7 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:getdash/feature/charts/widgets/chart_header.dart';
 
 class GetDashPieChart extends StatelessWidget {
-  const GetDashPieChart({Key? key}) : super(key: key);
+  const GetDashPieChart({super.key});
 
   @override
   Widget build(BuildContext context) {

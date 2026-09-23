@@ -4,7 +4,7 @@ import 'package:getdash/feature/accounting/data_sources/transaction_data_sources
 
 
 class TransactionList extends StatefulWidget {
-  const TransactionList({Key? key}) : super(key: key);
+  const TransactionList({super.key});
 
   @override
   State<TransactionList> createState() => _AllUserListState();

@@ -116,9 +116,9 @@ class UserOrderDataSource extends DataTableSource {
     return DataRow.byIndex(
       index: index,
       color: color != null
-          ? MaterialStateProperty.all(color)
+          ? WidgetStateProperty.all(color)
           : (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).primaryColor)
+          ? WidgetStateProperty.all(Theme.of(context).primaryColor)
           : null),
       onSelectChanged: (value) {
         if (dessert.selected != value) {

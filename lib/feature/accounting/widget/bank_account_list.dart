@@ -4,7 +4,7 @@ import 'package:getdash/feature/accounting/data_sources/bank_account_data_source
 
 
 class BankAccountList extends StatefulWidget {
-  const BankAccountList({Key? key}) : super(key: key);
+  const BankAccountList({super.key});
 
   @override
   State<BankAccountList> createState() => _AllUserListState();

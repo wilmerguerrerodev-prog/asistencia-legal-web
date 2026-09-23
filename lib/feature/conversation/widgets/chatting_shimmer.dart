@@ -4,16 +4,16 @@ import 'package:getdash/utils/dimensions.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 
 class ChattingShimmer extends StatelessWidget {
-  const ChattingShimmer({Key? key}) : super(key: key);
+  const ChattingShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Shimmer(
           duration: const Duration(seconds: 3),
           interval: const Duration(seconds: 5),
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           colorOpacity: 0,
           enabled: true,
           direction: const ShimmerDirection.fromLTRB(),

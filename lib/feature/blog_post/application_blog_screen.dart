@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class ApplicationBlogScreen extends StatefulWidget {
-  const ApplicationBlogScreen({Key? key}) : super(key: key);
+  const ApplicationBlogScreen({super.key});
 
   @override
   State<ApplicationBlogScreen> createState() => _AllUsersScreenState();
