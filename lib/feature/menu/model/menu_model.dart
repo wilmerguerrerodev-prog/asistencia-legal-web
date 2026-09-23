@@ -1,18 +1,21 @@
 
+import 'package:flutter/material.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/utils/images.dart';
 
 class MenuModel {
   String? icon;
+  IconData? iconData;
   String? menuTitle;
   String? route;
   List<SubMenu>? subMenus;
 
   MenuModel({
     this.icon,
+    this.iconData,
     this.menuTitle,
     this.route,
-    this.subMenus
+    this.subMenus,
   });
 }
 
@@ -29,8 +32,9 @@ class SubMenu {
 
  List<MenuModel> menuList = [
   MenuModel(
-    icon:Images.dashboard,
-    menuTitle: 'dashboard',
+    icon: Images.dashboard,
+    iconData: Icons.local_taxi_rounded,
+    menuTitle: 'LegalTech Cliente',
     route: RouteHelper.getInitialRoute(),
   ),
 

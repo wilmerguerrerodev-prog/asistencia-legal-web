@@ -67,7 +67,12 @@ class MenuButtonWebIcon extends StatelessWidget {
             height: 35,
             width: 35,
             decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), shape: BoxShape.circle),
-            child: Image.asset(icon!,scale: 3,color: Colors.grey.shade400,)),
+            child: Image.asset(
+              icon!,
+              scale: 3,
+              color: Colors.grey.shade400,
+              errorBuilder: (context, error, stackTrace) => Icon(Icons.circle_outlined, size: 18, color: Colors.grey.shade400),
+            )),
         const SizedBox(width: Dimensions.paddingSizeExtraSmall),
       ]),
     );
