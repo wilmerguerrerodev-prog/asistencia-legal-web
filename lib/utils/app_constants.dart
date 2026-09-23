@@ -4,7 +4,7 @@ import 'package:getdash/data/model/response/language_model.dart';
 import 'images.dart';
 
 class AppConstants {
-  static const String appName = 'GetDash';
+  static const String appName = 'LegalTech';
   static const double appVersion = 1.0;
   // static const String BASE_URL = 'https://ondemands.6am.one';
 
