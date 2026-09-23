@@ -139,46 +139,17 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget controlMenuButton() {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 30),
-      child: MenuButtonWebIcon(icon: Images.menu, onTap: Get.find<MenuDrawerController>().toggleMenuDrawer),
+      child: MenuButtonWebIcon(
+        icon: Images.menu,
+        onTap: Get.find<MenuDrawerController>().toggleMenuDrawer,
+      ),
     );
   }
 
   Widget controlTile(bool isExpanded) {
     return Padding(
-<<<<<<< HEAD
-      padding: const EdgeInsets.only(top: 20, bottom: 30),
-      child: ListTile(
-        leading: isExpanded
-            ? Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.gavel_rounded, color: Theme.of(context).primaryColor, size: 22),
-              )
-            : null,
-        title: isExpanded
-            ? Text(
-                "LegalTech",
-                style: ubuntuBold.copyWith(
-                  color: Theme.of(context).textTheme.bodyMedium!.color,
-                  fontSize: Dimensions.fontSizeLarge,
-                  letterSpacing: 0.5,
-                ),
-              )
-            : Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.gavel_rounded, color: Theme.of(context).primaryColor, size: 22),
-              ),
-=======
       padding: const EdgeInsets.only(top: 20, bottom: 25, left: 12, right: 12),
       child: InkWell(
->>>>>>> 018199037cc905aab4537c4ad37e9fbbabe8139c
         onTap: Get.find<MenuDrawerController>().toggleMenuDrawer,
         borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
         child: Padding(
@@ -187,46 +158,25 @@ class _MenuDrawerState extends State<MenuDrawer> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.balance_rounded,
-                  color: Theme.of(context).secondaryHeaderColor,
-                  size: 20,
+                  Icons.gavel_rounded,
+                  color: Theme.of(context).primaryColor,
+                  size: 22,
                 ),
               ),
               if (isExpanded) ...[
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Text(
-                        "LegalTech",
-                        style: ubuntuBold.copyWith(
-                          color: Theme.of(context).textTheme.bodyMedium!.color,
-                          fontSize: Dimensions.fontSizeLarge,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "PRO",
-                          style: ubuntuBold.copyWith(
-                            fontSize: 9,
-                            color: Theme.of(context).secondaryHeaderColor,
-                          ),
-                        ),
-                      ),
-                    ],
+                Text(
+                  "LegalTech",
+                  style: ubuntuBold.copyWith(
+                    color: Theme.of(context).textTheme.bodyMedium!.color,
+                    fontSize: Dimensions.fontSizeLarge,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],
