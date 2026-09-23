@@ -43,6 +43,11 @@ import 'package:getdash/feature/seller/seller_details_screen.dart';
 import 'package:getdash/feature/seller/all_seller_screen.dart';
 import 'package:getdash/feature/sms/sms_template_screen.dart';
 import 'package:getdash/feature/dashboard/dashboard_screen.dart';
+import 'package:getdash/feature/legal_center/view/legal_center_screen.dart';
+import 'package:getdash/feature/legal_center/view/legal_cases_screen.dart';
+import 'package:getdash/feature/legal_center/view/legal_lawyers_screen.dart';
+import 'package:getdash/feature/legal_center/view/legal_cooperatives_screen.dart';
+import 'package:getdash/feature/legal_center/view/legal_documents_screen.dart';
 import 'package:getdash/feature/media_library/media_library_screen.dart';
 import 'package:getdash/feature/support/support_screen.dart';
 import 'package:getdash/feature/users/add_user_screen.dart';
@@ -101,6 +106,11 @@ class RouteHelper {
   static const String conversationScreen = '/conversationScreen';
   static const String conversationScreenMobile = '/conversationScreenMobile';
   static const String edutechScreen = '/WeblandingPage';
+  static const String legalCenterScreen = '/WeblandingPage';
+  static const String legalCasesScreen = '/legalCases';
+  static const String legalLawyersScreen = '/legalLawyers';
+  static const String legalCooperativesScreen = '/legalCooperatives';
+  static const String legalDocumentsScreen = '/legalDocuments';
   static const String dashboardScreen1 = '/DashboardScreen1';
   static const String dashboardScreen2 = '/DashboardDemoScreen2';
   static const String dashboardScreen3 = '/DashboardDemoScreen3';
@@ -151,6 +161,11 @@ class RouteHelper {
   static String getConversationScreen() => conversationScreen;
   static String getConversationScreenMobile() => conversationScreenMobile;
   static String getEdutechRoute() => edutechScreen;
+  static String getLegalCenterRoute() => legalCenterScreen;
+  static String getLegalCasesRoute() => legalCasesScreen;
+  static String getLegalLawyersRoute() => legalLawyersScreen;
+  static String getLegalCooperativesRoute() => legalCooperativesScreen;
+  static String getLegalDocumentsRoute() => legalDocumentsScreen;
   static String getDashboardScreen1() => dashboardScreen1;
   static String getDashboardScreen2() => dashboardScreen2;
   static String getDashboardScreen3() => dashboardScreen3;
@@ -249,5 +264,21 @@ class RouteHelper {
             channelID: "channelID",
             date: "date",
             bookingID: "bookingID")),
+
+    GetPage(
+        name: edutechScreen,
+        page: () => const LegalCenterScreen()),
+    GetPage(
+        name: legalCasesScreen,
+        page: () => const LegalCasesScreen()),
+    GetPage(
+        name: legalLawyersScreen,
+        page: () => const LegalLawyersScreen()),
+    GetPage(
+        name: legalCooperativesScreen,
+        page: () => const LegalCooperativesScreen()),
+    GetPage(
+        name: legalDocumentsScreen,
+        page: () => const LegalDocumentsScreen()),
   ];
 }

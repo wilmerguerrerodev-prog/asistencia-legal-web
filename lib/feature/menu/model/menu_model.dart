@@ -63,9 +63,30 @@ class SubMenu {
 
 
   MenuModel(
-     icon:Images.dashboard,
-     menuTitle: 'GetLearn',
-     route: RouteHelper.getEdutechRoute(),
+     icon: Images.dashboard,
+     menuTitle: 'asistencia_juridica',
+     subMenus: [
+       SubMenu(
+         subMenuTitle: 'dashboard_abogado',
+         route: RouteHelper.getEdutechRoute(),
+       ),
+       SubMenu(
+         subMenuTitle: 'casos_siniestros',
+         route: RouteHelper.getLegalCasesRoute(),
+       ),
+       SubMenu(
+         subMenuTitle: 'abogados_territorio',
+         route: RouteHelper.getLegalLawyersRoute(),
+       ),
+       SubMenu(
+         subMenuTitle: 'cooperativas_flotas',
+         route: RouteHelper.getLegalCooperativesRoute(),
+       ),
+       SubMenu(
+         subMenuTitle: 'dictamenes_actas',
+         route: RouteHelper.getLegalDocumentsRoute(),
+       ),
+     ],
    ),
 
    MenuModel(

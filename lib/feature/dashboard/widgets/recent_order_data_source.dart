@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getdash/utils/styles.dart';
 
-
 /// Keeps track of selected rows, feed the data into DesertsDataSource
 class RestorableRecentOrderSelections extends RestorableProperty<Set<int>> {
   Set<int> _dessertSelections = {};
@@ -44,18 +43,17 @@ class RestorableRecentOrderSelections extends RestorableProperty<Set<int>> {
   Object toPrimitives() => _dessertSelections.toList();
 }
 
-
 int _idCounter = 0;
 
 /// Domain model entity
 class RecentOrderInfo {
   RecentOrderInfo(
-      this.orderCode,
-      this.customer,
-      this.items,
-      this.paymentStatus,
-      this.deliveryStatus,
-      );
+    this.orderCode,
+    this.customer,
+    this.items,
+    this.paymentStatus,
+    this.deliveryStatus,
+  );
 
   final int id = _idCounter++;
 
@@ -68,16 +66,11 @@ class RecentOrderInfo {
 }
 
 class CustomerInfo {
-
-  CustomerInfo(
-      this.customerName,
-      this.contactInfo
-      );
+  CustomerInfo(this.customerName, this.contactInfo);
 
   final String customerName;
   final String contactInfo;
 }
-
 
 class RecentOrderDataSource extends DataTableSource {
   RecentOrderDataSource.empty(this.context) {
@@ -86,9 +79,9 @@ class RecentOrderDataSource extends DataTableSource {
 
   RecentOrderDataSource(this.context,
       [sortedByCalories = false,
-        this.hasRowTaps = false,
-        this.hasRowHeightOverrides = false,
-        this.hasZebraStripes = false]) {
+      this.hasRowTaps = false,
+      this.hasRowHeightOverrides = false,
+      this.hasZebraStripes = false]) {
     desserts = _users;
   }
 
@@ -101,7 +94,8 @@ class RecentOrderDataSource extends DataTableSource {
   // Color each Row by index's parity
   bool hasZebraStripes = false;
 
-  void sort<T>(Comparable<T> Function(RecentOrderInfo d) getField, bool ascending) {
+  void sort<T>(
+      Comparable<T> Function(RecentOrderInfo d) getField, bool ascending) {
     desserts.sort((a, b) {
       final aValue = getField(a);
       final bValue = getField(b);
@@ -128,7 +122,6 @@ class RecentOrderDataSource extends DataTableSource {
 
   @override
   DataRow getRow(int index, [Color? color]) {
-
     assert(index >= 0);
     if (index >= desserts.length) throw 'index > _users.length';
     final bankAccountInfo = desserts[index];
@@ -144,7 +137,9 @@ class RecentOrderDataSource extends DataTableSource {
         }
       },
       cells: [
-        DataCell(Text(bankAccountInfo.orderCode),),
+        DataCell(
+          Text(bankAccountInfo.orderCode),
+        ),
         DataCell(Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -153,12 +148,13 @@ class RecentOrderDataSource extends DataTableSource {
           ],
         )),
         DataCell(Text(bankAccountInfo.items)),
-
         DataCell(Text(
           bankAccountInfo.paymentStatus,
-          style: ubuntuMedium.copyWith(color: bankAccountInfo.paymentStatus == "paid" ? Colors.cyan : Theme.of(context).colorScheme.secondary),)),
-
-
+          style: ubuntuMedium.copyWith(
+              color: bankAccountInfo.paymentStatus == "paid"
+                  ? Colors.cyan
+                  : Theme.of(context).colorScheme.secondary),
+        )),
         DataCell(Text(bankAccountInfo.deliveryStatus)),
       ],
     );
@@ -184,134 +180,82 @@ class RecentOrderDataSource extends DataTableSource {
 
 int _selectedCount = 0;
 
-
 List<RecentOrderInfo> _users = <RecentOrderInfo>[
   RecentOrderInfo(
     '#12REGGTTF785L',
-    CustomerInfo(
-        "Robert Jacobs",
-      "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Done',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Pending',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Confirmed',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Complete',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Complete',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Approved',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     'Pending',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     '\$800.00',
   ),
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     '\$800.00',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     '\$800.00',
   ),
-
   RecentOrderInfo(
     '#12REGGTTF785L',
-
-    CustomerInfo(
-        "Robert Jacobs",
-        "+8801703901010"
-    ),
+    CustomerInfo("Robert Jacobs", "+8801703901010"),
     '47842158321578',
     'Arlene McCoy',
     '\$800.00',
   ),
-
 ];
