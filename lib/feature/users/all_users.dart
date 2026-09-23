@@ -12,7 +12,7 @@ import 'widget/search_user_section.dart';
 
 
 class AllUsersScreen extends StatefulWidget {
-  const AllUsersScreen({Key? key}) : super(key: key);
+  const AllUsersScreen({super.key});
 
   @override
   State<AllUsersScreen> createState() => _AllUsersScreenState();

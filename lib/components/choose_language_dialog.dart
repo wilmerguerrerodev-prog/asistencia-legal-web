@@ -13,7 +13,7 @@ class ChooseLanguageDialog extends StatelessWidget {
   final bool? isLogOut;
   final Function? onNoPressed;
   final Widget? widget;
-  const ChooseLanguageDialog({super.key, this.title, @required this.description, @required this.onYesPressed,
+  const ChooseLanguageDialog({super.key, this.title, required this.description, required this.onYesPressed,
     this.isLogOut = false, this.onNoPressed, this.widget});
 
   @override

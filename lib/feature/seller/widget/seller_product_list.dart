@@ -6,7 +6,7 @@ import '../../../components/custom_switch.dart';
 
 
 class SellerProductList extends StatefulWidget {
-  const SellerProductList({Key? key}) : super(key: key);
+  const SellerProductList({super.key});
 
   @override
   State<SellerProductList> createState() => _SellerProductListState();
@@ -33,10 +33,10 @@ class _SellerProductListState extends State<SellerProductList> {
       height: 900,
       width: (MediaQuery.of(context).size.width - 40),
       decoration: BoxDecoration(
-          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child:  Container(
-        decoration: BoxDecoration(color: Theme.of(context).cardColor,border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)), borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
+        decoration: BoxDecoration(color: Theme.of(context).cardColor,border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)), borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal:Dimensions.paddingSizeExtraLarge,vertical:Dimensions.paddingSizeLarge ),
           child: Column(
@@ -55,7 +55,7 @@ class _SellerProductListState extends State<SellerProductList> {
               Container(
                 padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
                 decoration: BoxDecoration(
-                    border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+                    border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
                     color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
                 child: Row(
                   children: [
@@ -169,7 +169,7 @@ Widget sellerFilterSectionItem({
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border.all(
-          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: Padding(

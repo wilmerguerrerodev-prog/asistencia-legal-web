@@ -13,7 +13,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class CommissionHistoryScreen extends StatefulWidget {
-  const CommissionHistoryScreen({Key? key}) : super(key: key);
+  const CommissionHistoryScreen({super.key});
 
   @override
   State<CommissionHistoryScreen> createState() => _AllUsersScreenState();

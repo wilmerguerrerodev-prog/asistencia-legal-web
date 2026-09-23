@@ -3,7 +3,7 @@ import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 
 class SellerOverviewSection extends StatelessWidget {
-  const SellerOverviewSection({Key? key}) : super(key: key);
+  const SellerOverviewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +153,7 @@ class SellerOverviewSection extends StatelessWidget {
       height: height,
       width: (MediaQuery.of(context).size.width - width) / 4,
       decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
         Row(children: [

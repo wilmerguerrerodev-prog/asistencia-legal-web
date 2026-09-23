@@ -52,7 +52,7 @@ class _PagesListDataTableSectionState extends State<PagesList> {
           horizontalMargin: 0.0,
           minWidth: 600,
           showCheckboxColumn: false,
-          headingRowColor:  MaterialStateProperty.all(Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.03)),
+          headingRowColor:  WidgetStateProperty.all(Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.03)),
           headingTextStyle: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color),
           columns:  <DataColumn>[
             DataColumn2(

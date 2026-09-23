@@ -6,7 +6,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class FooterSection extends StatelessWidget {
-  const FooterSection({Key? key}) : super(key: key);
+  const FooterSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class FooterSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("All rights reserved By @GetDash 2023",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.7)),),
+            Text("All rights reserved By @GetDash 2023",style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7)),),
             if(!ResponsiveHelper.isMobile(context))
             Row(
               children: [
@@ -71,7 +71,7 @@ class FooterSection extends StatelessWidget {
           width: 30,
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
-            color: isActive? Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.2):Colors.transparent,
+            color: isActive? Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .2):Colors.transparent,
           ),
           child: Center(child: Text(pageNumber.toString()))),
     );

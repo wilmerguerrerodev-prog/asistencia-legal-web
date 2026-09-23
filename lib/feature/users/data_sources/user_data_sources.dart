@@ -125,7 +125,7 @@ class UserDataSource extends DataTableSource {
     return DataRow.byIndex(
       index: index,
       color: (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).primaryColor)
+          ? WidgetStateProperty.all(Theme.of(context).primaryColor)
           : null),
 
       onSelectChanged: (value) {

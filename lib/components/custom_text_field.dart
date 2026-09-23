@@ -68,7 +68,7 @@ class CustomTextFieldState extends State<CustomTextField> {
     return Container(
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+          border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
           borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall))
       ),
       child: TextFormField(
@@ -76,7 +76,7 @@ class CustomTextFieldState extends State<CustomTextField> {
         controller: widget.controller,
         onSaved: widget.onSaved,
         focusNode: widget.focusNode,
-        style: ubuntuRegular.copyWith(fontSize:Dimensions.fontSizeDefault,color: widget.isEnabled==false?Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.6):Theme.of(context).textTheme.bodyLarge!.color),
+        style: ubuntuRegular.copyWith(fontSize:Dimensions.fontSizeDefault,color: widget.isEnabled==false?Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.6):Theme.of(context).textTheme.bodyLarge!.color),
         textInputAction: widget.inputAction,
         keyboardType: widget.inputType,
         cursorColor: Theme.of(context).hintColor,
@@ -102,13 +102,13 @@ class CustomTextFieldState extends State<CustomTextField> {
           hintText: widget.hintText,
           hintStyle: ubuntuRegular.copyWith(
             fontSize: Dimensions.fontSizeLarge,
-            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
           ),
           prefixIcon: widget.prefixIcon,
           suffixIcon: widget.isPassword! ?
           IconButton(
             splashRadius: 20,
-            icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Theme.of(context).hintColor.withOpacity(0.3)),
+            icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: Theme.of(context).hintColor.withValues(alpha: 0.3)),
             onPressed: _toggle,
           ) : widget.suffixIcon,
         ),

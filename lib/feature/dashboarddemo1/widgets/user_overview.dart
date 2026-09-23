@@ -14,7 +14,7 @@ class UserOverviewChart extends StatelessWidget {
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
-      child: UserDataOverview(),
+      child: const UserDataOverview(),
     );
   }
 }

@@ -114,7 +114,7 @@ extension DateUtils on DateTime {
 
 extension ColorExtension on Color {
   Color get accentColor =>
-      (blue / 2 >= 255 / 2 || red / 2 >= 255 / 2 || green / 2 >= 255 / 2)
+      (b >= 0.5 || r >= 0.5 || g >= 0.5)
           ? AppColors.black
           : AppColors.white;
 }

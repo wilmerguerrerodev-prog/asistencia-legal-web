@@ -11,7 +11,7 @@ class AddMediaLibrarySection extends StatelessWidget {
     return Container(
         height: 95,
         decoration: BoxDecoration(
-            border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+            border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
             ),
             color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
         child: Padding(

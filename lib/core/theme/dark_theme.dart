@@ -19,7 +19,7 @@ ThemeData dark = ThemeData(
   shadowColor: const Color(0x33e2f1ff),
   cardColor: const Color(0xFF10324A),
   textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
-      foregroundColor: const Color(0xFFFFFFFF))), colorScheme: const ColorScheme.dark(primary: Color(0xFF056AB4), secondary: Color(0xFFf57d00), tertiary: (Color(0xFFFF6767))).copyWith(background: const Color(0xff010D15)).copyWith(error: const Color(0xFFdd3135)),
+      foregroundColor: const Color(0xFFFFFFFF))), colorScheme: const ColorScheme.dark(primary: Color(0xFF056AB4), secondary: Color(0xFFf57d00), tertiary: (Color(0xFFFF6767))).copyWith(surface: const Color(0xff010D15)).copyWith(error: const Color(0xFFdd3135)),
 );
 
 // semi-dark-light-color

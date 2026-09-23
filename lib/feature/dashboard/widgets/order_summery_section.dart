@@ -10,10 +10,10 @@ class OrderSummerySection extends StatelessWidget {
 
 
   const OrderSummerySection({
-    Key? key,
+    super.key,
     this.crossAxisCount = 4,
     this.childAspectRatio = 1,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class OrderSummerySection extends StatelessWidget {
                 orderSummeryItems.title!,
                 style: ubuntuRegular.copyWith(
                     fontSize: Dimensions.fontSizeDefault,
-                    color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5))),
+                    color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5))),
 
           ]),
         ],

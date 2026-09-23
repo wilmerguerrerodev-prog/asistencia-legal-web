@@ -8,7 +8,7 @@ import 'package:getdash/utils/styles.dart';
 
 class SearchSection extends StatelessWidget {
   final double screenWidth;
-  const SearchSection({Key? key, required this.screenWidth}) : super(key: key);
+  const SearchSection({super.key, required this.screenWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class SearchSection extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                  color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
                 ),
                 borderRadius: const BorderRadius.all(
                     Radius.circular(Dimensions.paddingSizeExtraSmall)),
@@ -39,7 +39,7 @@ class SearchSection extends StatelessWidget {
           if(ResponsiveHelper.isDesktop(context))
           Container(
             decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(.25),
+                color: Theme.of(context).primaryColor.withValues(alpha: .25),
                 borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall))
             ),
             height: 45,

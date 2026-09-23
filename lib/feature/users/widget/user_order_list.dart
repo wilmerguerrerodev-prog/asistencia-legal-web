@@ -5,7 +5,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class UserOrderList extends StatefulWidget {
-  const UserOrderList({Key? key}) : super(key: key);
+  const UserOrderList({super.key});
 
   @override
   State<UserOrderList> createState() => _AllUserListState();
@@ -115,7 +115,7 @@ class _AllUserListState extends State<UserOrderList> with RestorationMixin {
       padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
       decoration: BoxDecoration(
         color: Colors.white,
-          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child:  Row(
         children: [

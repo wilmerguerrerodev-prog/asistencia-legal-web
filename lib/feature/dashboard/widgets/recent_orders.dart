@@ -6,7 +6,7 @@ import 'package:getdash/utils/styles.dart';
 
 
 class RecentOrders extends StatefulWidget {
-  const RecentOrders({Key? key}) : super(key: key);
+  const RecentOrders({super.key});
 
   @override
   State<RecentOrders> createState() => _AllUserListState();
@@ -104,7 +104,7 @@ class _AllUserListState extends State<RecentOrders> with RestorationMixin {
 
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06)),
+          border: Border.all(color:Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06)),
           color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
       child:  Container(
         decoration: BoxDecoration(color: Theme.of(context).cardColor, borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
@@ -116,7 +116,7 @@ class _AllUserListState extends State<RecentOrders> with RestorationMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('recent_orders'.tr,style: ubuntuMedium.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.8),
+                      color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .8),
                       fontSize: Dimensions.fontSizeLarge
                   ),),
                   DropdownButton<String>(
@@ -126,7 +126,7 @@ class _AllUserListState extends State<RecentOrders> with RestorationMixin {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value,style: ubuntuMedium.copyWith(
-                            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.8),
+                            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .8),
                             fontSize: Dimensions.fontSizeLarge),),
                       );
                     }).toList(),

@@ -68,7 +68,7 @@ Widget pushNotificationInputItem({
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border.all(
-          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: const Padding(
@@ -94,7 +94,7 @@ Widget notificationFilterSectionItem({
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         border: Border.all(
-          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+          color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: Padding(

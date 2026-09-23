@@ -132,9 +132,9 @@ class CouponDataSource extends DataTableSource {
       index: index,
       // selected: subscriberInfo.selected,
       color: color != null
-          ? MaterialStateProperty.all(color)
+          ? WidgetStateProperty.all(color)
           : (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).highlightColor)
+          ? WidgetStateProperty.all(Theme.of(context).highlightColor)
           : null),
       onSelectChanged: (value) {
         if (subscriberInfo.selected != value) {

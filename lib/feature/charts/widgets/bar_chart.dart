@@ -4,7 +4,7 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:getdash/feature/charts/widgets/chart_header.dart';
 
 class GetDashBarChart extends StatelessWidget {
-  const GetDashBarChart({Key? key}) : super(key: key);
+  const GetDashBarChart({super.key});
   @override
   Widget build(BuildContext context) {
     return Column(

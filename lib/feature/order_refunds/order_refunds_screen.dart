@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class OrderRefundScreen extends StatefulWidget {
-  const OrderRefundScreen({Key? key}) : super(key: key);
+  const OrderRefundScreen({super.key});
 
   @override
   State<OrderRefundScreen> createState() => _AllUsersScreenState();

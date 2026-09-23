@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RippleButton extends StatelessWidget {
-  const RippleButton({Key? key, required this.onTap}) : super(key: key);
+  const RippleButton({super.key, required this.onTap});
   final GestureTapCallback onTap;
 
   @override

@@ -147,8 +147,8 @@ class SellerDataSource extends DataTableSource {
     final dessert = sellerInfoList[index];
     return DataRow.byIndex(
       index: index,
-      color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
+      color: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
                 return Theme.of(context).cardColor;
                 // Use default value for other states and odd rows.
           }),

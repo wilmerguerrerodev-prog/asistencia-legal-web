@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class BankAccountScreen extends StatefulWidget {
-  const BankAccountScreen({Key? key}) : super(key: key);
+  const BankAccountScreen({super.key});
 
   @override
   State<BankAccountScreen> createState() => _AllUsersScreenState();

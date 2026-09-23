@@ -9,10 +9,10 @@ class DashboardDemo3Ultimate extends StatelessWidget {
   final double childAspectRatio;
 
   const DashboardDemo3Ultimate({
-    Key? key,
+    super.key,
     this.crossAxisCount = 2,
     this.childAspectRatio = 1,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
 
@@ -142,7 +142,7 @@ class DashboardDemo3Ultimate extends StatelessWidget {
                   height: 60,
                   width: 60,
                   decoration: BoxDecoration(
-                      color: Color(0xFFD8D8FE),
+                      color: const Color(0xFFD8D8FE),
                       borderRadius: BorderRadius.circular(15)),
                   child: Image.asset(
                     Images.googledemo3,

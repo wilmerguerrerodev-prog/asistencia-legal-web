@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class ProductListScreen extends StatefulWidget {
-  const ProductListScreen({Key? key}) : super(key: key);
+  const ProductListScreen({super.key});
 
   @override
   State<ProductListScreen> createState() => _AllUsersScreenState();

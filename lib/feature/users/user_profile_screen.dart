@@ -10,7 +10,7 @@ import 'package:getdash/feature/users/widget/user_profile_section.dart';
 import 'package:getdash/utils/dimensions.dart';
 
 class UserProfile extends StatelessWidget {
-  const UserProfile({Key? key}) : super(key: key);
+  const UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class UserProfile extends StatelessWidget {
                                                     width: screenWidth / 3.5,
                                                     margin: const EdgeInsets.only(bottom: Dimensions.paddingSizeLarge),
                                                     decoration: BoxDecoration(
-                                                        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+                                                        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
                                                         borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
                                                     child: const UserProfileSection()),
                                                 const SizedBox(width: Dimensions.paddingSizeLarge),

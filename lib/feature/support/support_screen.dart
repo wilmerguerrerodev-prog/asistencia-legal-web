@@ -48,12 +48,12 @@ class SupportScreen extends StatelessWidget {
                                     height: 85,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                        border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                        border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                     ),
                                     child: Padding(padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge),
                                         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text('support'.tr,style: ubuntuMedium.copyWith(fontSize: 20,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.7))),
+                                              Text('support'.tr,style: ubuntuMedium.copyWith(fontSize: 20,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7))),
                                               const SizedBox(height: Dimensions.paddingSizeExtraMoreLarge),
 
                                             ]))),
@@ -64,21 +64,21 @@ class SupportScreen extends StatelessWidget {
                                     Expanded(
                                       child: Text("#204 - Status of some DZ,DL and XB Shipments Showing Delivered",
                                         style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeExtraLarge,
-                                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.7),
+                                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .7),
                                         ),),
                                     ),
                                     if(!ResponsiveHelper.isMobile(context))
-                                    Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                    Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                   ],
                                 ),
                                 if(ResponsiveHelper.isMobile(context))
-                                  Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                  Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                 const SizedBox(height: Dimensions.paddingSizeDoubleExtraLarge),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(.05),
+                                      color: Theme.of(context).primaryColor.withValues(alpha: .05),
                                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
@@ -98,13 +98,13 @@ class SupportScreen extends StatelessWidget {
                                               ],
                                             ),
                                             if(!ResponsiveHelper.isMobile(context))
-                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         ),
                                         if(ResponsiveHelper.isMobile(context))
-                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
-                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                       ],
                                     ),
                                   ),
@@ -113,9 +113,9 @@ class SupportScreen extends StatelessWidget {
                                 //second message card
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(.05),
+                                      color: Theme.of(context).primaryColor.withValues(alpha: .05),
                                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
@@ -135,20 +135,20 @@ class SupportScreen extends StatelessWidget {
                                               ],
                                             ),
                                             if(!ResponsiveHelper.isMobile(context))
-                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         ),
                                         if(ResponsiveHelper.isMobile(context))
-                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
-                                         Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do? The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                         Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do? The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text("Soni Shukla",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
-                                            Text("Team Shyplite",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
-                                            Text("+91-9643318580",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                            Text("Soni Shukla",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
+                                            Text("Team Shyplite",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
+                                            Text("+91-9643318580",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         )
                                       ],
@@ -158,9 +158,9 @@ class SupportScreen extends StatelessWidget {
                                 const SizedBox(height: Dimensions.paddingSizeDoubleExtraLarge),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(.05),
+                                      color: Theme.of(context).primaryColor.withValues(alpha: .05),
                                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
@@ -180,14 +180,14 @@ class SupportScreen extends StatelessWidget {
                                               ],
                                             ),
                                             if(!ResponsiveHelper.isMobile(context))
-                                              Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                              Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         ),
                                         if(ResponsiveHelper.isMobile(context))
-                                        Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                        Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
 
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
-                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                       ],
                                     ),
                                   ),
@@ -195,9 +195,9 @@ class SupportScreen extends StatelessWidget {
                                 const SizedBox(height: Dimensions.paddingSizeDefault,),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(.05),
+                                      color: Theme.of(context).primaryColor.withValues(alpha: .05),
                                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
@@ -217,23 +217,23 @@ class SupportScreen extends StatelessWidget {
                                               ],
                                             ),
                                             if(!ResponsiveHelper.isMobile(context))
-                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                            Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         ),
                                         if(ResponsiveHelper.isMobile(context))
-                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                          Text("04/09/2020, 09:20 AM",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
 
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
-                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do? The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                        Text("The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do? The shipment With the AWB  126318028397  didn’t arrive still to this day,What can we do?",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
 
                                         const SizedBox(height: Dimensions.paddingSizeDefault,),
 
                                         Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text("Soni Shukla",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
-                                            Text("Team Shyplite",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
-                                            Text("+91-9643318580",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                            Text("Soni Shukla",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
+                                            Text("Team Shyplite",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
+                                            Text("+91-9643318580",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                           ],
                                         ),
                                         const SizedBox(height: Dimensions.paddingSizeLarge,),
@@ -262,9 +262,9 @@ class SupportScreen extends StatelessWidget {
                                 const SizedBox(height: Dimensions.paddingSizeDefault,),
                                 Container(
                                   decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor.withOpacity(.05),
+                                      color: Theme.of(context).primaryColor.withValues(alpha: .05),
                                       borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                      border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                   ),
                                   child: CustomTextField(
                                     hintText: 'type_your_message_here'.tr,
@@ -279,7 +279,7 @@ class SupportScreen extends StatelessWidget {
                                             Container(
                                               width: 1,
                                               height: 20,
-                                              color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                                              color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                                             ),
                                             const SizedBox(width: Dimensions.paddingSizeSmall,),
                                             Container(
@@ -332,7 +332,7 @@ class SupportScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(fileName,style: ubuntuMedium),
-                  Text("2.5 Mb",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                  Text("2.5 Mb",style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                 ],
               )
             ],

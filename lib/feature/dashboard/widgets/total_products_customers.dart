@@ -7,7 +7,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class TotalProductsCustomers extends StatelessWidget {
-  const TotalProductsCustomers({Key? key}) : super(key: key);
+  const TotalProductsCustomers({super.key});
 
   @override
   Widget build(BuildContext context) {

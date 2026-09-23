@@ -9,7 +9,7 @@ import 'package:getdash/utils/styles.dart';
 
 class FiltersSection extends StatelessWidget {
   final double screenWidth;
-  const FiltersSection({Key? key, required this.screenWidth}) : super(key: key);
+  const FiltersSection({super.key, required this.screenWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +87,7 @@ class FiltersSection extends StatelessWidget {
                   .textTheme
                   .bodyLarge!
                   .color!
-                  .withOpacity(0.06),
+                  .withValues(alpha: 0.06),
             ),
             borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),),
           child: Padding(

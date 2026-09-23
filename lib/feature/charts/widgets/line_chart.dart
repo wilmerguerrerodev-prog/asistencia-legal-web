@@ -5,7 +5,7 @@ import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:getdash/feature/charts/widgets/chart_header.dart';
 
 class GetDashLineChart extends StatelessWidget {
-  GetDashLineChart({Key? key}) : super(key: key);
+  GetDashLineChart({super.key});
 
 
   final List<FlSpot> dummyData1 = List.generate(8, (index) {

@@ -26,20 +26,20 @@ class EmployeeUploadFileSection extends StatelessWidget {
                 height: Dimensions.uploadFileSize,
                 width: Dimensions.uploadFileSize,
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
-                child: DottedBorder(borderType: BorderType.RRect,color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),padding: EdgeInsets.zero,radius: const Radius.circular(1000),dashPattern: const [8,4],
+                child: DottedBorder(borderType: BorderType.RRect,color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),padding: EdgeInsets.zero,radius: const Radius.circular(1000),dashPattern: const [8,4],
                   child:  Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
                     Icon(
                       Icons.cloud_upload,
                       size: Dimensions.iconSizeMedium,
-                      color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                      color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                     ),
                     const SizedBox(height: Dimensions.paddingSizeSmall),
-                    Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                    Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                   ])),
                 )),
             const SizedBox(width: Dimensions.paddingSizeDefault,),
             if(!ResponsiveHelper.isMobile(context))
-              Text("profile_photo".tr, style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.5),),)
+              Text("profile_photo".tr, style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.5),),)
           ],
         ),
       ],);

@@ -9,7 +9,7 @@ import 'package:getdash/utils/dimensions.dart';
 class SearchSection extends StatelessWidget {
   final double screenWidth;
   final bool isActiveFilterBtn;
-  const SearchSection({Key? key, required this.screenWidth, required this.isActiveFilterBtn}) : super(key: key);
+  const SearchSection({super.key, required this.screenWidth, required this.isActiveFilterBtn});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class SearchSection extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                  color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
               ),
@@ -46,7 +46,7 @@ class SearchSection extends StatelessWidget {
                     .textTheme
                     .bodyLarge!
                     .color!
-                    .withOpacity(0.06),
+                    .withValues(alpha: 0.06),
               ),
               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),),
             child: Padding(

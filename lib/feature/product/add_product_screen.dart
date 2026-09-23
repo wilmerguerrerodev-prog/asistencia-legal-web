@@ -60,7 +60,7 @@ class AddProductScreen extends StatelessWidget {
                                         "must be in certain dimensions.  . Pictures must be in certain dimensions.",
                                       style: ubuntuRegular.copyWith(
                                           fontSize: Dimensions.fontSizeDefault,
-                                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),
+                                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),
                                     ),
                                     const SizedBox(height: Dimensions.paddingSizeExtraLarge),
                                     SizedBox(
@@ -112,7 +112,7 @@ class AddProductScreen extends StatelessWidget {
                                                       Text('do_not_over_100_character'.tr,
                                                         style: ubuntuRegular.copyWith(
                                                             fontSize: Dimensions.fontSizeSmall,
-                                                            color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),
+                                                            color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),
                                                       ),
                                                   ],),
                                                 ),
@@ -146,7 +146,7 @@ class AddProductScreen extends StatelessWidget {
                                                         " comply with the backgrounds color standards." ,
                                                       style: ubuntuRegular.copyWith(
                                                           fontSize: Dimensions.fontSizeDefault,
-                                                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                                     const SizedBox(height: Dimensions.paddingSizeLargeThirty,),
                                                     Text('product_date'.tr,style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeDefault),),
                                                     const SizedBox(height: Dimensions.paddingSizeSmall,),
@@ -233,7 +233,7 @@ class AddProductScreen extends StatelessWidget {
                                                   " comply with the backgrounds color standards." ,
                                                 style: ubuntuRegular.copyWith(
                                                     fontSize: Dimensions.fontSizeDefault,
-                                                    color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                                                    color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                                               const SizedBox(height: Dimensions.paddingSizeLargeThirty,),
                                               Text('product_date'.tr,style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeDefault),),
                                               const SizedBox(height: Dimensions.paddingSizeSmall,),
@@ -318,21 +318,21 @@ class AddProductScreen extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withOpacity(.05),
+            color: Theme.of(context).primaryColor.withValues(alpha: .05),
             borderRadius: BorderRadius.circular(Dimensions.radiusSmall)),
         child: DottedBorder(
           borderType: BorderType.RRect,
-          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
           padding: EdgeInsets.zero,
           radius: const Radius.circular(10),dashPattern: const [8,4],
           child:  Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,children: [
             Image.asset(
               Images.thumbnail,
               scale: 3,
-              color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+              color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
             ),
             const SizedBox(height: Dimensions.paddingSizeSmall),
-            Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+            Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
           ])),
         ));
   }
@@ -341,7 +341,7 @@ class AddProductScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+        border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge),
@@ -355,7 +355,7 @@ class AddProductScreen extends StatelessWidget {
               value: value,
               child: Text(value,style: ubuntuRegular.copyWith(
                   fontSize: Dimensions.fontSizeSmall,
-                  color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),);}).toList(),
+                  color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),);}).toList(),
           onChanged: (value) {
             selectedDuration = value!;
           },),
@@ -368,7 +368,7 @@ class AddProductScreen extends StatelessWidget {
       padding: const EdgeInsets.all(Dimensions.paddingSizeExtraSmall),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.06)),
+          border: Border.all(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.06)),
           borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall)),
         ),
         child: Padding(
@@ -377,7 +377,7 @@ class AddProductScreen extends StatelessWidget {
               horizontal: Dimensions.paddingSizeLarge),
           child: Text("EU-38.5",style: ubuntuRegular.copyWith(
               fontSize: Dimensions.fontSizeSmall,
-              color:Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+              color:Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
         ),
       ),
     );

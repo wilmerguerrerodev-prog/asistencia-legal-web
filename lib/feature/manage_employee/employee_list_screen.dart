@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class EmployeeListScreen extends StatefulWidget {
-  const EmployeeListScreen({Key? key}) : super(key: key);
+  const EmployeeListScreen({super.key});
 
   @override
   State<EmployeeListScreen> createState() => _AllUsersScreenState();

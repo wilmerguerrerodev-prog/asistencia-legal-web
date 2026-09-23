@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class MultiBoardList extends StatefulWidget {
-  const MultiBoardList({Key? key}) : super(key: key);
+  const MultiBoardList({super.key});
 
   @override
   State<MultiBoardList> createState() => _MultiBoardListState();
@@ -150,8 +150,8 @@ class RichTextCard extends StatefulWidget {
   final RichTextItem item;
   const RichTextCard({
     required this.item,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<RichTextCard> createState() => _RichTextCardState();

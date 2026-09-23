@@ -4,7 +4,7 @@ import 'package:getdash/feature/seller/data_source/seller_data_source.dart';
 
 
 class AllSellerList extends StatefulWidget {
-  const AllSellerList({Key? key}) : super(key: key);
+  const AllSellerList({super.key});
 
   @override
   State<AllSellerList> createState() => _AllUserListState();

@@ -10,10 +10,10 @@ class CalendarViewType extends StatelessWidget {
   final CalendarView currentView;
 
   const CalendarViewType({
-    Key? key,
+    super.key,
     required this.onViewChange,
     this.currentView = CalendarView.month,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class CalendarViewType extends StatelessWidget {
                 borderRadius: BorderRadius.circular(7),
                 color: view == currentView
                     ? Theme.of(context).primaryColor
-                    : Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.09),
+                    : Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.09),
               ),
               child: Text(
                 view.name.capitalized,

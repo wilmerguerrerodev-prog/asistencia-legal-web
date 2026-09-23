@@ -57,7 +57,7 @@ class SmsOtpSettingScreen extends StatelessWidget {
                                       child: Container(
                                         decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                                            border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),)
+                                            border: Border.all(color:  Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),)
                                         ),
                                         child: Column(
                                           children: [
@@ -99,7 +99,7 @@ class SmsOtpSettingScreen extends StatelessWidget {
                                                               "Releans is a global leader in customer engagement, prowering a brod range of communication channels to reach.",
                                                               style: ubuntuRegular.copyWith(
                                                                   fontSize: Dimensions.fontSizeDefault,
-                                                                color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)
+                                                                color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)
                                                               ),)
                                                           ],
                                                         ),

@@ -5,7 +5,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class UserProfileSection extends StatelessWidget {
-  const UserProfileSection({Key? key}) : super(key: key);
+  const UserProfileSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class UserProfileSection extends StatelessWidget {
               const SizedBox(width: Dimensions.paddingSizeSmall),
               Text("edit".tr,style: ubuntuBold.copyWith(
                   fontSize: Dimensions.fontSizeSmall,
-                  color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5))),
+                  color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5))),
             ]),
 
         const SizedBox(height: Dimensions.paddingSizeSmall),
@@ -30,7 +30,7 @@ class UserProfileSection extends StatelessWidget {
             "Cameron Williamson",
             style: ubuntuMedium.copyWith(
                 fontSize: Dimensions.fontSizeSmall,
-                color:Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)
+                color:Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)
             )),
         const SizedBox(height: Dimensions.paddingSizeExtraMoreLarge),
         Row(
@@ -47,7 +47,7 @@ class UserProfileSection extends StatelessWidget {
         const SizedBox(height: Dimensions.paddingSizeExtraLarge),
         Container(
             decoration: BoxDecoration(
-                color:  Theme.of(context).primaryColor.withOpacity(.05),
+                color:  Theme.of(context).primaryColor.withValues(alpha: .05),
                 borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
             ),
             child: Column(children: [
@@ -92,7 +92,7 @@ class UserProfileSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: Dimensions.paddingSizeSmall,top: Dimensions.paddingSizeSmall),
           height: Dimensions.containerHeight,
           decoration: BoxDecoration(
-              color:  Theme.of(context).primaryColor.withOpacity(.05),
+              color:  Theme.of(context).primaryColor.withValues(alpha: .05),
               borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
@@ -135,12 +135,12 @@ class UserProfileSection extends StatelessWidget {
               width: 130,
               child: Text(
                 title,
-                style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),
+                style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),
               )),
           Expanded(
               child: Text(
                 subTitle,
-                style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),
+                style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),
               ))
         ],
       ),

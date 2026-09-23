@@ -5,7 +5,7 @@ class AppColors {
 
   static Color contentColorRed = Colors.red;
 
-  static var contentColorOrange;
+  static Color contentColorOrange = Colors.orange;
 
   AppColors._();
 

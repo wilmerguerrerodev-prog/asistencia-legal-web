@@ -15,7 +15,7 @@ class EmployeeRoleDropDownSection extends StatelessWidget {
               .textTheme
               .bodyLarge!
               .color!
-              .withOpacity(0.06),
+              .withValues(alpha: 0.06),
         ),
         borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
       child: Padding(

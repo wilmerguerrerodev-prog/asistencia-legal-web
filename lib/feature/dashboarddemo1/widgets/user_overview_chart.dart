@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class UserDataOverview extends StatefulWidget {
-  UserDataOverview({super.key});
+  const UserDataOverview({super.key});
   final Color leftBarColor = Colors.yellow;
   final Color rightBarColor = Colors.red;
   final Color avgColor =
@@ -83,7 +83,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
                   maxY: 20,
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.grey,
+                      getTooltipColor: (_) => Colors.grey,
                       getTooltipItem: (a, b, c, d) => null,
                     ),
                     touchCallback: (FlTouchEvent event, response) {
@@ -130,10 +130,10 @@ class UserDataOverviewState extends State<UserDataOverview> {
                   ),
                   titlesData: FlTitlesData(
                     show: true,
-                    rightTitles:  AxisTitles(
+                    rightTitles:  const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
-                    topTitles:  AxisTitles(
+                    topTitles:  const AxisTitles(
                       sideTitles: SideTitles(showTitles: false),
                     ),
                     bottomTitles: AxisTitles(
@@ -156,7 +156,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
                     show: false,
                   ),
                   barGroups: showingBarGroups,
-                  gridData:  FlGridData(show: false),
+                  gridData:  const FlGridData(show: false),
                 ),
               ),
             ),
@@ -239,7 +239,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
         Container(
           width: width,
           height: 10,
-          color: Colors.white.withOpacity(0.4),
+          color: Colors.white.withValues(alpha: 0.4),
         ),
         const SizedBox(
           width: space,
@@ -247,7 +247,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
         Container(
           width: width,
           height: 28,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
         ),
         const SizedBox(
           width: space,
@@ -255,7 +255,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
         Container(
           width: width,
           height: 42,
-          color: Colors.white.withOpacity(1),
+          color: Colors.white.withValues(alpha: 1),
         ),
         const SizedBox(
           width: space,
@@ -263,7 +263,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
         Container(
           width: width,
           height: 28,
-          color: Colors.white.withOpacity(0.8),
+          color: Colors.white.withValues(alpha: 0.8),
         ),
         const SizedBox(
           width: space,
@@ -271,7 +271,7 @@ class UserDataOverviewState extends State<UserDataOverview> {
         Container(
           width: width,
           height: 10,
-          color: Colors.white.withOpacity(0.4),
+          color: Colors.white.withValues(alpha: 0.4),
         ),
       ],
     );

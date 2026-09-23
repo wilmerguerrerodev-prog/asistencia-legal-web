@@ -5,7 +5,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class SubscriberList extends StatefulWidget {
-  const SubscriberList({Key? key}) : super(key: key);
+  const SubscriberList({super.key});
 
   @override
   State<SubscriberList> createState() => _AllUserListState();

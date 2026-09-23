@@ -6,7 +6,7 @@ import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
 
 class BestSellingProducts extends StatelessWidget {
-  const BestSellingProducts({Key? key}) : super(key: key);
+  const BestSellingProducts({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class BestSellingProducts extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('best_selling_product'.tr,style: ubuntuMedium.copyWith(
-                      color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.8),
+                      color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .8),
                       fontSize: Dimensions.fontSizeLarge
                   ),),
                   DropdownButton<String>(
@@ -36,7 +36,7 @@ class BestSellingProducts extends StatelessWidget {
                         value: value,
                         child: Text(value,
                           style: ubuntuMedium.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.8),
+                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .8),
                       fontSize: Dimensions.fontSizeLarge))
                       );
                     }).toList(),

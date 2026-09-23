@@ -8,10 +8,10 @@ class DemoOneSummeryCard extends StatelessWidget {
   final double childAspectRatio;
 
   const DemoOneSummeryCard({
-    Key? key,
+    super.key,
     this.crossAxisCount = 4,
     this.childAspectRatio = 1,
-  }) : super(key: key);
+  });
   @override
   Widget build(BuildContext context) {
 

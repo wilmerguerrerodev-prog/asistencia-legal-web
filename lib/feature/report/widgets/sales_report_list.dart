@@ -4,7 +4,7 @@ import 'package:getdash/feature/report/widgets/sales_report_data_source.dart';
 
 
 class SalesReportList extends StatefulWidget {
-  const SalesReportList({Key? key}) : super(key: key);
+  const SalesReportList({super.key});
 
   @override
   State<SalesReportList> createState() => _SalesReportListState();

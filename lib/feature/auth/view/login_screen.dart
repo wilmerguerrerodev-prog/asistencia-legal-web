@@ -58,10 +58,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     fontSize: Dimensions.fontSizeExtraLarge)),
                                 const SizedBox(height: Dimensions.paddingSizeSmall),
                                 Text("please_enter_your_details_to_sign_in".tr,
-                                style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),),),
+                                style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),),),
                                 const SizedBox(height: Dimensions.paddingSizeLarge),
                                 Text("email".tr,style: ubuntuMedium.copyWith(
-                                    color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                                    color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                                     fontSize: Dimensions.fontSizeDefault)),
                                 const SizedBox(height: Dimensions.paddingSizeSmall),
                                 CustomTextField(
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   suffixIcon: Image.asset(Images.email,scale: 3,),
                                 ),
                                 const SizedBox(height: Dimensions.paddingSizeLarge),
-                                Text("password".tr,style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5), fontSize: Dimensions.fontSizeDefault)),
+                                Text("password".tr,style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5), fontSize: Dimensions.fontSizeDefault)),
                                 const SizedBox(height: Dimensions.paddingSizeSmall),
                                 CustomTextField(
                                   hintText: "enter_password".tr,
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             Text(
                                               'remember_me'.tr,
                                               style: ubuntuRegular.copyWith(
-                                                  color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                                                  color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                                                   fontSize: Dimensions.fontSizeSmall),
                                             ),
                                           ],
@@ -111,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         onPressed: () => Get.toNamed(RouteHelper.getForgotPassRoute()),
                                         child: Text('forgot_password'.tr, style: ubuntuRegular.copyWith(
                                           fontSize: Dimensions.fontSizeSmall,
-                                          color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                                          color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                                         )),
                                       ),
                                     ),
@@ -126,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: Dimensions.buttonSize,
                                   decoration: BoxDecoration(
                                   border: Border.all(
-                                    color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                                    color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
                                   ),
                                 borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall))
                               ),
@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(height: Dimensions.paddingSizeExtraLarge),
                             Row(mainAxisAlignment: MainAxisAlignment.center,children: [
                               Text("don't_have_an_account".tr,style: ubuntuRegular.copyWith(
-                                color:  Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),
+                                color:  Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),
                               ),),
                               const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                               Text("sign_up".tr,style: ubuntuRegular.copyWith(

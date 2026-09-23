@@ -73,7 +73,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               ),
                               const SizedBox(height: Dimensions.paddingSizeExtraSmall),
                               Text("must_be_at_least_six_characters".tr,style: ubuntuRegular.copyWith(
-                                color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),
+                                color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),
                               ),),
                               const SizedBox(height: Dimensions.paddingSizeExtraMoreLarge),
                               CustomButton(
@@ -84,7 +84,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 height: Dimensions.buttonSize,
                                 decoration: BoxDecoration(
                                     border: Border.all(
-                                      color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),
+                                      color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),
                                     ),
                                     borderRadius: const BorderRadius.all(Radius.circular(Dimensions.radiusSmall))
                                 ),
@@ -101,7 +101,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               const SizedBox(height: Dimensions.paddingSizeLarge),
                               Row(mainAxisAlignment: MainAxisAlignment.center,children: [
                                 Text("already_have_an_account".tr,style: ubuntuRegular.copyWith(
-                                  color:  Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),
+                                  color:  Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),
                                 ),),
                                 const SizedBox(width: Dimensions.paddingSizeExtraSmall),
                                 Text("login".tr,style: ubuntuRegular.copyWith(
@@ -112,7 +112,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               Column(
                                 children: [
                                   Text("by_signing_up".tr,style: ubuntuRegular.copyWith(
-                                    color:  Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5),
+                                    color:  Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: .5),
                                   ),),
                                   const SizedBox(height: Dimensions.paddingSizeDefault),
                                   Row(

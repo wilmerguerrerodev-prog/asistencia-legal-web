@@ -117,9 +117,9 @@ class ProductDataSource extends DataTableSource {
     return DataRow.byIndex(
       index: index,
       color: color != null
-          ? MaterialStateProperty.all(color)
+          ? WidgetStateProperty.all(color)
           : (hasZebraStripes && index.isEven
-          ? MaterialStateProperty.all(Theme.of(context).cardColor)
+          ? WidgetStateProperty.all(Theme.of(context).cardColor)
           : null),
       onSelectChanged: (value) {
         if (dessert.selected != value) {

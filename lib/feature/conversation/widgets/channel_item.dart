@@ -8,7 +8,7 @@ class ChannelItem extends StatelessWidget {
   final String channelupdatedAt;
   final int isRead;
   final int index;
-  const ChannelItem({Key? key, required this.channelupdatedAt, required this.isRead, required this.index}) : super(key: key);
+  const ChannelItem({super.key, required this.channelupdatedAt, required this.isRead, required this.index});
   @override
   Widget build(BuildContext context) {
 
@@ -17,7 +17,7 @@ class ChannelItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingSizeDefault),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: index == 0 ? Theme.of(context).colorScheme.primary.withOpacity(.2):Theme.of(context).hoverColor,
+        color: index == 0 ? Theme.of(context).colorScheme.primary.withValues(alpha: .2):Theme.of(context).hoverColor,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,7 +48,7 @@ class ChannelItem extends StatelessWidget {
                     'Customer',
                     style: ubuntuRegular.copyWith(
                         fontSize: Dimensions.fontSizeSmall,
-                        color:Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.6) ),),
+                        color:Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.6) ),),
                 ],
               )
           ),

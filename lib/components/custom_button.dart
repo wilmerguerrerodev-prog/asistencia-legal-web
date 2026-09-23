@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
   final double? radius;
   final IconData? icon;
   final Color? color;
-  const CustomButton({super.key, this.onPressed, @required this.buttonText, this.transparent = false, this.margin, this.width, this.height,
+  const CustomButton({super.key, this.onPressed, required this.buttonText, this.transparent = false, this.margin, this.width, this.height,
     this.fontSize, this.radius = 5, this.icon,this.color});
 
   @override

@@ -77,11 +77,11 @@ class MediaLibraryScreen extends StatelessWidget {
                                                           children: [
                                                             Text("A chair made by GetChairFirst",style: ubuntuMedium.copyWith(
                                                               fontSize: Dimensions.fontSizeDefault,
-                                                              color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
+                                                              color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: .5),
                                                             ),),
                                                             const SizedBox(height: Dimensions.paddingSizeSmall,),
                                                             Text("Used 3 times",style: ubuntuMedium.copyWith(
-                                                                color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(.5),
+                                                                color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: .5),
                                                                 fontSize: Dimensions.fontSizeExtraSmall),),
                                                           ],
                                                         ),

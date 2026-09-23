@@ -30,7 +30,7 @@ class SellerLogoSection extends StatelessWidget {
                 decoration: BoxDecoration(borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
                 child: DottedBorder(
                   borderType: BorderType.RRect,
-                  color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                  color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                   padding: EdgeInsets.zero,
                   radius: const Radius.circular(20),dashPattern: const [8,4],
 
@@ -38,15 +38,15 @@ class SellerLogoSection extends StatelessWidget {
                     Icon(
                       Icons.cloud_upload,
                       size: Dimensions.iconSizeMedium,
-                      color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5),
+                      color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5),
                     ),
                     const SizedBox(height: Dimensions.paddingSizeSmall),
-                    Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(.5)),),
+                    Text("upload_file".tr,style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: .5)),),
                   ])),
                 )),
             const SizedBox(width: Dimensions.paddingSizeDefault,),
             if(!ResponsiveHelper.isMobile(context))
-              Text("seller_logo".tr, style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.5),),)
+              Text("seller_logo".tr, style: ubuntuRegular.copyWith(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.5),),)
           ],
         ),
       ],);

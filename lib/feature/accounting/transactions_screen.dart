@@ -11,7 +11,7 @@ import 'package:getdash/utils/dimensions.dart';
 
 
 class TransactionScreen extends StatefulWidget {
-  const TransactionScreen({Key? key}) : super(key: key);
+  const TransactionScreen({super.key});
 
   @override
   State<TransactionScreen> createState() => _AllUsersScreenState();

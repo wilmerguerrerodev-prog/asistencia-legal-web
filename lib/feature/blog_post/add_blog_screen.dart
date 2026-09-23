@@ -71,7 +71,7 @@ class AddBlogScreen extends StatelessWidget {
                                           Container(
                                             decoration: BoxDecoration(
                                               color: Theme.of(context).cardColor,
-                                              border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+                                              border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
                                               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
                                             child: Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge),
@@ -83,7 +83,7 @@ class AddBlogScreen extends StatelessWidget {
                                                   return DropdownMenuItem<String>(
                                                     value: value,
                                                     child: Text(value,style: ubuntuRegular.copyWith(
-                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.6),
+                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.6),
                                                         fontSize: Dimensions.fontSizeSmall),),);}).toList(),
                                                 onChanged: (value) {
                                                   selectedCategory = value!;
@@ -100,7 +100,7 @@ class AddBlogScreen extends StatelessWidget {
                                           Container(
                                             decoration: BoxDecoration(
                                               color: Theme.of(context).cardColor,
-                                              border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.06),),
+                                              border: Border.all(color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(alpha: 0.06),),
                                               borderRadius: const BorderRadius.all(Radius.circular(Dimensions.paddingSizeExtraSmall)),),
                                             child: Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingSizeLarge),
@@ -112,7 +112,7 @@ class AddBlogScreen extends StatelessWidget {
                                                   return DropdownMenuItem<String>(
                                                     value: value,
                                                     child: Text(value,style: ubuntuRegular.copyWith(
-                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withOpacity(0.6),
+                                                        color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.6),
                                                         fontSize: Dimensions.fontSizeSmall),),);}).toList(),
                                                 onChanged: (value) {
                                                   selectedStatus = value!;

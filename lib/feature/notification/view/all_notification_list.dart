@@ -4,7 +4,7 @@ import 'package:getdash/feature/notification/widgets/notification_data_source.da
 import 'package:getdash/feature/users/data_sources/user_data_sources.dart';
 
 class AllNotificationList extends StatefulWidget {
-  const AllNotificationList({Key? key}) : super(key: key);
+  const AllNotificationList({super.key});
 
   @override
   State<AllNotificationList> createState() => _AllUserListState();

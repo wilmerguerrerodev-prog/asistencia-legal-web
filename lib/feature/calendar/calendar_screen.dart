@@ -1,7 +1,7 @@
 import 'package:calendar_view/calendar_view.dart';
 import 'package:flutter/material.dart';
 import 'model/event.dart';
-import 'pages/web/calendarHomePage.dart';
+import 'pages/web/calendar_home_page.dart';
 
 DateTime get _now => DateTime.now();
 

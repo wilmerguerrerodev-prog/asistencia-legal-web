@@ -4,7 +4,7 @@ import 'package:getdash/feature/product/product_data_source.dart';
 
 
 class ProductList extends StatefulWidget {
-  const ProductList({Key? key}) : super(key: key);
+  const ProductList({super.key});
 
   @override
   State<ProductList> createState() => _AllUserListState();
