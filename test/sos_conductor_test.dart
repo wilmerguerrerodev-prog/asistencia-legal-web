@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 import 'package:getdash/controller/localization_controller.dart';
 import 'package:getdash/controller/theme_controller.dart';
 import 'package:getdash/core/theme/light_theme.dart';
+import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/feature/conductor/sos_conductor_view.dart';
+import 'package:getdash/feature/conductor/widgets/incidente_vector_icon.dart';
 import 'package:getdash/feature/language/controller/language_controller.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,7 +27,8 @@ void main() {
     Get.reset();
   });
 
-  testWidgets('SosConductorView mobile flow: Triage diferenciado para los 4 casos y 3 niveles de víctimas',
+  testWidgets(
+      'SosConductorView mobile flow: Triage diferenciado para los 4 casos y 3 niveles de víctimas',
       (WidgetTester tester) async {
     tester.view.physicalSize = const Size(375, 812);
     tester.view.devicePixelRatio = 1.0;
@@ -56,13 +59,17 @@ void main() {
     // CASO 1: Operativo de Tránsito (Paso directo al dictamen)
     // -------------------------------------------------------------
     expect(find.text('LegalTech Conductor'), findsOneWidget);
-    expect(find.text('Operativo de Tránsito / Retención'), findsOneWidget);
+    expect(
+        find.text('Operativo de Tránsito / Retención Ilegal'), findsOneWidget);
 
-    await tapVisible('Operativo de Tránsito / Retención');
+    await tapVisible('Operativo de Tránsito / Retención Ilegal');
 
     expect(find.text('GARANTÍAS Y CONTROL VIAL'), findsOneWidget);
-    expect(find.text('Procedimiento de Control Vial y Garantías'), findsOneWidget);
-    expect(find.textContaining('LLAMAR A MI ABOGADO ASIGNADO'), findsOneWidget);
+    expect(
+        find.text('Procedimiento de Control Vial y Garantías'), findsOneWidget);
+    expect(find.text('EN GUARDIA 24/7'), findsNothing);
+    expect(find.textContaining('LLAMAR A MI ABOGADO ASIGNADO'), findsNothing);
+    expect(find.textContaining('Contactar con abogado'), findsOneWidget);
 
     // -------------------------------------------------------------
     // CASO 2: Me choqué (Evaluación de fallecido, heridos y daños)
@@ -80,15 +87,20 @@ void main() {
     // Probar opción FALLECIDO -> Alerta Penal Máxima (Art. 377 COIP)
     await tapVisible('HAY PERSONA FALLECIDA');
 
-    expect(find.text('ALERTA PENAL MÁXIMA — HOMICIDIO CULPOSO'), findsOneWidget);
-    expect(find.text('Accidente de Tránsito con Persona Fallecida'), findsOneWidget);
+    expect(
+        find.text('ALERTA PENAL MÁXIMA — HOMICIDIO CULPOSO'), findsOneWidget);
+    expect(find.text('Accidente de Tránsito con Persona Fallecida'),
+        findsOneWidget);
 
     // Reevaluar y probar HERIDOS -> Alerta Penal Lesiones (Art. 379 COIP)
     await tapVisible('Reevaluar');
     await tapVisible('HAY PERSONAS HERIDAS');
 
     expect(find.text('ALERTA PENAL PRIORITARIA — LESIONES'), findsOneWidget);
-    expect(find.text('Accidente con Víctimas Heridas (Presunto Delito de Lesiones)'), findsOneWidget);
+    expect(
+        find.text(
+            'Accidente con Víctimas Heridas (Presunto Delito de Lesiones)'),
+        findsOneWidget);
 
     // Reevaluar y probar SOLO DAÑOS -> Pasa a evaluación vehicular
     await tapVisible('Reevaluar');
@@ -114,8 +126,10 @@ void main() {
     await tapVisible('NO, SOLO DAÑOS / LATA');
     await tapVisible('SÍ, VEHÍCULO INMOVILIZADO');
 
-    expect(find.text('EXIGENCIA DE INDEMNIZACIÓN Y LUCRO CESANTE'), findsOneWidget);
-    expect(find.text('Taxi Inmovilizado por Impacto de Tercero'), findsOneWidget);
+    expect(find.text('EXIGENCIA DE INDEMNIZACIÓN Y LUCRO CESANTE'),
+        findsOneWidget);
+    expect(
+        find.text('Taxi Inmovilizado por Impacto de Tercero'), findsOneWidget);
 
     // -------------------------------------------------------------
     // CASO 4: Agresión / Problema personal
@@ -133,6 +147,41 @@ void main() {
     await tapVisible('SOLO CONFLICTO VERBAL O AMENAZA');
 
     expect(find.text('PROTECCIÓN Y CONTENCIÓN PERSONAL'), findsOneWidget);
-    expect(find.text('Altercado Verbal o Conflicto con Pasajero / Tercero'), findsOneWidget);
+    expect(find.text('Altercado Verbal o Conflicto con Pasajero / Tercero'),
+        findsOneWidget);
+  });
+
+  testWidgets('IncidenteVectorIcon renders all 4 incident types properly',
+      (WidgetTester tester) async {
+    for (final tipo in TipoIncidente.values) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: IncidenteVectorIcon(
+                tipo: tipo,
+                size: 40,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+      expect(find.byType(IncidenteVectorIcon), findsOneWidget);
+    }
+  });
+
+  test(
+      'ConductorController.obtenerEnlaceWhatsApp generates valid wa.me URL with clean phone and case metadata',
+      () {
+    final controller = ConductorController();
+    controller.seleccionarIncidente(TipoIncidente.operativoTransito);
+    final link = controller.obtenerEnlaceWhatsApp();
+
+    expect(link, startsWith('https://wa.me/593991234567?text='));
+    expect(link, contains('Carlos+Mendoza'));
+    expect(link, contains('Unidad+%2342'));
+    expect(link, contains('IBA-1234'));
+    expect(link, contains('Procedimiento+de+Control+Vial+y+Garant%C3%ADas'));
   });
 }

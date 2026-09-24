@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
+import 'package:getdash/feature/conductor/widgets/incidente_vector_icon.dart';
 import 'package:getdash/utils/dimensions.dart';
 
 class SosConductorView extends StatelessWidget {
@@ -66,7 +67,8 @@ class SosConductorView extends StatelessWidget {
                         ),
                       );
                     },
-                    child: _buildWizardStep(context, controller, isDark, isWideScreen),
+                    child: _buildWizardStep(
+                        context, controller, isDark, isWideScreen),
                   );
                 }),
               ),
@@ -92,7 +94,8 @@ class SosConductorView extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B132B) : const Color(0xFFEBF3FC),
+      backgroundColor:
+          isDark ? const Color(0xFF0B132B) : const Color(0xFFEBF3FC),
       appBar: AppBar(
         title: const Text("Portal Conductor — Asistencia Legal"),
         backgroundColor: const Color(0xFF0F172A),
@@ -168,18 +171,18 @@ class SosConductorView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                color:
+                    isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                 width: 1,
               ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.local_taxi_rounded, color: Color(0xFFD97706), size: 15),
+                const Icon(Icons.local_taxi_rounded,
+                    color: Color(0xFFD97706), size: 15),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -232,119 +235,195 @@ class SosConductorView extends StatelessWidget {
       key: const ValueKey('paso_1_incidentes'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Indicador de Paso
+        // Indicador de Paso con saludo cercano sugerido por el abogado
         _buildStepIndicator(
           pasoActual: 1,
           totalPasos: 3,
-          titulo: "¿Qué situación tienes en la vía?",
-          subtitulo: "Selecciona una opción en 1 toque para activar tu defensa.",
+          titulo: "¡Hola! ¿Cuál es tu problema?",
+          subtitulo: "¿Cómo podemos ayudarte?",
           isDark: isDark,
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
 
-        // Lista de 4 botones gigantes en color directo y sólido ("rojo y ya", "azul y ya")
-        Column(
-          children: controller.opcionesIncidentes.map((opcion) {
-            final Color colorOpcion = opcion.color;
-
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => controller.seleccionarIncidente(opcion.tipo),
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isWide ? 16 : 14,
-                      vertical: isWide ? 16 : 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorOpcion, // COLOR DIRECTO SÓLIDO
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorOpcion.withValues(alpha: 0.38),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        // Contenedor Emoji / Icono con sutil fondo blanco traslúcido
-                        Container(
-                          width: isWide ? 52 : 48,
-                          height: isWide ? 52 : 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            opcion.emoji,
-                            style: TextStyle(fontSize: isWide ? 26 : 24),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-
-                        // Título y Detalle en texto blanco de alto impacto y contraste
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                opcion.titulo,
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: isWide ? 17 : 15.5,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                opcion.descripcion,
-                                style: TextStyle(
-                                  fontFamily: 'Plus Jakarta Sans',
-                                  fontSize: isWide ? 12.5 : 11.5,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white.withValues(alpha: 0.92),
-                                  height: 1.25,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 10),
-
-                        // Botón circular con flecha de acción
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child: const Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 13,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
+        // 4 Botones grandes cuadrados sin mensajes inferiores (Grilla 2x2 en móvil, 4 en línea en escritorio)
+        if (isWide)
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: _buildBotonIncidenteCuadrado(
+                    opcion: controller.opcionesIncidentes[0],
+                    onTap: () => controller.seleccionarIncidente(
+                        controller.opcionesIncidentes[0].tipo),
+                    isWide: true,
                   ),
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildBotonIncidenteCuadrado(
+                    opcion: controller.opcionesIncidentes[1],
+                    onTap: () => controller.seleccionarIncidente(
+                        controller.opcionesIncidentes[1].tipo),
+                    isWide: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildBotonIncidenteCuadrado(
+                    opcion: controller.opcionesIncidentes[2],
+                    onTap: () => controller.seleccionarIncidente(
+                        controller.opcionesIncidentes[2].tipo),
+                    isWide: true,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildBotonIncidenteCuadrado(
+                    opcion: controller.opcionesIncidentes[3],
+                    onTap: () => controller.seleccionarIncidente(
+                        controller.opcionesIncidentes[3].tipo),
+                    isWide: true,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          Column(
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[0],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[0].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[1],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[1].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            );
-          }).toList(),
-        ),
+              const SizedBox(height: 12),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[2],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[2].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[3],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[3].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
       ],
+    );
+  }
+
+  // Tarjeta interactiva táctil cuadrada grande para los incidentes del Paso 1
+  Widget _buildBotonIncidenteCuadrado({
+    required OpcionIncidente opcion,
+    required VoidCallback onTap,
+    required bool isWide,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          constraints: BoxConstraints(
+            minHeight: isWide ? 172 : 156,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: isWide ? 14 : 10,
+            vertical: isWide ? 18 : 16,
+          ),
+          decoration: BoxDecoration(
+            color: opcion.color, // Color sólido directo
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: opcion.color.withValues(alpha: 0.38),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Badge cuadrado blanco grande con ilustración vectorial moderna a color
+              Container(
+                width: isWide ? 76 : 68,
+                height: isWide ? 76 : 68,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.14),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: IncidenteVectorIcon(
+                  tipo: opcion.tipo,
+                  size: isWide ? 54 : 48,
+                  useModernColors: true,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Título en blanco de alto impacto (sin texto secundario debajo)
+              Text(
+                opcion.titulo,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: isWide ? 16 : 14,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                  height: 1.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -358,20 +437,20 @@ class SosConductorView extends StatelessWidget {
     required bool isWide,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 14),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: isWide ? 18 : 14,
+              horizontal: isWide ? 16 : 14,
               vertical: isWide ? 16 : 14,
             ),
             decoration: BoxDecoration(
               color: color, // COLOR DIRECTO SÓLIDO
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
                   color: color.withValues(alpha: 0.38),
@@ -382,40 +461,59 @@ class SosConductorView extends StatelessWidget {
             ),
             child: Row(
               children: [
+                // Badge blanco grande con icono moderno a color
                 Container(
-                  width: 46,
-                  height: 46,
+                  width: isWide ? 56 : 50,
+                  height: isWide ? 56 : 50,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: Icon(icono, color: Colors.white, size: 26),
+                  child: Center(
+                    child: Icon(
+                      icono,
+                      color: color,
+                      size: isWide ? 32 : 28,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 14),
+
+                // Título en blanco de alto impacto
                 Expanded(
                   child: Text(
                     titulo,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: isWide ? 16 : 14.5,
+                      fontSize: isWide ? 15.5 : 14.0,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.3,
                       color: Colors.white,
+                      height: 1.25,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
+
+                // Botón circular con flecha de acción
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
+                    color: Colors.white.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: const Icon(
                     Icons.arrow_forward_ios_rounded,
-                    size: 13,
+                    size: 14,
                     color: Colors.white,
                   ),
                 ),
@@ -473,7 +571,9 @@ class SosConductorView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                subPaso == 0 ? "PASO 2 DE 3: TRIAGE PENAL" : "PASO 2 DE 3: ESTADO DEL TAXI",
+                subPaso == 0
+                    ? "PASO 2 DE 3: TRIAGE PENAL"
+                    : "PASO 2 DE 3: ESTADO DEL TAXI",
                 style: const TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   fontSize: 10,
@@ -496,7 +596,8 @@ class SosConductorView extends StatelessWidget {
               color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                color:
+                    isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                 width: 1.0,
               ),
             ),
@@ -507,12 +608,16 @@ class SosConductorView extends StatelessWidget {
                   child: Text(
                     esAgresion
                         ? "⚠️ EVALUACIÓN DE CONFLICTO"
-                        : (esChocado ? "🚗💥 EVALUACIÓN DEL IMPACTO" : "🚨 EVALUACIÓN DE URGENCIA"),
+                        : (esChocado
+                            ? "🚗💥 EVALUACIÓN DEL IMPACTO"
+                            : "🚨 EVALUACIÓN DE URGENCIA"),
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: esAgresion ? const Color(0xFF7C3AED) : const Color(0xFFDC2626),
+                      color: esAgresion
+                          ? const Color(0xFF7C3AED)
+                          : const Color(0xFFDC2626),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -535,14 +640,14 @@ class SosConductorView extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-
                 if (esAgresion) ...[
                   // Opción 1: Agresión física / heridos
                   _buildBotonTriageCard(
                     titulo: "HAY AGRESIÓN FÍSICA O HERIDOS",
                     color: const Color(0xFFDC2626),
-                    icono: Icons.emergency_rounded,
-                    onTap: () => controller.responderSeveridad(SeveridadVictimas.heridos),
+                    icono: Icons.front_hand_rounded,
+                    onTap: () => controller
+                        .responderSeveridad(SeveridadVictimas.heridos),
                     isDark: isDark,
                     isWide: isWide,
                   ),
@@ -551,8 +656,9 @@ class SosConductorView extends StatelessWidget {
                   _buildBotonTriageCard(
                     titulo: "SOLO CONFLICTO VERBAL O AMENAZA",
                     color: const Color(0xFF7C3AED),
-                    icono: Icons.record_voice_over_rounded,
-                    onTap: () => controller.responderSeveridad(SeveridadVictimas.ninguna),
+                    icono: Icons.forum_rounded,
+                    onTap: () => controller
+                        .responderSeveridad(SeveridadVictimas.ninguna),
                     isDark: isDark,
                     isWide: isWide,
                   ),
@@ -561,8 +667,9 @@ class SosConductorView extends StatelessWidget {
                   _buildBotonTriageCard(
                     titulo: "HAY PERSONA FALLECIDA",
                     color: const Color(0xFF991B1B),
-                    icono: Icons.warning_rounded,
-                    onTap: () => controller.responderSeveridad(SeveridadVictimas.fallecido),
+                    icono: Icons.dangerous_rounded,
+                    onTap: () => controller
+                        .responderSeveridad(SeveridadVictimas.fallecido),
                     isDark: isDark,
                     isWide: isWide,
                   ),
@@ -571,8 +678,9 @@ class SosConductorView extends StatelessWidget {
                   _buildBotonTriageCard(
                     titulo: "HAY PERSONAS HERIDAS",
                     color: const Color(0xFFDC2626),
-                    icono: Icons.health_and_safety_rounded,
-                    onTap: () => controller.responderSeveridad(SeveridadVictimas.heridos),
+                    icono: Icons.medical_services_rounded,
+                    onTap: () => controller
+                        .responderSeveridad(SeveridadVictimas.heridos),
                     isDark: isDark,
                     isWide: isWide,
                   ),
@@ -581,8 +689,9 @@ class SosConductorView extends StatelessWidget {
                   _buildBotonTriageCard(
                     titulo: "NO, SOLO DAÑOS / LATA",
                     color: const Color(0xFF059669),
-                    icono: Icons.check_circle_outline_rounded,
-                    onTap: () => controller.responderSeveridad(SeveridadVictimas.ninguna),
+                    icono: Icons.car_repair_rounded,
+                    onTap: () => controller
+                        .responderSeveridad(SeveridadVictimas.ninguna),
                     isDark: isDark,
                     isWide: isWide,
                   ),
@@ -598,7 +707,8 @@ class SosConductorView extends StatelessWidget {
               color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                color:
+                    isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                 width: 1.0,
               ),
             ),
@@ -648,7 +758,7 @@ class SosConductorView extends StatelessWidget {
                 _buildBotonTriageCard(
                   titulo: "NO, DAÑOS LEVES O ROZADURA",
                   color: const Color(0xFF059669),
-                  icono: Icons.thumb_up_alt_rounded,
+                  icono: Icons.check_circle_rounded,
                   onTap: () => controller.responderDaniosGraves(false),
                   isDark: isDark,
                   isWide: isWide,
@@ -725,7 +835,8 @@ class SosConductorView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: colorNivel,
                         borderRadius: BorderRadius.circular(6),
@@ -733,7 +844,8 @@ class SosConductorView extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(dictamen.iconoNivel, size: 14, color: Colors.white),
+                          Icon(dictamen.iconoNivel,
+                              size: 14, color: Colors.white),
                           const SizedBox(width: 5),
                           Flexible(
                             child: Text(
@@ -754,7 +866,8 @@ class SosConductorView extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFF2563EB),
                       borderRadius: BorderRadius.circular(6),
@@ -815,7 +928,8 @@ class SosConductorView extends StatelessWidget {
 
               Divider(
                 height: 20,
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                color:
+                    isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
               ),
 
               // Reglas de Oro Inmediatas (Contención en sitio)
@@ -830,25 +944,58 @@ class SosConductorView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              ...reglas.map((regla) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+              ...reglas.asMap().entries.map((entry) {
+                final int idx = entry.key + 1;
+                final String regla = entry.value;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF1E293B)
+                        : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
+                      width: 1.0,
+                    ),
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 2),
-                        child: Icon(Icons.shield, size: 14, color: Color(0xFF2563EB)),
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2563EB),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          "$idx",
+                          style: const TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           regla,
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 12,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
                             height: 1.35,
-                            color: isDark ? Colors.white70 : const Color(0xFF334155),
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF334155),
                           ),
                         ),
                       ),
@@ -876,19 +1023,32 @@ class SosConductorView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Abogado asignado
+              // Abogado asignado con badge ejecutivo grande
               Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF0F172A),
-                      shape: BoxShape.circle,
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: const Icon(Icons.person, color: Colors.white, size: 22),
+                    child: const Center(
+                      child: Icon(
+                        Icons.gavel_rounded,
+                        color: Color(0xFF2563EB),
+                        size: 26,
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -897,79 +1057,107 @@ class SosConductorView extends StatelessWidget {
                           controller.nombreAbogado,
                           style: const TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
+                        const SizedBox(height: 2),
                         const Text(
-                          "Abogado Especialista en Tránsito · EN GUARDIA",
+                          "Especialista en Tránsito y COIP",
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 11,
-                            color: Color(0xFF059669),
-                            fontWeight: FontWeight.w600,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    width: 10,
-                    height: 10,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF10B981),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
                 ],
               ),
 
-              const SizedBox(height: 14),
+              const SizedBox(height: 16),
 
-              // Botón Prominente: LLAMAR A MI ABOGADO ASIGNADO
+              // Botón Único: Contactar con abogado (Directo wa.me)
               Container(
-                height: 56,
+                height: 58,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF059669),
-                  borderRadius: BorderRadius.circular(12),
+                  color: const Color(0xFF25D366),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF25D366).withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   onPressed: () {
-                    controller.iniciarLlamada();
+                    controller.contactarWhatsAppAbogado();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          "Marcando llamada directa con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
+                          "Conectando con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
                         ),
-                        backgroundColor: const Color(0xFF059669),
+                        backgroundColor: const Color(0xFF16A34A),
                         duration: const Duration(seconds: 4),
                       ),
                     );
                   },
-                  icon: const Icon(Icons.phone_in_talk_rounded, size: 22),
-                  label: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      "LLAMAR A MI ABOGADO ASIGNADO (${controller.telefonoAbogado})",
-                      style: const TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
-                        letterSpacing: 0.3,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.phone_in_talk_rounded,
+                          size: 20,
+                          color: Color(0xFF25D366),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 12),
+                      const Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            "Contactar con abogado",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                              letterSpacing: 0.2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-
             ],
           ),
         ),
@@ -1020,7 +1208,9 @@ class SosConductorView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isActive
                         ? const Color(0xFF2563EB)
-                        : (isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1)),
+                        : (isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFCBD5E1)),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 );
@@ -1057,7 +1247,7 @@ class SosConductorView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
           width: 1.0,
@@ -1065,13 +1255,25 @@ class SosConductorView extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Badge blanco grande con icono moderno
           Container(
-            padding: const EdgeInsets.all(9),
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFF2563EB),
-              borderRadius: BorderRadius.circular(10),
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: const Icon(Icons.folder_shared_rounded, color: Colors.white, size: 20),
+            child: const Center(
+              child: Icon(Icons.folder_shared_rounded,
+                  color: Color(0xFF2563EB), size: 26),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1086,15 +1288,17 @@ class SosConductorView extends StatelessWidget {
                         "Billetera Digital",
                         style: TextStyle(
                           fontFamily: 'Montserrat',
-                          fontSize: 13,
+                          fontSize: 13.5,
                           fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          color:
+                              isDark ? Colors.white : const Color(0xFF0F172A),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Icon(Icons.verified, size: 14, color: Color(0xFF10B981)),
+                    const Icon(Icons.verified,
+                        size: 15, color: Color(0xFF10B981)),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -1102,7 +1306,7 @@ class SosConductorView extends StatelessWidget {
                   "Licencia Tipo C · Matrícula",
                   style: TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 11,
+                    fontSize: 11.5,
                     color: isDark ? Colors.white60 : const Color(0xFF64748B),
                     fontWeight: FontWeight.w600,
                   ),
@@ -1115,18 +1319,19 @@ class SosConductorView extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2563EB),
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
               elevation: 0,
             ),
             onPressed: () => _mostrarBilleteraModal(context),
-            icon: const Icon(Icons.qr_code_2_rounded, size: 16),
+            icon: const Icon(Icons.qr_code_2_rounded, size: 18),
             label: const Text(
               "Ver QR",
               style: TextStyle(
-                fontFamily: 'Plus Jakarta Sans',
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
+                fontFamily: 'Montserrat',
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
@@ -1143,7 +1348,8 @@ class SosConductorView extends StatelessWidget {
         final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
 
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 400),
             padding: const EdgeInsets.all(20),
@@ -1155,7 +1361,8 @@ class SosConductorView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: const Color(0xFF059669),
                         borderRadius: BorderRadius.circular(6),
@@ -1203,22 +1410,45 @@ class SosConductorView extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                    color: isDark
+                        ? const Color(0xFF0F172A)
+                        : const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
                       width: 1.0,
                     ),
                   ),
                   child: Column(
                     children: [
-                      const _FichaDocRow(label: "Conductor:", valor: "Carlos Alberto Mendoza"),
-                      Divider(height: 12, color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(label: "Licencia:", valor: "Tipo C Profesional (30 Puntos)"),
-                      Divider(height: 12, color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(label: "Unidad / Taxi:", valor: "Unidad #42 · Coo. Los Lagos"),
-                      Divider(height: 12, color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(label: "Placa / RTV:", valor: "IBA-1234 · RTV 2024 Aprobada"),
+                      const _FichaDocRow(
+                          label: "Conductor:", valor: "Carlos Alberto Mendoza"),
+                      Divider(
+                          height: 12,
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0)),
+                      const _FichaDocRow(
+                          label: "Licencia:",
+                          valor: "Tipo C Profesional (30 Puntos)"),
+                      Divider(
+                          height: 12,
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0)),
+                      const _FichaDocRow(
+                          label: "Unidad / Taxi:",
+                          valor: "Unidad #42 · Coo. Los Lagos"),
+                      Divider(
+                          height: 12,
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0)),
+                      const _FichaDocRow(
+                          label: "Placa / RTV:",
+                          valor: "IBA-1234 · RTV 2024 Aprobada"),
                     ],
                   ),
                 ),
@@ -1231,7 +1461,8 @@ class SosConductorView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
-                    child: const Icon(Icons.qr_code_2_rounded, size: 90, color: Color(0xFF0F172A)),
+                    child: const Icon(Icons.qr_code_2_rounded,
+                        size: 90, color: Color(0xFF0F172A)),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -1239,7 +1470,8 @@ class SosConductorView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0F172A),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: const Text("Cerrar Documento"),
