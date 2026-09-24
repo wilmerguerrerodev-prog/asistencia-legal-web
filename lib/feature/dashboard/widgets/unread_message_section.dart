@@ -12,69 +12,66 @@ class UnreadMessageSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 14 : 22,
-        horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+        vertical: isMobile ? 12 : 16,
+        horizontal: isMobile ? 14 : Dimensions.paddingSizeLarge,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF0F172A), const Color(0xFF1E293B)]
+              : [Colors.white, const Color(0xFFEFF6FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(isMobile ? Dimensions.radiusDefault : Dimensions.radiusLarge),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
-          width: 1,
+          color: const Color(0xFF0284C7).withValues(alpha: isDark ? 0.35 : 0.25),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: const Color(0xFF0284C7).withValues(alpha: isDark ? 0.2 : 0.06),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            "LegalTech - Asistencia en Carretera",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: isMobile ? 17 : 22,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
-              color: Theme.of(context).textTheme.bodyLarge?.color,
+          Container(
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF0284C7), Color(0xFF2563EB)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(9),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0284C7).withValues(alpha: 0.3),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
+            child: const Icon(Icons.shield_rounded, color: Colors.white, size: 18),
           ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 7,
-                height: 7,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF10B981),
-                  shape: BoxShape.circle,
-                ),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Text(
+              "LegalTech - Asistencia en Carretera",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: isMobile ? 15.5 : 20,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.4,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  "Soporte Jurídico Inmediato & Monitoreo en Tiempo Real",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: isMobile ? 11 : 13,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.2,
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.65),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
+            ),
           ),
         ],
       ),

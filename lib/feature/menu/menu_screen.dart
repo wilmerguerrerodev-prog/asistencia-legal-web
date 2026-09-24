@@ -24,7 +24,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
       builder: (menuDrawerController){
         if(ResponsiveHelper.isMobile(context)){
           return expandedMenuList(
-              menuDrawerController.isMenuDrawerExpanded,
+              true,
               menuDrawerController.selectedIndex);
         }else{
           return menuDrawerController.isMenuDrawerExpanded ? expandedMenuList(
@@ -43,8 +43,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
       color: Theme.of(context).primaryColorLight,
     // color: Colors.amber,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          controlTile(isExpanded),
+          controlTile(true),
           Expanded(
             child: ListView.builder(
               itemCount: menuList.length,
@@ -147,40 +148,53 @@ class _MenuDrawerState extends State<MenuDrawer> {
   }
 
   Widget controlTile(bool isExpanded) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 25, left: 12, right: 12),
-      child: InkWell(
-        onTap: Get.find<MenuDrawerController>().toggleMenuDrawer,
-        borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.gavel_rounded,
-                  color: Theme.of(context).primaryColor,
-                  size: 22,
-                ),
-              ),
-              if (isExpanded) ...[
-                const SizedBox(width: 10),
-                Text(
-                  "LegalTech",
-                  style: ubuntuBold.copyWith(
-                    color: Theme.of(context).textTheme.bodyMedium!.color,
-                    fontSize: Dimensions.fontSizeLarge,
-                    letterSpacing: 0.5,
+    final bool showTitle = isExpanded || ResponsiveHelper.isMobile(context);
+    return Align(
+      alignment: showTitle ? Alignment.centerLeft : Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 20,
+          bottom: 25,
+          left: showTitle ? 16 : 8,
+          right: showTitle ? 16 : 8,
+        ),
+        child: InkWell(
+          onTap: () {
+            if (!ResponsiveHelper.isMobile(context)) {
+              Get.find<MenuDrawerController>().toggleMenuDrawer();
+            }
+          },
+          borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.gavel_rounded,
+                    color: Theme.of(context).primaryColor,
+                    size: 22,
                   ),
                 ),
+                if (showTitle) ...[
+                  const SizedBox(width: 12),
+                  Text(
+                    "LegalTech",
+                    style: ubuntuBold.copyWith(
+                      color: Theme.of(context).textTheme.bodyMedium!.color,
+                      fontSize: Dimensions.fontSizeLarge,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
