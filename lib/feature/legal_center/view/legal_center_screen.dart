@@ -10,10 +10,9 @@ import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import '../controller/legal_center_controller.dart';
-import '../widgets/cooperative_filter_chips.dart';
-import '../widgets/expediente_360_panel.dart';
-import '../widgets/legal_cases_table.dart';
-import '../widgets/legal_kpi_header.dart';
+import '../widgets/legal_realtime_table.dart';
+import '../widgets/legal_territorial_header.dart';
+import '../widgets/territory_lawyers_grid.dart';
 
 class LegalCenterScreen extends StatefulWidget {
   const LegalCenterScreen({super.key});
@@ -64,11 +63,11 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Menú lateral izquierdo en escritorio
+            // Menú lateral en escritorio
             if (ResponsiveHelper.isDesktop(context))
               const MenuDrawer(),
 
-            // Área de contenido principal
+            // Área central ejecutiva
             Expanded(
               flex: 5,
               child: Column(
@@ -76,7 +75,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                   const WebMenuBar(),
                   Expanded(
                     child: GetBuilder<LegalCenterController>(
-                      builder: (controller) {
+                      builder: (ctrl) {
                         return SingleChildScrollView(
                           padding: const EdgeInsets.symmetric(
                             horizontal: Dimensions.paddingSizeDefault,
@@ -85,16 +84,28 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // BANNER DE TÍTULO LEGALTECH
-                              _buildTitleBanner(context, isMobile),
+                              // BANNER DE ENCABEZADO EJECUTIVO
+                              _buildExecutiveHeader(context, isMobile),
+
+                              const SizedBox(height: 14),
+
+                              // BLOQUE 1: CABECERA DE FILTROS TERRITORIALES Y KPIS
+                              const LegalTerritorialHeader(),
 
                               const SizedBox(height: 16),
 
-                              // ENTORNO MÓVIL vs ESCRITORIO
-                              if (isMobile)
-                                _buildMobileLayout(context, controller)
+                              // SELECTOR DE PESTAÑAS EJECUTIVAS (Bloque 2 vs Bloque 3)
+                              _buildDashboardTabsSelector(context, ctrl),
+
+                              const SizedBox(height: 14),
+
+                              // CONTENIDO SEGÚN LA PESTAÑA ACTIVA
+                              if (ctrl.dashboardTab == 0)
+                                // BLOQUE 2: TABLA CENTRAL DE INCIDENTES EN TIEMPO REAL
+                                const LegalRealtimeTable()
                               else
-                                _buildDesktopLayout(context, controller),
+                                // BLOQUE 3: PANEL DE SUPERVISIÓN DE ABOGADOS DE TERRITORIO
+                                const TerritoryLawyersGrid(),
 
                               const SizedBox(height: 24),
                               const FooterSection(),
@@ -113,16 +124,19 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
     );
   }
 
-  // --- BANNER DE TÍTULO ---
-  Widget _buildTitleBanner(BuildContext context, bool isMobile) {
+  // --- BANNER DE ENCABEZADO EJECUTIVO MINIMALISTA ---
+  Widget _buildExecutiveHeader(BuildContext context, bool isMobile) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+      padding: EdgeInsets.symmetric(
+        horizontal: Dimensions.paddingSizeDefault,
+        vertical: isMobile ? 10 : 14,
+      ),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            Theme.of(context).primaryColor,
-            const Color(0xFF0D47A1),
+            Color(0xFF0D47A1),
+            Color(0xFF1565C0),
           ],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -130,55 +144,55 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+            color: const Color(0xFF0D47A1).withValues(alpha: 0.25),
             blurRadius: 10,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.gavel_rounded,
+              color: Colors.white,
+              size: isMobile ? 18 : 22,
+            ),
+          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Icon(Icons.gavel, color: Colors.white, size: 20),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Centro de Mando LegalTech • Asistencia Jurídica',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: ubuntuBold.copyWith(
-                          fontSize: Dimensions.fontSizeLarge,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
                 Text(
-                  'Despacho y monitoreo de siniestros viales en tiempo real para flotas y cooperativas de taxis.',
-                  style: ubuntuRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
-                    color: Colors.white.withValues(alpha: 0.9),
+                  'Panel de Control LegalTech • Despacho Inmediato',
+                  style: ubuntuBold.copyWith(
+                    fontSize: isMobile ? Dimensions.fontSizeDefault : Dimensions.fontSizeLarge,
+                    color: Colors.white,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Gestión ejecutiva de siniestros viales y supervisión de abogados en territorio ecuatoriano.',
+                  style: ubuntuRegular.copyWith(
+                    fontSize: isMobile ? Dimensions.fontSizeExtraSmall : Dimensions.fontSizeSmall,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                  maxLines: isMobile ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          if (!isMobile) ...[
+          if (!isMobile && MediaQuery.of(context).size.width >= 850) ...[
             const SizedBox(width: 12),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -188,6 +202,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                 border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
                     width: 8,
@@ -199,7 +214,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Enlace en Vivo Taxista ⇄ Abogado',
+                    'Despacho Activo 24/7',
                     style: ubuntuBold.copyWith(
                       fontSize: Dimensions.fontSizeExtraSmall,
                       color: Colors.white,
@@ -214,174 +229,121 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
     );
   }
 
-  // --- LAYOUT ESCRITORIO (VISTA DIVIDIDA 360°) ---
-  Widget _buildDesktopLayout(BuildContext context, LegalCenterController controller) {
-    return Column(
-      children: [
-        // KPIs SUPERIORES
-        const LegalKpiHeader(),
+  // --- SELECTOR DE PESTAÑAS EJECUTIVAS ---
+  Widget _buildDashboardTabsSelector(
+    BuildContext context,
+    LegalCenterController ctrl,
+  ) {
+    final isMobile = ResponsiveHelper.isMobile(context);
 
-        const SizedBox(height: 16),
-
-        // FILTRO POR COOPERATIVA
-        const CooperativeFilterChips(),
-
-        const SizedBox(height: 16),
-
-        // SPLIT SCREEN: TABLA A LA IZQUIERDA + EXPEDIENTE 360 A LA DERECHA
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // LADO IZQUIERDO: TABLA DE CASOS (Flex: 6)
-            const Expanded(
-              flex: 6,
-              child: LegalCasesTable(),
-            ),
-
-            const SizedBox(width: 16),
-
-            // LADO DERECHO: EXPEDIENTE 360° (Flex: 5)
-            Expanded(
-              flex: 5,
-              child: controller.selectedCase != null
-                  ? Expediente360Panel(caseItem: controller.selectedCase!)
-                  : Container(
-                      padding: const EdgeInsets.all(32),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-                      ),
-                      child: const Center(
-                        child: Text('Seleccione un caso para ver el Expediente 360°'),
-                      ),
-                    ),
-            ),
-          ],
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
         ),
-      ],
+      ),
+      child: Row(
+        children: [
+          // PESTAÑA 1: INCIDENTES EN TIEMPO REAL
+          Expanded(
+            child: _tabButton(
+              context: context,
+              title: isMobile ? 'Incidentes' : 'Incidentes en Tiempo Real',
+              countBadge: '${ctrl.filteredCases.length}',
+              icon: Icons.table_chart_rounded,
+              isSelected: ctrl.dashboardTab == 0,
+              isMobile: isMobile,
+              onTap: () => ctrl.setDashboardTab(0),
+            ),
+          ),
+          const SizedBox(width: 6),
+
+          // PESTAÑA 2: SUPERVISIÓN DE ABOGADOS DE TERRITORIO
+          Expanded(
+            child: _tabButton(
+              context: context,
+              title: isMobile ? 'Supervisión' : 'Supervisión de Abogados de Territorio',
+              countBadge: '${ctrl.territoryLawyers.length}',
+              icon: Icons.supervised_user_circle_rounded,
+              isSelected: ctrl.dashboardTab == 1,
+              isMobile: isMobile,
+              onTap: () => ctrl.setDashboardTab(1),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  // --- LAYOUT MÓVIL RESPONSIVO CON TABS INTUITIVAS ---
-  Widget _buildMobileLayout(BuildContext context, LegalCenterController controller) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // KPIs adaptados en cuadrícula
-        const LegalKpiHeader(),
-
-        const SizedBox(height: 12),
-
-        // BARRA SELECTORA DE PESTAÑAS MÓVIL
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-            border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () => controller.setMobileTab(0),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: controller.mobileTabIndex == 0
-                          ? Theme.of(context).primaryColor
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.list_alt_rounded,
-                          size: 16,
-                          color: controller.mobileTabIndex == 0 ? Colors.white : Theme.of(context).hintColor,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Casos (${controller.filteredCases.length})',
-                          style: ubuntuBold.copyWith(
-                            fontSize: Dimensions.fontSizeSmall,
-                            color: controller.mobileTabIndex == 0 ? Colors.white : Theme.of(context).textTheme.bodyLarge!.color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: InkWell(
-                  onTap: () => controller.setMobileTab(1),
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: controller.mobileTabIndex == 1
-                          ? Theme.of(context).primaryColor
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.folder_shared_rounded,
-                          size: 16,
-                          color: controller.mobileTabIndex == 1 ? Colors.white : Theme.of(context).hintColor,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Expediente 360°',
-                          style: ubuntuBold.copyWith(
-                            fontSize: Dimensions.fontSizeSmall,
-                            color: controller.mobileTabIndex == 1 ? Colors.white : Theme.of(context).textTheme.bodyLarge!.color,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+  Widget _tabButton({
+    required BuildContext context,
+    required String title,
+    required String countBadge,
+    required IconData icon,
+    required bool isSelected,
+    required bool isMobile,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(
+          vertical: isMobile ? 8 : 10,
+          horizontal: isMobile ? 4 : 12,
         ),
-
-        const SizedBox(height: 12),
-
-        // CONTENIDO SEGÚN LA PESTAÑA SELECCIONADA EN MÓVIL
-        if (controller.mobileTabIndex == 0) ...[
-          const CooperativeFilterChips(),
-          const SizedBox(height: 12),
-          const LegalCasesTable(),
-        ] else ...[
-          if (controller.selectedCase != null) ...[
-            // Botón de retorno rápido a la lista
-            TextButton.icon(
-              icon: const Icon(Icons.arrow_back, size: 16),
-              label: const Text('← Volver a lista de casos'),
-              onPressed: () => controller.setMobileTab(0),
+        decoration: BoxDecoration(
+          color: isSelected ? Theme.of(context).primaryColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 15,
+              color: isSelected ? Colors.white : Theme.of(context).hintColor,
             ),
-            const SizedBox(height: 6),
-            Expediente360Panel(caseItem: controller.selectedCase!),
-          ] else
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                title,
+                style: ubuntuBold.copyWith(
+                  fontSize: isMobile ? 11 : Dimensions.fontSizeSmall,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyLarge!.color,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const SizedBox(width: 6),
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.25)
+                    : Theme.of(context).dividerColor.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
-                child: Text('No hay caso seleccionado.'),
+              child: Text(
+                countBadge,
+                style: ubuntuBold.copyWith(
+                  fontSize: 10,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyLarge!.color,
+                ),
               ),
             ),
-        ],
-      ],
+          ],
+        ),
+      ),
     );
   }
 }

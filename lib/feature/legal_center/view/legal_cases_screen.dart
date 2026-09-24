@@ -34,6 +34,9 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
       controller = Get.find<LegalCenterController>();
     }
 
+    // Inicializar sin filtros residuales de otras pantallas sin disparar update() durante el build
+    controller.resetCasesFilters(shouldUpdate: false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<MenuDrawerController>()) {
         final menuController = Get.find<MenuDrawerController>();
@@ -88,8 +91,6 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                               const SizedBox(height: Dimensions.paddingSizeDefault),
                               const CooperativeFilterChips(),
                               const SizedBox(height: Dimensions.paddingSizeDefault),
-                              _buildFiltersAndSearchBar(context, ctrl),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
                               _buildCasesTableCard(context, cases, ctrl),
                               const SizedBox(height: Dimensions.paddingSizeExtraLarge),
                               const FooterSection(),
@@ -109,9 +110,31 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
   }
 
   List<LegalCase> _getFilteredCases(LegalCenterController ctrl) {
-    final base = ctrl.filteredCases;
-    if (_statusFilter == null) return base;
-    return base.where((c) => c.estado == _statusFilter).toList();
+    return ctrl.allCases.where((c) {
+      if (_statusFilter != null && c.estado != _statusFilter) {
+        return false;
+      }
+      if (ctrl.selectedCooperative != 'Todas' &&
+          !c.cooperativa.toLowerCase().contains(
+                ctrl.selectedCooperative.toLowerCase().replaceAll('coop. ', ''),
+              )) {
+        return false;
+      }
+      final query = ctrl.searchQuery.toLowerCase().trim();
+      if (query.isNotEmpty) {
+        final matches = c.id.toLowerCase().contains(query) ||
+            c.taxistaNombre.toLowerCase().contains(query) ||
+            c.taxistaCedula.toLowerCase().contains(query) ||
+            c.placa.toLowerCase().contains(query) ||
+            c.unidad.toLowerCase().contains(query) ||
+            c.cooperativa.toLowerCase().contains(query) ||
+            c.tipoIncidente.toLowerCase().contains(query) ||
+            c.ubicacionDireccion.toLowerCase().contains(query) ||
+            c.canton.toLowerCase().contains(query);
+        if (!matches) return false;
+      }
+      return true;
+    }).toList();
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -234,46 +257,6 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildFiltersAndSearchBar(BuildContext context, LegalCenterController ctrl) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
-        border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.15)),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search_rounded, color: Theme.of(context).primaryColor, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: TextField(
-              controller: ctrl.searchController,
-              onChanged: ctrl.setSearchQuery,
-              decoration: InputDecoration(
-                hintText: "Buscar por código, conductor, cédula, placa, cooperativa o tipo de siniestro...",
-                hintStyle: ubuntuRegular.copyWith(
-                  fontSize: Dimensions.fontSizeSmall,
-                  color: Theme.of(context).hintColor,
-                ),
-                border: InputBorder.none,
-                isDense: true,
-              ),
-            ),
-          ),
-          if (ctrl.searchQuery.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear, size: 18),
-              onPressed: () {
-                ctrl.searchController.clear();
-                ctrl.setSearchQuery('');
-              },
-            ),
-        ],
       ),
     );
   }
@@ -595,15 +578,28 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.folder_shared_rounded, color: Color(0xFF056AB4)),
-                        const SizedBox(width: 8),
-                        Text("Expediente Digital 360° • ${c.id}", style: ubuntuBold),
-                      ],
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const Icon(Icons.folder_shared_rounded, color: Color(0xFF056AB4), size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Expediente Digital 360° • ${c.id}",
+                              style: ubuntuBold.copyWith(fontSize: isMobile ? 13 : 15),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: const Icon(Icons.close, size: 20),
+                      splashRadius: 18,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                       onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
