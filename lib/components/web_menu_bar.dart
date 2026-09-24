@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/controller/theme_controller.dart';
-import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/images.dart';
-import 'choose_language_dialog.dart';
 
 
 class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,37 +14,45 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
       color: Theme.of(context).cardColor,
       padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            MenuButtonWebIcon(icon: Images.menu, onTap: () {
-              Get.find<MenuDrawerController>().toggleMenuDrawer();
-              Scaffold.of(context).openDrawer();
-              },),
-
-        Row(
-          children: [
-            MenuButtonWebIcon(icon: Images.chat, onTap: () {  },),
-            MenuButtonWebIcon(icon: Images.notification, onTap: () {  },),
-            GetBuilder<ThemeController>(builder: (themeController){
-              return MenuButtonWebIcon(icon: themeController.darkTheme ? Images.lightMode:Images.darkMode, onTap: (){
-                themeController.toggleTheme();
-              });
-            }),
-
-            MenuButtonWebIcon(icon: Images.globe, onTap: () {
-              if (Get.isSnackbarOpen) {
-                Get.back();
-              }
-              Get.dialog(ChooseLanguageDialog(
-                description: 'choose_a_language'.tr,
-                onYesPressed: () {
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MenuButtonWebIcon(
+                icon: Images.menu,
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
                 },
-              ));
-            },)
-          ],
-        )
+              ),
+              const SizedBox(width: 8),
+              Text(
+                "LegalTech",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.4,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+              ),
+            ],
+          ),
 
-      ]),
+          Row(
+            children: [
+              GetBuilder<ThemeController>(builder: (themeController){
+                return MenuButtonWebIcon(
+                  icon: themeController.darkTheme ? Images.lightMode : Images.darkMode,
+                  onTap: (){
+                    themeController.toggleTheme();
+                  },
+                );
+              }),
+            ],
+          ),
+        ],
+      ),
     );
   }
   @override
