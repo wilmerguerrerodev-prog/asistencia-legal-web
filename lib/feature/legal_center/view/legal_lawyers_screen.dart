@@ -9,6 +9,8 @@ import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
+import '../controller/legal_center_controller.dart';
+import '../widgets/assign_lawyer_case_dialog.dart';
 
 class LegalLawyersScreen extends StatefulWidget {
   const LegalLawyersScreen({super.key});
@@ -18,9 +20,63 @@ class LegalLawyersScreen extends StatefulWidget {
 }
 
 class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
+  late final LegalCenterController _legalController;
+  late List<Map<String, dynamic>> _lawyersData;
+
   @override
   void initState() {
     super.initState();
+    _legalController = Get.isRegistered<LegalCenterController>()
+        ? Get.find<LegalCenterController>()
+        : Get.put(LegalCenterController());
+
+    _lawyersData = [
+      {
+        "nombre": "Dra. Elena Torres",
+        "unidad": "Móvil Legal #02 • Zona Norte",
+        "estado": "Disponible en Patrullaje",
+        "color": const Color(0xFF2E7D32),
+        "ubicacion": "Redondel del Labrador • Av. Amazonas y Galo Plaza",
+        "vehiculo": "Suzuki Grand Vitara (PBX-3012)",
+        "telefono": "+593 99 445 1200",
+        "casosHoy": "2 casos resueltos con éxito",
+        "especialidad": "Conciliación en vía pública y peritajes SIAT",
+      },
+      {
+        "nombre": "Dr. Marcelo Dávila",
+        "unidad": "Móvil Legal #01 • Zona Sur",
+        "estado": "En Camino a Siniestro #CASO-1028",
+        "color": const Color(0xFFE65100),
+        "ubicacion": "Av. Rodrigo de Chávez y 5 de Junio (Villaflora) • ETA: 6 min",
+        "vehiculo": "Renault Duster (PBA-9921)",
+        "telefono": "+593 98 776 5544",
+        "casosHoy": "1 caso en atención activa",
+        "especialidad": "Evitar retención vehicular Art. 380 COIP",
+      },
+      {
+        "nombre": "Dr. Fernando Salazar",
+        "unidad": "Móvil Legal #03 • Centro & Tribunales",
+        "estado": "En Audiencia de Tránsito",
+        "color": const Color(0xFF1565C0),
+        "ubicacion": "Juzgado de Tránsito La Pradera • Sala 4",
+        "vehiculo": "Chevrolet Tracker (PCY-1100)",
+        "telefono": "+593 99 112 3344",
+        "casosHoy": "1 impugnación de citación en trámite",
+        "especialidad": "Impugnación de contravenciones y fotomultas",
+      },
+      {
+        "nombre": "Abg. Patricia Vinueza",
+        "unidad": "Móvil Legal #04 • Valles",
+        "estado": "Disponible en Guardia",
+        "color": const Color(0xFF2E7D32),
+        "ubicacion": "Interoceánica y Av. Oswaldo Guayasamín (Cumbayá)",
+        "vehiculo": "Kia Sportage (PCZ-4412)",
+        "telefono": "+593 96 889 0011",
+        "casosHoy": "1 caso cerrado hoy",
+        "especialidad": "Acuerdos extrajudiciales y cobertura de aseguradoras",
+      },
+    ];
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<MenuDrawerController>()) {
         final menuController = Get.find<MenuDrawerController>();
@@ -38,6 +94,44 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
         }
       }
     });
+  }
+
+  void _openAssignCaseDialog(BuildContext context, int index) {
+    final law = _lawyersData[index];
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => AssignLawyerCaseDialog(
+        lawyer: law,
+        onConfirmAssignment: ({
+          required String caseId,
+          required bool isQueued,
+          required String etaMinutes,
+          required String mode,
+          required String caseTitle,
+        }) {
+          final lawyerName = law["nombre"] as String;
+          setState(() {
+            if (isQueued) {
+              _lawyersData[index]["casosHoy"] = "${law["casosHoy"]} • En cola: $caseId";
+            } else {
+              _lawyersData[index]["estado"] = "En Camino a Siniestro $caseId";
+              _lawyersData[index]["color"] = const Color(0xFFE65100);
+              _lawyersData[index]["casosHoy"] = "1 caso en atención activa ($caseId)";
+              final baseLoc = (law["ubicacion"] as String).split('•').first.trim();
+              _lawyersData[index]["ubicacion"] = "$baseLoc • ETA: $etaMinutes min";
+            }
+          });
+
+          // Notificar y sincronizar con el controlador central
+          if (isQueued) {
+            _legalController.enqueueCaseForLawyer(caseId, lawyerName, incidentTitle: caseTitle);
+          } else {
+            _legalController.dispatchLawyer(caseId, lawyerName, etaMinutes);
+          }
+        },
+      ),
+    );
   }
 
   @override
@@ -144,10 +238,14 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
 
   Widget _buildKPIs(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
+    final totalLawyers = _lawyersData.length;
+    final enCamino = _lawyersData.where((l) => l["estado"].toString().contains("En Camino")).length;
+    final disponibles = _lawyersData.where((l) => l["estado"].toString().contains("Disponible")).length;
+
     final kpis = [
-      _kpiCard(context, "Abogados en Guardia", "4", "Unidades activas 24/7", const Color(0xFF0D47A1), Icons.badge_rounded),
-      _kpiCard(context, "En Camino a Siniestro", "1", "Dr. Marcelo Dávila (Villaflora)", const Color(0xFFE65100), Icons.directions_car_rounded),
-      _kpiCard(context, "Disponibles en Vía", "2", "Listos para asignación", const Color(0xFF2E7D32), Icons.check_circle_rounded),
+      _kpiCard(context, "Abogados en Guardia", "$totalLawyers", "Unidades activas 24/7", const Color(0xFF0D47A1), Icons.badge_rounded),
+      _kpiCard(context, "En Camino a Siniestro", "$enCamino", enCamino > 0 ? "Atención activa en vía" : "Sin despachos activos", const Color(0xFFE65100), Icons.directions_car_rounded),
+      _kpiCard(context, "Disponibles en Vía", "$disponibles", "Listos para asignación", const Color(0xFF2E7D32), Icons.check_circle_rounded),
       _kpiCard(context, "Tiempo Prom. Arribo (SLA)", "12.4 min", "Meta legal: <15 min", const Color(0xFF6A1B9A), Icons.timer_rounded),
     ];
 
@@ -208,52 +306,6 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
 
   Widget _buildLawyersList(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
-    final lawyers = [
-      {
-        "nombre": "Dra. Elena Torres",
-        "unidad": "Móvil Legal #02 • Zona Norte",
-        "estado": "Disponible en Patrullaje",
-        "color": const Color(0xFF2E7D32),
-        "ubicacion": "Redondel del Labrador • Av. Amazonas y Galo Plaza",
-        "vehiculo": "Suzuki Grand Vitara (PBX-3012)",
-        "telefono": "+593 99 445 1200",
-        "casosHoy": "2 casos resueltos con éxito",
-        "especialidad": "Conciliación en vía pública y peritajes SIAT",
-      },
-      {
-        "nombre": "Dr. Marcelo Dávila",
-        "unidad": "Móvil Legal #01 • Zona Sur",
-        "estado": "En Camino a Siniestro #CASO-1028",
-        "color": const Color(0xFFE65100),
-        "ubicacion": "Av. Rodrigo de Chávez y 5 de Junio (Villaflora) • ETA: 6 min",
-        "vehiculo": "Renault Duster (PBA-9921)",
-        "telefono": "+593 98 776 5544",
-        "casosHoy": "1 caso en atención activa",
-        "especialidad": "Evitar retención vehicular Art. 380 COIP",
-      },
-      {
-        "nombre": "Dr. Fernando Salazar",
-        "unidad": "Móvil Legal #03 • Centro & Tribunales",
-        "estado": "En Audiencia de Tránsito",
-        "color": const Color(0xFF1565C0),
-        "ubicacion": "Juzgado de Tránsito La Pradera • Sala 4",
-        "vehiculo": "Chevrolet Tracker (PCY-1100)",
-        "telefono": "+593 99 112 3344",
-        "casosHoy": "1 impugnación de citación en trámite",
-        "especialidad": "Impugnación de contravenciones y fotomultas",
-      },
-      {
-        "nombre": "Abg. Patricia Vinueza",
-        "unidad": "Móvil Legal #04 • Valles",
-        "estado": "Disponible en Guardia",
-        "color": const Color(0xFF2E7D32),
-        "ubicacion": "Interoceánica y Av. Oswaldo Guayasamín (Cumbayá)",
-        "vehiculo": "Kia Sportage (PCZ-4412)",
-        "telefono": "+593 96 889 0011",
-        "casosHoy": "1 caso cerrado hoy",
-        "especialidad": "Acuerdos extrajudiciales y cobertura de aseguradoras",
-      },
-    ];
 
     return Container(
       decoration: BoxDecoration(
@@ -272,7 +324,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Cuerpo de Abogados de Turno (${lawyers.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                      Text("Cuerpo de Abogados de Turno (${_lawyersData.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
                       const SizedBox(height: 6),
                       _buildGpsBadge(),
                     ],
@@ -280,7 +332,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Cuerpo de Abogados de Turno (${lawyers.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
+                      Text("Cuerpo de Abogados de Turno (${_lawyersData.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
                       _buildGpsBadge(),
                     ],
                   ),
@@ -289,14 +341,14 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: lawyers.length,
+            itemCount: _lawyersData.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
             itemBuilder: (context, index) {
-              final law = lawyers[index];
+              final law = _lawyersData[index];
               final color = law["color"] as Color;
               return isMobile
-                  ? _buildMobileLawyerCard(context, law, color)
-                  : _buildDesktopLawyerRow(context, law, color);
+                  ? _buildMobileLawyerCard(context, index, law, color)
+                  : _buildDesktopLawyerRow(context, index, law, color);
             },
           ),
         ],
@@ -319,7 +371,9 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
     );
   }
 
-  Widget _buildMobileLawyerCard(BuildContext context, Map<String, dynamic> law, Color color) {
+  Widget _buildMobileLawyerCard(BuildContext context, int index, Map<String, dynamic> law, Color color) {
+    final bool hasQueue = law["casosHoy"].toString().contains("En cola");
+
     return Padding(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -345,10 +399,26 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
-                child: Text(law["estado"] as String, style: ubuntuBold.copyWith(color: color, fontSize: 9)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
+                    child: Text(law["estado"] as String, style: ubuntuBold.copyWith(color: color, fontSize: 9)),
+                  ),
+                  if (hasQueue) ...[
+                    const SizedBox(height: 3),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0D47A1).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text("+1 en cola", style: ubuntuBold.copyWith(color: const Color(0xFF0D47A1), fontSize: 8)),
+                    ),
+                  ],
+                ],
               ),
             ],
           ),
@@ -397,15 +467,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     textStyle: ubuntuMedium.copyWith(fontSize: 11),
                   ),
-                  onPressed: () {
-                    Get.snackbar(
-                      "Despacho Rápido",
-                      "Asignación directa a ${law["nombre"]}",
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: const Color(0xFF0D47A1),
-                      colorText: Colors.white,
-                    );
-                  },
+                  onPressed: () => _openAssignCaseDialog(context, index),
                 ),
               ),
             ],
@@ -415,7 +477,9 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
     );
   }
 
-  Widget _buildDesktopLawyerRow(BuildContext context, Map<String, dynamic> law, Color color) {
+  Widget _buildDesktopLawyerRow(BuildContext context, int index, Map<String, dynamic> law, Color color) {
+    final bool hasQueue = law["casosHoy"].toString().contains("En cola");
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -444,6 +508,17 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                       decoration: BoxDecoration(color: color.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(4)),
                       child: Text(law["estado"] as String, style: ubuntuBold.copyWith(color: color, fontSize: 10)),
                     ),
+                    if (hasQueue) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D47A1).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text("+1 en cola", style: ubuntuBold.copyWith(color: const Color(0xFF0D47A1), fontSize: 9)),
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -499,15 +574,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   textStyle: ubuntuMedium.copyWith(fontSize: 11),
                 ),
-                onPressed: () {
-                  Get.snackbar(
-                    "Despacho Rápido",
-                    "Asignación directa a ${law["nombre"]}",
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: const Color(0xFF0D47A1),
-                    colorText: Colors.white,
-                  );
-                },
+                onPressed: () => _openAssignCaseDialog(context, index),
               ),
             ],
           ),

@@ -13,7 +13,7 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CalendarControllerProvider<Event>(
       controller: EventController<Event>()..addAll(_events),
-      child:  const CalendarHomePage(),
+      child: const CalendarHomePage(),
     );
   }
 }
@@ -49,10 +49,16 @@ List<CalendarEventData<Event>> _events = [
   CalendarEventData(
     date: _now.add(const Duration(days: 3)),
     color: Colors.lightGreen,
-    startTime: DateTime(_now.add(const Duration(days: 3)).year,
-        _now.add(const Duration(days: 3)).month, _now.add(const Duration(days: 3)).day, 10),
-    endTime: DateTime(_now.add(const Duration(days: 3)).year,
-        _now.add(const Duration(days: 3)).month, _now.add(const Duration(days: 3)).day, 14),
+    startTime: DateTime(
+        _now.add(const Duration(days: 3)).year,
+        _now.add(const Duration(days: 3)).month,
+        _now.add(const Duration(days: 3)).day,
+        10),
+    endTime: DateTime(
+        _now.add(const Duration(days: 3)).year,
+        _now.add(const Duration(days: 3)).month,
+        _now.add(const Duration(days: 3)).day,
+        14),
     event: const Event(title: "Sprint Meeting."),
     title: "Sprint Meeting.",
     description: "Last day of project submission for last year.",

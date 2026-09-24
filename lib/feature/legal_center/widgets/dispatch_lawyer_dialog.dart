@@ -47,11 +47,17 @@ class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 500;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 24,
+        vertical: isMobile ? 16 : 24,
+      ),
       child: Container(
-        width: 520,
-        padding: const EdgeInsets.all(Dimensions.paddingSizeLarge),
+        width: isMobile ? double.infinity : 520,
+        padding: EdgeInsets.all(isMobile ? 14 : Dimensions.paddingSizeLarge),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
@@ -288,36 +294,58 @@ class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
               const SizedBox(height: 16),
               // Botones de acción
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: Text(
-                      'Cancelar',
-                      style: ubuntuMedium.copyWith(color: Theme.of(context).hintColor),
+                  if (isMobile)
+                    Expanded(
+                      flex: 2,
+                      child: OutlinedButton(
+                        onPressed: () => Get.back(),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text(
+                          'Cancelar',
+                          style: ubuntuMedium.copyWith(color: Theme.of(context).hintColor, fontSize: 11),
+                        ),
+                      ),
+                    )
+                  else ...[
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        'Cancelar',
+                        style: ubuntuMedium.copyWith(color: Theme.of(context).hintColor),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1565C0),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: isMobile ? 3 : 0,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1565C0),
+                        padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 20, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: const Icon(Icons.send_rounded, color: Colors.white, size: 16),
+                      label: Text(
+                        isMobile ? 'Despachar Ahora' : 'Confirmar Despacho Inmediato',
+                        style: ubuntuBold.copyWith(color: Colors.white, fontSize: isMobile ? 11 : 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      onPressed: () {
+                        final selectedLawyer = lawyers[selectedLawyerIndex]['name']!;
+                        Get.find<LegalCenterController>().dispatchLawyer(
+                          widget.caseItem.id,
+                          selectedLawyer,
+                          arrivalMinutes,
+                        );
+                        Get.back();
+                      },
                     ),
-                    icon: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
-                    label: Text(
-                      'Confirmar Despacho Inmediato',
-                      style: ubuntuBold.copyWith(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      final selectedLawyer = lawyers[selectedLawyerIndex]['name']!;
-                      Get.find<LegalCenterController>().dispatchLawyer(
-                        widget.caseItem.id,
-                        selectedLawyer,
-                        arrivalMinutes,
-                      );
-                      Get.back();
-                    },
                   ),
                 ],
               ),
