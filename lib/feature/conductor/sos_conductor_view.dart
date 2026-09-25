@@ -196,6 +196,70 @@ class SosConductorView extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
+                // Indicador reactivo de GPS
+                Obx(() {
+                  final estado = controller.estadoGps.value;
+                  Color colorPunto;
+                  Color colorFondo;
+                  if (estado == 'GPS activo') {
+                    colorPunto = const Color(0xFF10B981);
+                    colorFondo =
+                        const Color(0xFF10B981).withValues(alpha: 0.12);
+                  } else if (estado == 'Localizando...') {
+                    colorPunto = const Color(0xFFF59E0B);
+                    colorFondo =
+                        const Color(0xFFF59E0B).withValues(alpha: 0.12);
+                  } else {
+                    colorPunto = const Color(0xFFEF4444);
+                    colorFondo =
+                        const Color(0xFFEF4444).withValues(alpha: 0.12);
+                  }
+
+                  return GestureDetector(
+                    onTap: () {
+                      controller.capturarUbicacionInicial();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text("Reintentando conectar con satélite GPS..."),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: colorFondo,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: colorPunto,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4.5),
+                          Text(
+                            estado,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: colorPunto,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),
@@ -1104,7 +1168,7 @@ class SosConductorView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                   ),
                   onPressed: () {
-                    controller.contactarWhatsAppAbogado();
+                    controller.contactarAbogadoPorWhatsApp();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 enum TipoIncidente {
   meChoque,
@@ -72,6 +75,11 @@ class ConductorController extends GetxController {
   final Rx<bool?> hayHeridos = Rx<bool?>(null);
   final Rx<bool?> daniosGraves = Rx<bool?>(null);
 
+  // Variables reactivas de geolocalización
+  final Rx<Position?> posicionActual = Rx<Position?>(null);
+  final RxBool obteniendoUbicacion = false.obs;
+  final RxString estadoGps = 'Localizando...'.obs;
+
   // Temporizador de escalamiento (2 minutos = 120 segundos)
   final RxInt segundosRestantes = 120.obs;
   final RxBool llamadaIniciada = false.obs;
@@ -86,7 +94,7 @@ class ConductorController extends GetxController {
   // Datos del abogado asignado
   final String nombreAbogado = "Dr. Esteban Narváez";
   final String especialidadAbogado = "Especialista en Tránsito y COIP";
-  final String telefonoAbogado = "+593 99 123 4567";
+  final String telefonoAbogado = "+593 97 937 6024";
 
   // Opciones de incidentes con alto contraste táctil fuertemente tipadas
   final List<OpcionIncidente> opcionesIncidentes = const [
@@ -123,6 +131,69 @@ class ConductorController extends GetxController {
       icono: Icons.shield_outlined,
     ),
   ];
+
+  @override
+  void onInit() {
+    super.onInit();
+    capturarUbicacionInicial();
+  }
+
+  /// Captura automática de geolocalización en segundo plano sin bloquear la UI
+  Future<void> capturarUbicacionInicial() async {
+    obteniendoUbicacion.value = true;
+    estadoGps.value = 'Localizando...';
+    try {
+      if (kIsWeb) {
+        // En navegadores web (Chrome/Safari), getCurrentPosition dispara directamente
+        // el diálogo nativo de permisos del navegador (evita fallos de Permissions API en iOS/Safari).
+        final posicion = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 8),
+        );
+        posicionActual.value = posicion;
+        estadoGps.value = 'GPS activo';
+        return;
+      }
+
+      final servicioHabilitado = await Geolocator.isLocationServiceEnabled();
+      if (!servicioHabilitado) {
+        posicionActual.value = null;
+        estadoGps.value = 'Sin señal GPS';
+        obteniendoUbicacion.value = false;
+        return;
+      }
+
+      var permiso = await Geolocator.checkPermission();
+      if (permiso == LocationPermission.denied) {
+        permiso = await Geolocator.requestPermission();
+        if (permiso == LocationPermission.denied ||
+            permiso == LocationPermission.deniedForever) {
+          posicionActual.value = null;
+          estadoGps.value = 'Sin señal GPS';
+          obteniendoUbicacion.value = false;
+          return;
+        }
+      } else if (permiso == LocationPermission.deniedForever) {
+        posicionActual.value = null;
+        estadoGps.value = 'Sin señal GPS';
+        obteniendoUbicacion.value = false;
+        return;
+      }
+
+      final posicion = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 5),
+      );
+      posicionActual.value = posicion;
+      estadoGps.value = 'GPS activo';
+    } catch (e) {
+      debugPrint("[GPS] Fallo de geolocalización: $e");
+      posicionActual.value = null;
+      estadoGps.value = 'Sin señal GPS';
+    } finally {
+      obteniendoUbicacion.value = false;
+    }
+  }
 
   @override
   void onClose() {
@@ -231,23 +302,50 @@ class ConductorController extends GetxController {
     });
   }
 
-  /// Genera el enlace directo universal de WhatsApp (wa.me) con los datos del conductor y el caso
-  String obtenerEnlaceWhatsApp() {
-    final telefonoLimpio = telefonoAbogado.replaceAll(RegExp(r'[^0-9]'), '');
-    final dictamen = obtenerDictamenIA();
-    final mensaje =
-        "Hola Abogado $nombreAbogado, soy $nombreConductor de la $unidadTaxi ($cooperativa, Placa $placaVehiculo). "
-        "Reporto una emergencia vial: '${dictamen.titulo}'. "
-        "Solicito asistencia jurídica inmediata.";
-    final uri = Uri.https('wa.me', '/$telefonoLimpio', {'text': mensaje});
-    return uri.toString();
+  /// Formatea el enlace de ubicación de Google Maps o mensaje de contingencia
+  String obtenerEnlaceUbicacion() {
+    if (posicionActual.value != null) {
+      return 'https://maps.google.com/?q=${posicionActual.value!.latitude},${posicionActual.value!.longitude}';
+    }
+    return 'Ubicación no disponible al momento del incidente';
   }
 
-  /// Inicia el contacto directo por WhatsApp activando el temporizador y generando el enlace
-  void contactarWhatsAppAbogado() {
+  /// Construye el mensaje estructurado de WhatsApp con negritas y emojis
+  String obtenerMensajeWhatsApp() {
+    final dictamen = obtenerDictamenIA();
+    final ubicacion = obtenerEnlaceUbicacion();
+    return "🚨 *ALERTA SOS - ASISTENCIA LEGAL*\n"
+        "👤 *Conductor:* $nombreConductor\n"
+        "🚖 *Unidad:* $unidadTaxi - $cooperativa\n"
+        "📋 *Placa:* $placaVehiculo\n"
+        "⚖️ *Diagnóstico:* ${dictamen.titulo}\n\n"
+        "📍 *Ubicación del incidente:*\n"
+        "$ubicacion";
+  }
+
+  /// Genera el enlace directo universal de WhatsApp (wa.me) con los datos del conductor, caso y ubicación
+  String obtenerEnlaceWhatsApp() {
+    final telefonoLimpio = telefonoAbogado.replaceAll(RegExp(r'[^0-9]'), '');
+    final mensaje = obtenerMensajeWhatsApp();
+    final textoCodificado = Uri.encodeComponent(mensaje);
+    return "https://wa.me/$telefonoLimpio?text=$textoCodificado";
+  }
+
+  /// Inicia el contacto directo por WhatsApp abriendo la app externa y activando el temporizador SLA
+  Future<bool> contactarAbogadoPorWhatsApp() async {
     iniciarLlamada();
     final enlace = obtenerEnlaceWhatsApp();
-    debugPrint("Enlace WhatsApp preparado: $enlace");
+    final uri = Uri.parse(enlace);
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Método de compatibilidad hacia atrás
+  void contactarWhatsAppAbogado() {
+    contactarAbogadoPorWhatsApp();
   }
 
   // Dictamen de contención inmediata generado por IA (diferenciado para los 4 casos)

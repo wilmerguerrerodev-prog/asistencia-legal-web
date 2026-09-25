@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:getdash/controller/localization_controller.dart';
 import 'package:getdash/controller/theme_controller.dart';
@@ -178,10 +179,38 @@ void main() {
     controller.seleccionarIncidente(TipoIncidente.operativoTransito);
     final link = controller.obtenerEnlaceWhatsApp();
 
-    expect(link, startsWith('https://wa.me/593991234567?text='));
-    expect(link, contains('Carlos+Mendoza'));
-    expect(link, contains('Unidad+%2342'));
-    expect(link, contains('IBA-1234'));
-    expect(link, contains('Procedimiento+de+Control+Vial+y+Garant%C3%ADas'));
+    expect(link, startsWith('https://wa.me/593979376024?text='));
+    final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
+    expect(decodedText, contains('ALERTA SOS - ASISTENCIA LEGAL'));
+    expect(decodedText, contains('Carlos Mendoza'));
+    expect(decodedText, contains('Unidad #42 - Coo. Los Lagos'));
+    expect(decodedText, contains('IBA-1234'));
+    expect(decodedText, contains('Procedimiento de Control Vial y Garantías'));
+    expect(decodedText,
+        contains('Ubicación no disponible al momento del incidente'));
+  });
+
+  test(
+      'ConductorController.obtenerEnlaceWhatsApp includes Google Maps link when position is available',
+      () {
+    final controller = ConductorController();
+    controller.seleccionarIncidente(TipoIncidente.meChoque);
+    controller.posicionActual.value = Position(
+      latitude: -0.22985,
+      longitude: -78.52495,
+      timestamp: DateTime.now(),
+      accuracy: 5.0,
+      altitude: 2800.0,
+      altitudeAccuracy: 5.0,
+      heading: 0.0,
+      headingAccuracy: 0.0,
+      speed: 0.0,
+      speedAccuracy: 0.0,
+    );
+
+    final link = controller.obtenerEnlaceWhatsApp();
+    final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
+    expect(
+        decodedText, contains('https://maps.google.com/?q=-0.22985,-78.52495'));
   });
 }
