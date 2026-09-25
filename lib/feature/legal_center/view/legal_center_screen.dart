@@ -13,6 +13,7 @@ import '../controller/legal_center_controller.dart';
 import '../widgets/legal_realtime_table.dart';
 import '../widgets/legal_territorial_header.dart';
 import '../widgets/territory_lawyers_grid.dart';
+import '../widgets/legal_dispatch_map.dart';
 
 class LegalCenterScreen extends StatefulWidget {
   const LegalCenterScreen({super.key});
@@ -100,10 +101,15 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                               const SizedBox(height: 14),
 
                               // CONTENIDO SEGÚN LA PESTAÑA ACTIVA
-                              if (ctrl.dashboardTab == 0)
-                                // BLOQUE 2: TABLA CENTRAL DE INCIDENTES EN TIEMPO REAL
-                                const LegalRealtimeTable()
-                              else
+                              if (ctrl.dashboardTab == 0) ...[
+                                // SELECTOR DE MODO DE VISTA OPERATIVA (Dividida / Solo Tabla / Solo Mapa)
+                                _buildViewModeSelector(context, ctrl),
+
+                                const SizedBox(height: 12),
+
+                                // VISTA SINCRONIZADA: TABLA + MAPA INTERACTIVO
+                                _buildRealtimeIncidentsContent(context, ctrl),
+                              ] else
                                 // BLOQUE 3: PANEL DE SUPERVISIÓN DE ABOGADOS DE TERRITORIO
                                 const TerritoryLawyersGrid(),
 
@@ -345,5 +351,264 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         ),
       ),
     );
+  }
+
+  // --- SELECTOR DE MODO DE VISTA ADAPTATIVO: DIVIDIDA (TABLA + MAPA) | SOLO TABLA | SOLO MAPA ---
+  Widget _buildViewModeSelector(
+    BuildContext context,
+    LegalCenterController ctrl,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 520;
+
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isCompact ? 6 : 12,
+            vertical: isCompact ? 6 : 8,
+          ),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+            ),
+          ),
+          child: isCompact
+              ? Row(
+                  children: [
+                    Expanded(
+                      child: _viewModeButton(
+                        context: context,
+                        title: 'Dividida',
+                        icon: Icons.splitscreen_rounded,
+                        isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.split,
+                        isCompact: true,
+                        onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.split),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: _viewModeButton(
+                        context: context,
+                        title: 'Tabla',
+                        icon: Icons.table_chart_rounded,
+                        isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.tableOnly,
+                        isCompact: true,
+                        onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.tableOnly),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: _viewModeButton(
+                        context: context,
+                        title: 'Mapa',
+                        icon: Icons.map_rounded,
+                        isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.mapOnly,
+                        isCompact: true,
+                        onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly),
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.dashboard_customize_rounded,
+                          size: 15,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Centro de Mando:',
+                          style: ubuntuBold.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        _viewModeButton(
+                          context: context,
+                          title: 'Dividida (Tabla + Mapa)',
+                          icon: Icons.splitscreen_rounded,
+                          isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.split,
+                          onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.split),
+                        ),
+                        const SizedBox(width: 6),
+                        _viewModeButton(
+                          context: context,
+                          title: 'Solo Tabla',
+                          icon: Icons.table_chart_rounded,
+                          isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.tableOnly,
+                          onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.tableOnly),
+                        ),
+                        const SizedBox(width: 6),
+                        _viewModeButton(
+                          context: context,
+                          title: 'Solo Mapa',
+                          icon: Icons.map_rounded,
+                          isSelected: ctrl.dispatchViewMode == LegalDispatchViewMode.mapOnly,
+                          onTap: () => ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _viewModeButton({
+    required BuildContext context,
+    required String title,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+    bool isCompact = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(6),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 4 : 10,
+          vertical: isCompact ? 7 : 6,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).dividerColor.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: isSelected
+                ? Theme.of(context).primaryColor
+                : Theme.of(context).dividerColor.withValues(alpha: 0.25),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: isCompact ? MainAxisSize.max : MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: isCompact ? 12 : 13,
+              color: isSelected ? Colors.white : Theme.of(context).hintColor,
+            ),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                title,
+                style: ubuntuBold.copyWith(
+                  fontSize: isCompact ? 10 : 11,
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // --- RENDERIZADO EQUILIBRADO RESPONSIVO DE TABLA Y MAPA INTERACTIVO ---
+  Widget _buildRealtimeIncidentsContent(
+    BuildContext context,
+    LegalCenterController ctrl,
+  ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isLargeDesktop = screenWidth >= 1200;
+
+    // Altura del mapa dinámicamente adaptada al dispositivo (teléfonos, tablets y desktops)
+    final double adaptiveMapHeight;
+    if (isLargeDesktop) {
+      adaptiveMapHeight = 720;
+    } else if (screenWidth >= 768) {
+      adaptiveMapHeight = 480;
+    } else {
+      // En teléfonos (pantallas de 320px a 450px)
+      adaptiveMapHeight = (screenHeight * 0.42).clamp(290.0, 390.0);
+    }
+
+    final double fullScreenMapHeight;
+    if (screenWidth < 600) {
+      fullScreenMapHeight = (screenHeight * 0.74).clamp(420.0, 680.0);
+    } else {
+      fullScreenMapHeight = 760;
+    }
+
+    switch (ctrl.dispatchViewMode) {
+      case LegalDispatchViewMode.split:
+        if (isLargeDesktop) {
+          // Distribución en paralelo split-view de alta fidelidad para escritorio
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. Tabla reactiva de incidentes en tiempo real
+              const Expanded(
+                flex: 6,
+                child: LegalRealtimeTable(isSplitView: true),
+              ),
+              const SizedBox(width: 14),
+
+              // 2. Mapa interactivo de despacho y triage en vivo
+              Expanded(
+                flex: 5,
+                child: SizedBox(
+                  height: adaptiveMapHeight,
+                  child: LegalDispatchMap(
+                    onToggleFullScreen: () {
+                      ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly);
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else {
+          // Pantallas de smartphone, tablet o laptop compacta: apiladas armónicamente
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const LegalRealtimeTable(isSplitView: true),
+              const SizedBox(height: 14),
+              SizedBox(
+                height: adaptiveMapHeight,
+                child: LegalDispatchMap(
+                  onToggleFullScreen: () {
+                    ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly);
+                  },
+                ),
+              ),
+            ],
+          );
+        }
+
+      case LegalDispatchViewMode.tableOnly:
+        return const LegalRealtimeTable(isSplitView: false);
+
+      case LegalDispatchViewMode.mapOnly:
+        return SizedBox(
+          height: fullScreenMapHeight,
+          child: LegalDispatchMap(
+            isFullScreen: true,
+            onToggleFullScreen: () {
+              ctrl.setDispatchViewMode(LegalDispatchViewMode.split);
+            },
+          ),
+        );
+    }
   }
 }
