@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../model/legal_case_model.dart';
 
+enum LegalDispatchViewMode {
+  split,      // Vista Dividida (Tabla + Mapa)
+  tableOnly,  // Solo Tabla
+  mapOnly,    // Solo Mapa
+}
+
 class LegalCenterController extends GetxController {
   // --- DESPACHO AUTOMÁTICO POR GEORREFERENCIACIÓN (GPS SMART DISPATCH) ---
   bool _autoDispatchEnabled = true;
@@ -91,6 +97,114 @@ class LegalCenterController extends GetxController {
   // --- BUSCADOR Y ESTADO GENERAL ---
   LegalCase? _selectedCase;
   LegalCase? get selectedCase => _selectedCase;
+
+  // --- MODO DE VISUALIZACIÓN EN CENTRO DE MANDO (SPLIT VIEW / TABLA / MAPA) ---
+  LegalDispatchViewMode _dispatchViewMode = LegalDispatchViewMode.split;
+  LegalDispatchViewMode get dispatchViewMode => _dispatchViewMode;
+
+  void setDispatchViewMode(LegalDispatchViewMode mode) {
+    _dispatchViewMode = mode;
+    update();
+  }
+
+  // --- ESTADO Y CONTROL DEL MAPA INTERACTIVO (DISPATCH MAP) ---
+  double? _targetMapLat = 0.2800;
+  double? _targetMapLng = -78.2000;
+  double _targetMapZoom = 12.0;
+  int _mapMoveCounter = 0;
+
+  double? get targetMapLat => _targetMapLat;
+  double? get targetMapLng => _targetMapLng;
+  double get targetMapZoom => _targetMapZoom;
+  int get mapMoveCounter => _mapMoveCounter;
+
+  // Capas del mapa
+  bool _showIncidentsLayer = true;
+  bool _showLawyersLayer = true;
+  bool _showRoutesLayer = true;
+
+  bool get showIncidentsLayer => _showIncidentsLayer;
+  bool get showLawyersLayer => _showLawyersLayer;
+  bool get showRoutesLayer => _showRoutesLayer;
+
+  void toggleIncidentsLayer() {
+    _showIncidentsLayer = !_showIncidentsLayer;
+    update();
+  }
+
+  void toggleLawyersLayer() {
+    _showLawyersLayer = !_showLawyersLayer;
+    update();
+  }
+
+  void toggleRoutesLayer() {
+    _showRoutesLayer = !_showRoutesLayer;
+    update();
+  }
+
+  // Abogado enfocado/seleccionado en el mapa
+  TerritoryLawyer? _selectedLawyer;
+  TerritoryLawyer? get selectedLawyer => _selectedLawyer;
+
+  void selectLawyer(TerritoryLawyer? lawyer) {
+    _selectedLawyer = lawyer;
+    if (lawyer != null) {
+      animateMapToCoordinates(lawyer.lat, lawyer.lng, zoom: 15.0);
+    }
+    update();
+  }
+
+  // ID del último caso alertado / simulado para animación en mapa
+  String? _lastAlertedCaseId;
+  String? get lastAlertedCaseId => _lastAlertedCaseId;
+
+  void clearLastAlertedCase() {
+    _lastAlertedCaseId = null;
+    update();
+  }
+
+  void animateMapToCoordinates(double lat, double lng, {double zoom = 14.5}) {
+    _targetMapLat = lat;
+    _targetMapLng = lng;
+    _targetMapZoom = zoom;
+    _mapMoveCounter++;
+    update();
+  }
+
+  void animateMapToCase(LegalCase caseItem, {double zoom = 14.8}) {
+    _selectedCase = caseItem;
+    _selectedLawyer = null;
+    if (_dispatchViewMode == LegalDispatchViewMode.tableOnly) {
+      _dispatchViewMode = LegalDispatchViewMode.split;
+    }
+    animateMapToCoordinates(caseItem.lat, caseItem.lng, zoom: zoom);
+  }
+
+  void resetMapToDefaultBounds() {
+    // Centro geográfico de Imbabura (Otavalo - Ibarra)
+    _targetMapLat = 0.2800;
+    _targetMapLng = -78.2000;
+    _targetMapZoom = 11.8;
+    _mapMoveCounter++;
+    update();
+  }
+
+  TerritoryLawyer? getAssignedLawyerForCase(LegalCase caseItem) {
+    if (caseItem.abogadoAsignado == null || caseItem.abogadoAsignado!.isEmpty) {
+      return null;
+    }
+    final target = caseItem.abogadoAsignado!.toLowerCase().trim();
+    try {
+      return _lawyers.firstWhere(
+        (l) =>
+            l.nombre.toLowerCase().trim() == target ||
+            target.contains(l.nombre.toLowerCase().trim()) ||
+            l.nombre.toLowerCase().trim().contains(target),
+      );
+    } catch (_) {
+      return null;
+    }
+  }
 
   int _mobileTabIndex = 0; // 0: Lista de Casos, 1: Expediente 360
   int get mobileTabIndex => _mobileTabIndex;
@@ -552,6 +666,25 @@ class LegalCenterController extends GetxController {
   void selectCanton(String canton) {
     _selectedCanton = canton;
     _ensureValidCaseSelection();
+    switch (canton.toLowerCase()) {
+      case 'otavalo':
+        animateMapToCoordinates(0.2338, -78.2612, zoom: 13.5);
+        break;
+      case 'ibarra':
+        animateMapToCoordinates(0.3517, -78.1223, zoom: 13.5);
+        break;
+      case 'cotacachi':
+        animateMapToCoordinates(0.2980, -78.2620, zoom: 13.5);
+        break;
+      case 'quito':
+        animateMapToCoordinates(-0.1807, -78.4678, zoom: 13.0);
+        break;
+      case 'cayambe':
+        animateMapToCoordinates(0.0420, -78.1450, zoom: 13.0);
+        break;
+      default:
+        resetMapToDefaultBounds();
+    }
     update();
   }
 
@@ -569,6 +702,7 @@ class LegalCenterController extends GetxController {
     _activeKpiFilter = null;
     searchController.clear();
     _ensureValidCaseSelection();
+    resetMapToDefaultBounds();
     update();
   }
 
@@ -588,10 +722,14 @@ class LegalCenterController extends GetxController {
     update();
   }
 
-  void selectCase(LegalCase caseItem, {bool isMobile = false}) {
+  void selectCase(LegalCase caseItem, {bool isMobile = false, bool moveMap = true}) {
     _selectedCase = caseItem;
+    _selectedLawyer = null;
     if (isMobile) {
       _mobileTabIndex = 1;
+    }
+    if (moveMap) {
+      animateMapToCoordinates(caseItem.lat, caseItem.lng, zoom: 14.8);
     }
     update();
   }
@@ -1096,7 +1234,7 @@ class LegalCenterController extends GetxController {
   }
 
   // --- BOTÓN DE SIMULACIÓN PARA DEMOS EN VIVO ---
-  void simulateIncomingDriverAlert() {
+  void simulateIncomingDriverAlert({bool notifySnackbar = true}) {
     final newCase = LegalCase(
       id: '#CASO-${1043 + _cases.length}',
       taxistaNombre: 'Patricio Guanoluisa',
@@ -1148,39 +1286,46 @@ class LegalCenterController extends GetxController {
 
     _cases.insert(0, newCase);
     _selectedCase = newCase;
+    _selectedLawyer = null;
+    _lastAlertedCaseId = newCase.id;
     _selectedProvince = 'Imbabura';
     _selectedCanton = 'Todos';
     _selectedCooperative = 'Todas';
     _activeKpiFilter = null;
     _dashboardTab = 0; // Mostrar tabla de incidentes
+    animateMapToCoordinates(newCase.lat, newCase.lng, zoom: 15.0);
 
     if (_autoDispatchEnabled) {
       autoDispatchCase(newCase, notifySnackbar: false);
       update();
 
-      Get.snackbar(
-        '🚨 ¡SOS ENTRADA + ⚡ DESPACHO GPS AUTOMÁTICO!',
-        'Conductor ${newCase.taxistaNombre} (Los Lagos • Otavalo). Asignado de inmediato a ${newCase.abogadoAsignado} (${newCase.distanciaAbogadoKm} km • ${newCase.horaDespacho}).',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFFC62828),
-        colorText: Colors.white,
-        icon: const Icon(Icons.bolt_rounded, color: Colors.amber, size: 30),
-        duration: const Duration(seconds: 7),
-        margin: const EdgeInsets.all(16),
-      );
+      if (notifySnackbar && Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '🚨 ¡SOS ENTRADA + ⚡ DESPACHO GPS AUTOMÁTICO!',
+          'Conductor ${newCase.taxistaNombre} (Los Lagos • Otavalo). Asignado de inmediato a ${newCase.abogadoAsignado} (${newCase.distanciaAbogadoKm} km • ${newCase.horaDespacho}).',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFFC62828),
+          colorText: Colors.white,
+          icon: const Icon(Icons.bolt_rounded, color: Colors.amber, size: 30),
+          duration: const Duration(seconds: 7),
+          margin: const EdgeInsets.all(16),
+        );
+      }
     } else {
       update();
 
-      Get.snackbar(
-        '🚨 ¡NUEVA ALERTA CÓDIGO ROJO EN OTAVALO (MODO MANUAL)!',
-        'Conductor Patricio Guanoluisa (Unidad 99 - Los Lagos). En espera de asignación manual por el operador.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFFC62828),
-        colorText: Colors.white,
-        icon: const Icon(Icons.notification_important, color: Colors.white, size: 30),
-        duration: const Duration(seconds: 6),
-        margin: const EdgeInsets.all(16),
-      );
+      if (notifySnackbar && Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '🚨 ¡NUEVA ALERTA CÓDIGO ROJO EN OTAVALO (MODO MANUAL)!',
+          'Conductor Patricio Guanoluisa (Unidad 99 - Los Lagos). En espera de asignación manual por el operador.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFFC62828),
+          colorText: Colors.white,
+          icon: const Icon(Icons.notification_important, color: Colors.white, size: 30),
+          duration: const Duration(seconds: 6),
+          margin: const EdgeInsets.all(16),
+        );
+      }
     }
   }
 }

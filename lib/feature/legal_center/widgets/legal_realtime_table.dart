@@ -9,7 +9,12 @@ import 'legal_call_dialog.dart';
 import 'legal_case_detail_dialog.dart';
 
 class LegalRealtimeTable extends StatelessWidget {
-  const LegalRealtimeTable({super.key});
+  final bool isSplitView;
+
+  const LegalRealtimeTable({
+    super.key,
+    this.isSplitView = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -381,11 +386,15 @@ class LegalRealtimeTable extends StatelessWidget {
         children: [
           Icon(alert.icon, size: 13, color: alert.color),
           const SizedBox(width: 4),
-          Text(
-            alert.label,
-            style: ubuntuBold.copyWith(
-              fontSize: 10,
-              color: alert.color,
+          Flexible(
+            child: Text(
+              alert.label,
+              style: ubuntuBold.copyWith(
+                fontSize: 10,
+                color: alert.color,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -667,11 +676,32 @@ class LegalRealtimeTable extends StatelessWidget {
     );
   }
 
-  // 6. Botones de Acción (Llamada rápida + Expediente)
+  // 6. Botones de Acción (Mapa + Llamada rápida + Expediente)
   Widget _buildActionButtons(BuildContext context, LegalCase c) {
+    final controller = Get.find<LegalCenterController>();
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // BOTÓN CENTRAR EN MAPA
+        IconButton(
+          tooltip: 'Centrar en Mapa Satelital',
+          icon: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D47A1).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Icon(
+              Icons.location_searching_rounded,
+              color: Color(0xFF0D47A1),
+              size: 16,
+            ),
+          ),
+          onPressed: () => controller.animateMapToCase(c),
+        ),
+        const SizedBox(width: 4),
+
         // BOTÓN LLAMADA RÁPIDA
         IconButton(
           tooltip: 'Llamada Rápida Inmediata',
@@ -735,19 +765,24 @@ class LegalRealtimeTable extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      _buildAlertBadge(c),
-                      const SizedBox(width: 8),
-                      Text(
-                        c.id,
-                        style: ubuntuBold.copyWith(
-                          fontSize: Dimensions.fontSizeSmall,
-                          color: Theme.of(context).primaryColor,
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: _buildAlertBadge(c),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 6),
+                        Text(
+                          c.id,
+                          style: ubuntuBold.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 6),
                   Text(
                     c.horaReporte,
                     style: ubuntuRegular.copyWith(
@@ -815,20 +850,86 @@ class LegalRealtimeTable extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // Selector de abogado y acciones
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildLawyerAssignmentSelector(context, controller, c),
-                  ),
-                  const SizedBox(width: 8),
-                  _buildActionButtons(context, c),
-                ],
-              ),
+              // Selector de abogado (fila completa para teléfonos)
+              _buildLawyerAssignmentSelector(context, controller, c),
+              const SizedBox(height: 8),
+
+              // Botones de acción adaptativos (Mapa, Llamar, Expediente)
+              _buildMobileActionRow(context, controller, c),
             ],
           ),
         );
       },
+    );
+  }
+
+  // --- BOTONES DE ACCIÓN PARA MÓVIL (Touch targets ergonómicos y sin desbordamiento) ---
+  Widget _buildMobileActionRow(
+    BuildContext context,
+    LegalCenterController controller,
+    LegalCase c,
+  ) {
+    return Row(
+      children: [
+        // BOTÓN CENTRAR EN MAPA
+        Expanded(
+          flex: 4,
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFF0D47A1),
+              side: const BorderSide(color: Color(0xFF0D47A1)),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              minimumSize: const Size(0, 36),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            icon: const Icon(Icons.location_searching_rounded, size: 14),
+            label: Text(
+              'Mapa',
+              style: ubuntuBold.copyWith(fontSize: 11, color: const Color(0xFF0D47A1)),
+            ),
+            onPressed: () => controller.animateMapToCase(c),
+          ),
+        ),
+        const SizedBox(width: 6),
+
+        // BOTÓN LLAMADA RÁPIDA
+        IconButton(
+          tooltip: 'Llamada Rápida',
+          style: IconButton.styleFrom(
+            backgroundColor: const Color(0xFF2E7D32).withValues(alpha: 0.12),
+            foregroundColor: const Color(0xFF2E7D32),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+            padding: const EdgeInsets.all(8),
+            minimumSize: const Size(36, 36),
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          icon: const Icon(Icons.phone_in_talk_rounded, size: 16),
+          onPressed: () => LegalCallDialog.show(context, c),
+        ),
+        const SizedBox(width: 6),
+
+        // BOTÓN EXPEDIENTE
+        Expanded(
+          flex: 5,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+              minimumSize: const Size(0, 36),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            icon: const Icon(Icons.folder_shared_outlined, size: 14, color: Colors.white),
+            label: Text(
+              'Expediente',
+              style: ubuntuBold.copyWith(fontSize: 11, color: Colors.white),
+            ),
+            onPressed: () => LegalCaseDetailDialog.show(context, c),
+          ),
+        ),
+      ],
     );
   }
 }
