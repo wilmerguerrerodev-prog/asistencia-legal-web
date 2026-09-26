@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
@@ -10,6 +11,7 @@ import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import '../controller/legal_center_controller.dart';
+import '../widgets/legal_mobile_nav_header.dart';
 import '../widgets/legal_realtime_table.dart';
 import '../widgets/legal_territorial_header.dart';
 import '../widgets/territory_lawyers_grid.dart';
@@ -57,8 +59,75 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
+    // ==========================================
+    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
+    // ==========================================
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: const LegalMobileNavHeader(
+          activeIndex: 0,
+          title: "Monitor Legal",
+          subtitle: "Mando territorial y despacho en vía",
+        ),
+        body: GetBuilder<LegalCenterController>(
+          builder: (ctrl) {
+            return RefreshIndicator(
+              color: const Color(0xFF1D4ED8),
+              onRefresh: () async {
+                HapticFeedback.lightImpact();
+                ctrl.update();
+                await Future.delayed(const Duration(milliseconds: 350));
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeDefault,
+                  vertical: Dimensions.paddingSizeSmall,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // BANNER DE ENCABEZADO EJECUTIVO
+                    _buildExecutiveHeader(context, true),
+
+                    const SizedBox(height: 12),
+
+                    // BLOQUE 1: CABECERA DE FILTROS TERRITORIALES Y KPIS
+                    const LegalTerritorialHeader(),
+
+                    const SizedBox(height: 14),
+
+                    // SELECTOR DE PESTAÑAS (Incidentes vs Abogados)
+                    _buildDashboardTabsSelector(context, ctrl),
+
+                    const SizedBox(height: 12),
+
+                    // CONTENIDO SEGÚN LA PESTAÑA ACTIVA
+                    if (ctrl.dashboardTab == 0) ...[
+                      _buildViewModeSelector(context, ctrl),
+                      const SizedBox(height: 12),
+                      _buildRealtimeIncidentsContent(context, ctrl),
+                    ] else
+                      const TerritoryLawyersGrid(),
+
+                    const SizedBox(height: 36),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    // ==========================================
+    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
+    // ==========================================
     return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
+      drawer: null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -85,34 +154,18 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // BANNER DE ENCABEZADO EJECUTIVO
-                              _buildExecutiveHeader(context, isMobile),
-
+                              _buildExecutiveHeader(context, false),
                               const SizedBox(height: 14),
-
-                              // BLOQUE 1: CABECERA DE FILTROS TERRITORIALES Y KPIS
                               const LegalTerritorialHeader(),
-
                               const SizedBox(height: 16),
-
-                              // SELECTOR DE PESTAÑAS EJECUTIVAS (Bloque 2 vs Bloque 3)
                               _buildDashboardTabsSelector(context, ctrl),
-
                               const SizedBox(height: 14),
-
-                              // CONTENIDO SEGÚN LA PESTAÑA ACTIVA
                               if (ctrl.dashboardTab == 0) ...[
-                                // SELECTOR DE MODO DE VISTA OPERATIVA (Dividida / Solo Tabla / Solo Mapa)
                                 _buildViewModeSelector(context, ctrl),
-
                                 const SizedBox(height: 12),
-
-                                // VISTA SINCRONIZADA: TABLA + MAPA INTERACTIVO
                                 _buildRealtimeIncidentsContent(context, ctrl),
                               ] else
-                                // BLOQUE 3: PANEL DE SUPERVISIÓN DE ABOGADOS DE TERRITORIO
                                 const TerritoryLawyersGrid(),
-
                               const SizedBox(height: 24),
                               const FooterSection(),
                             ],

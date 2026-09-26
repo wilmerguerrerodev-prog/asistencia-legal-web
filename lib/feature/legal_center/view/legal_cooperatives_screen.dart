@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
@@ -9,6 +10,7 @@ import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
+import '../widgets/legal_mobile_nav_header.dart';
 
 class LegalCooperativesScreen extends StatefulWidget {
   const LegalCooperativesScreen({super.key});
@@ -44,8 +46,53 @@ class _LegalCooperativesScreenState extends State<LegalCooperativesScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
+    // ==========================================
+    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
+    // ==========================================
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: const LegalMobileNavHeader(
+          activeIndex: 3,
+          title: "Cooperativas & Flotas",
+          subtitle: "Gestión de unidades y convenios",
+        ),
+        body: RefreshIndicator(
+          color: const Color(0xFF1D4ED8),
+          onRefresh: () async {
+            HapticFeedback.lightImpact();
+            setState(() {});
+            await Future.delayed(const Duration(milliseconds: 350));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Dimensions.paddingSizeDefault,
+              vertical: Dimensions.paddingSizeSmall,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 12),
+                _buildKPIs(context),
+                const SizedBox(height: 12),
+                _buildCooperativesGrid(context),
+                const SizedBox(height: 36),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // ==========================================
+    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
+    // ==========================================
     return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
+      drawer: null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(

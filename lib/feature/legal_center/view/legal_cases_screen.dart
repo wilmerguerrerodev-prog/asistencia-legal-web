@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
@@ -13,6 +14,7 @@ import '../controller/legal_center_controller.dart';
 import '../model/legal_case_model.dart';
 import '../widgets/cooperative_filter_chips.dart';
 import '../widgets/expediente_360_panel.dart';
+import '../widgets/legal_mobile_nav_header.dart';
 
 class LegalCasesScreen extends StatefulWidget {
   const LegalCasesScreen({super.key});
@@ -60,8 +62,60 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
+    // ==========================================
+    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
+    // ==========================================
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: const LegalMobileNavHeader(
+          activeIndex: 1,
+          title: "Siniestros & Casos",
+          subtitle: "Expedientes viales en tiempo real",
+        ),
+        body: GetBuilder<LegalCenterController>(
+          builder: (ctrl) {
+            final cases = _getFilteredCases(ctrl);
+            return RefreshIndicator(
+              color: const Color(0xFF1D4ED8),
+              onRefresh: () async {
+                HapticFeedback.lightImpact();
+                ctrl.update();
+                await Future.delayed(const Duration(milliseconds: 350));
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingSizeDefault,
+                  vertical: Dimensions.paddingSizeSmall,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(context),
+                    const SizedBox(height: 12),
+                    _buildStatusMetrics(context, ctrl),
+                    const SizedBox(height: 12),
+                    const CooperativeFilterChips(),
+                    const SizedBox(height: 12),
+                    _buildCasesTableCard(context, cases, ctrl),
+                    const SizedBox(height: 36),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    // ==========================================
+    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
+    // ==========================================
     return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
+      drawer: null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -559,14 +613,121 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
 
   void _showExpedienteModal(BuildContext context, LegalCase c) {
     final isMobile = ResponsiveHelper.isMobile(context);
+
+    // En móviles: Modal Bottom Sheet arrastrable fluido
+    if (isMobile) {
+      HapticFeedback.mediumImpact();
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (ctx) => DraggableScrollableSheet(
+          initialChildSize: 0.88,
+          minChildSize: 0.45,
+          maxChildSize: 0.95,
+          builder: (sheetContext, scrollController) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: const Offset(0, -6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                // Indicador de arrastre táctil (drag handle)
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10, bottom: 8),
+                    width: 44,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+
+                // Encabezado móvil del expediente
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D47A1).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.folder_shared_rounded,
+                          color: Color(0xFF1D4ED8),
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Expediente 360° • ${c.id}",
+                              style: ubuntuBold.copyWith(fontSize: 14),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              "${c.cooperativa} · Unidad ${c.unidad}",
+                              style: ubuntuRegular.copyWith(
+                                fontSize: 11,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color
+                                    ?.withValues(alpha: 0.65),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close_rounded, size: 20),
+                        onPressed: () => Navigator.pop(ctx),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+
+                // Contenido del Expediente con scroll táctil
+                Expanded(
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(14),
+                    child: Expediente360Panel(caseItem: c),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Modo Escritorio / Web (Dialog centrado)
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Dimensions.radiusDefault)),
-        insetPadding: EdgeInsets.all(isMobile ? 10 : 24),
+        insetPadding: const EdgeInsets.all(24),
         child: SizedBox(
-          width: isMobile ? double.infinity : 750,
-          height: isMobile ? MediaQuery.of(context).size.height * 0.88 : 650,
+          width: 750,
+          height: 650,
           child: Column(
             children: [
               Container(
@@ -586,7 +747,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                           Expanded(
                             child: Text(
                               "Expediente Digital 360° • ${c.id}",
-                              style: ubuntuBold.copyWith(fontSize: isMobile ? 13 : 15),
+                              style: ubuntuBold.copyWith(fontSize: 15),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
