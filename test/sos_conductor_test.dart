@@ -75,7 +75,7 @@ void main() {
     // -------------------------------------------------------------
     // CASO 2: Me choqué (Evaluación de fallecido, heridos y daños)
     // -------------------------------------------------------------
-    await tapVisible('Reevaluar');
+    await tapVisible('Regresar');
 
     expect(find.text('Me choqué'), findsOneWidget);
     await tapVisible('Me choqué');
@@ -93,8 +93,8 @@ void main() {
     expect(find.text('Accidente de Tránsito con Persona Fallecida'),
         findsOneWidget);
 
-    // Reevaluar y probar HERIDOS -> Alerta Penal Lesiones (Art. 379 COIP)
-    await tapVisible('Reevaluar');
+    // Regresar y probar HERIDOS -> Alerta Penal Lesiones (Art. 379 COIP)
+    await tapVisible('Regresar');
     await tapVisible('HAY PERSONAS HERIDAS');
 
     expect(find.text('ALERTA PENAL PRIORITARIA — LESIONES'), findsOneWidget);
@@ -103,8 +103,8 @@ void main() {
             'Accidente con Víctimas Heridas (Presunto Delito de Lesiones)'),
         findsOneWidget);
 
-    // Reevaluar y probar SOLO DAÑOS -> Pasa a evaluación vehicular
-    await tapVisible('Reevaluar');
+    // Regresar y probar SOLO DAÑOS -> Pasa a evaluación vehicular
+    await tapVisible('Regresar');
     await tapVisible('NO, SOLO DAÑOS / LATA');
 
     expect(find.text('SÍ, VEHÍCULO INMOVILIZADO'), findsOneWidget);
@@ -213,4 +213,133 @@ void main() {
     expect(
         decodedText, contains('https://maps.google.com/?q=-0.22985,-78.52495'));
   });
+
+  testWidgets(
+      'SosConductorView: Asignación por cercanía en Paso 3 y escalamiento al Super Abogado Dr. Emir Vásquez',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(375, 812);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        theme: light,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: SosConductorView(isEmbeddedInDashboard: true),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // 1. Verificar que en reposo NO hay abogado asignado fijo debajo de documentos
+    expect(find.text('Documentos'), findsOneWidget);
+    expect(find.text('Credencial'), findsNothing);
+    expect(find.text('Dr. Esteban Narváez'), findsNothing);
+    expect(find.text('Dr. Emir Vásquez'), findsNothing);
+
+    // 2. Avanzar a Paso 3 (Dictamen): Asignación automática del abogado más cercano
+    final opcionOperativo =
+        find.text('Operativo de Tránsito / Retención Ilegal');
+    await tester.ensureVisible(opcionOperativo);
+    await tester.tap(opcionOperativo);
+    await tester.pumpAndSettle();
+
+    // En Paso 3 aparece automáticamente el abogado de zona más cercano (Dr. Esteban Narváez)
+    expect(find.text('Dr. Esteban Narváez'), findsOneWidget);
+    expect(find.textContaining('A 1.2 km de tu incidente'), findsNothing);
+    expect(find.text('Contactar con abogado'), findsOneWidget);
+
+    // Abrir credencial del abogado de zona
+    final pillVerCredencial = find.text('Ver credencial ›');
+    await tester.ensureVisible(pillVerCredencial);
+    await tester.tap(pillVerCredencial);
+    await tester.pumpAndSettle();
+
+    expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
+    expect(find.text('Dr. Esteban Narváez'), findsWidgets);
+    expect(find.text('FORMACIÓN ACADÉMICA (SENESCYT)'), findsOneWidget);
+    expect(find.text('TRAYECTORIA Y RESPALDO'), findsOneWidget);
+    expect(find.text('Cerrar credencial'), findsOneWidget);
+
+    // Cerrar credencial
+    await tester.tap(find.byKey(const Key('btn_cerrar_credencial_modal')));
+    await tester.pumpAndSettle();
+    expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsNothing);
+
+    // 3. Iniciar contacto con abogado de zona: se activa temporizador de 1 minuto
+    final btnContactarZona = find.text('Contactar con abogado');
+    await tester.ensureVisible(btnContactarZona);
+    await tester.tap(btnContactarZona);
+    await tester.pump();
+
+    expect(find.textContaining('Esperando respuesta'), findsOneWidget);
+    expect(find.text('¿No contesta? Conectar con otro abogado ahora'),
+        findsOneWidget);
+
+    // 4. Escalar caso al Dr. Emir Vásquez
+    final btnEscalar = find.text('¿No contesta? Conectar con otro abogado ahora');
+    await tester.ensureVisible(btnEscalar);
+    await tester.tap(btnEscalar);
+    await tester.pumpAndSettle();
+
+    // Verificar que el caso ahora está a cargo de Dr. Emir Vásquez (sin etiquetas redundantes)
+    expect(find.text('Dr. Emir Vásquez'), findsOneWidget);
+    expect(find.text('Caso asignado a otro abogado'), findsNothing);
+    expect(find.text('Contactar con Dr. Emir Vásquez'), findsOneWidget);
+
+    // 5. Abrir credencial del Dr. Emir Vásquez
+    final pillVerCredencialSuper = find.text('Ver credencial ›');
+    await tester.ensureVisible(pillVerCredencialSuper);
+    await tester.tap(pillVerCredencialSuper);
+    await tester.pumpAndSettle();
+
+    expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
+    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
+    expect(
+        find.text('Doctor en Jurisprudencia y Abogado de la República'),
+        findsOneWidget);
+    expect(find.text('Matrícula F.A. 17-2010-415 · Pichincha / Corte Nacional'),
+        findsOneWidget);
+    expect(find.text('Director Jurídico Nacional'), findsWidgets);
+    expect(find.text('Vásquez & Asociados · Despacho Matriz Nacional'),
+        findsWidgets);
+  });
+
+  test(
+      'ConductorController: Temporizador de 1 minuto (60s) y escalamiento al Dr. Emir Vásquez',
+      () {
+    final controller = ConductorController();
+    expect(controller.abogadoActivo.nombre, 'Dr. Esteban Narváez');
+    expect(controller.segundosRestantes.value, 60);
+    expect(controller.casoEscaladoASuperAbogado.value, false);
+
+    controller.iniciarLlamada();
+    expect(controller.llamadaIniciada.value, true);
+    expect(controller.segundosRestantes.value, 60);
+
+    // Escalar al Dr. Emir Vásquez
+    controller.escalarASuperAbogado();
+    expect(controller.casoEscaladoASuperAbogado.value, true);
+    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
+    expect(controller.abogadoActivo.esSuperAbogado, true);
+    expect(controller.telefonoAbogado, '+593 99 876 5432');
+    expect(controller.matriculaAbogado,
+        '17-2010-415 · Pichincha / Corte Nacional');
+
+    // Comprobar que el mensaje de WhatsApp se actualiza con los datos del Dr. Emir Vásquez
+    final mensaje = controller.obtenerMensajeWhatsApp();
+    expect(mensaje, contains('TRANSFERIDO A DR. EMIR VÁSQUEZ'));
+    expect(controller.obtenerEnlaceWhatsApp(), startsWith('https://wa.me/593998765432'));
+
+    // Reiniciar flujo y verificar regreso a estado inicial con abogado de zona
+    controller.reiniciarFlujo();
+    expect(controller.casoEscaladoASuperAbogado.value, false);
+    expect(controller.abogadoActivo.nombre, 'Dr. Esteban Narváez');
+    expect(controller.segundosRestantes.value, 60);
+    expect(controller.llamadaIniciada.value, false);
+  });
 }
+

@@ -58,6 +58,42 @@ class DictamenLegal {
   });
 }
 
+class AbogadoDefensor {
+  final String nombre;
+  final String rol;
+  final String zonaODistancia;
+  final String especialidad;
+  final String telefono;
+  final String matricula;
+  final String entidadAcreditadora;
+  final String universidad;
+  final String tituloGrado;
+  final String especialidadPosgrado;
+  final String maestria;
+  final String experiencia;
+  final String casosAtendidos;
+  final String despacho;
+  final bool esSuperAbogado;
+
+  const AbogadoDefensor({
+    required this.nombre,
+    required this.rol,
+    required this.zonaODistancia,
+    required this.especialidad,
+    required this.telefono,
+    required this.matricula,
+    required this.entidadAcreditadora,
+    required this.universidad,
+    required this.tituloGrado,
+    required this.especialidadPosgrado,
+    required this.maestria,
+    required this.experiencia,
+    required this.casosAtendidos,
+    required this.despacho,
+    this.esSuperAbogado = false,
+  });
+}
+
 class ConductorController extends GetxController {
   // Paso del flujo (0 = Tipo Incidente, 1 = Triage Binario, 2 = Dictamen IA y Llamada)
   final RxInt pasoActual = 0.obs;
@@ -80,9 +116,10 @@ class ConductorController extends GetxController {
   final RxBool obteniendoUbicacion = false.obs;
   final RxString estadoGps = 'Localizando...'.obs;
 
-  // Temporizador de escalamiento (2 minutos = 120 segundos)
-  final RxInt segundosRestantes = 120.obs;
+  // Temporizador de escalamiento SLA (1 minuto = 60 segundos)
+  final RxInt segundosRestantes = 60.obs;
   final RxBool llamadaIniciada = false.obs;
+  final RxBool casoEscaladoASuperAbogado = false.obs;
   Timer? _timerEscalamiento;
 
   // Datos del conductor
@@ -91,10 +128,65 @@ class ConductorController extends GetxController {
   final String cooperativa = "Coo. Los Lagos";
   final String placaVehiculo = "IBA-1234";
 
-  // Datos del abogado asignado
-  final String nombreAbogado = "Dr. Esteban Narváez";
-  final String especialidadAbogado = "Especialista en Tránsito y COIP";
-  final String telefonoAbogado = "+593 97 937 6024";
+  // Abogado de zona más cercano (asignado automáticamente según geolocalización del incidente)
+  final AbogadoDefensor abogadoZona = const AbogadoDefensor(
+    nombre: "Dr. Esteban Narváez",
+    rol: "Abogado de Zona Asignado (Más cercano)",
+    zonaODistancia: "En territorio · A 1.2 km del incidente",
+    especialidad: "Especialista en Tránsito, Peritajes y COIP",
+    telefono: "+593 97 937 6024",
+    matricula: "17-2018-842 · Pichincha",
+    entidadAcreditadora: "Consejo de la Judicatura del Ecuador",
+    universidad: "Universidad Central del Ecuador",
+    tituloGrado: "Abogado de los Tribunales y Juzgados de la República",
+    especialidadPosgrado: "Especialista Superior en Derecho Penal y Tránsito (COIP)",
+    maestria: "Magíster en Litigación Oral y Solución de Controversias",
+    experiencia: "+12 años defendiendo a transportistas y conductores",
+    casosAtendidos: "Más de 450 peritajes y audiencias de tránsito",
+    despacho: "Red LegalTech · Auxilio Inmediato en Territorio",
+    esSuperAbogado: false,
+  );
+
+  // Super Abogado (Director General titular que contrató y respalda el servicio)
+  final AbogadoDefensor superAbogado = const AbogadoDefensor(
+    nombre: "Dr. Emir Vásquez",
+    rol: "Director Jurídico Nacional",
+    zonaODistancia: "Dirección Jurídica General · Despacho Matriz",
+    especialidad: "Director General de Asistencia Legal para Conductores",
+    telefono: "+593 99 876 5432",
+    matricula: "17-2010-415 · Pichincha / Corte Nacional",
+    entidadAcreditadora: "Consejo de la Judicatura del Ecuador",
+    universidad: "Universidad Central del Ecuador",
+    tituloGrado: "Doctor en Jurisprudencia y Abogado de la República",
+    especialidadPosgrado: "Especialista en Derecho Procesal Penal y Casación en Tránsito",
+    maestria: "Master en Litigación Estratégica y Ciencias Penales",
+    experiencia: "+20 años liderando la defensa de cooperativas y transportistas",
+    casosAtendidos: "Más de 1.800 defensas penales y peritajes viales resueltos",
+    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    esSuperAbogado: true,
+  );
+
+  // Abogado activo según estado de escalamiento (de zona o Super Abogado)
+  AbogadoDefensor get abogadoActivo =>
+      casoEscaladoASuperAbogado.value ? superAbogado : abogadoZona;
+
+  // Propiedades dinámicas compatibles con las vistas
+  String get nombreAbogado => abogadoActivo.nombre;
+  String get especialidadAbogado => abogadoActivo.especialidad;
+  String get telefonoAbogado => abogadoActivo.telefono;
+  String get matriculaAbogado => abogadoActivo.matricula;
+  String get entidadAcreditadora => abogadoActivo.entidadAcreditadora;
+  String get universidadAbogado => abogadoActivo.universidad;
+  String get tituloGrado => abogadoActivo.tituloGrado;
+  String get especialidadPosgrado => abogadoActivo.especialidadPosgrado;
+  String get maestriaAbogado => abogadoActivo.maestria;
+  String get experienciaAbogado => abogadoActivo.experiencia;
+  String get casosAtendidos => abogadoActivo.casosAtendidos;
+  String get despachoAbogado => abogadoActivo.despacho;
+  String get rolAbogado => abogadoActivo.rol;
+  String get zonaODistanciaAbogado => abogadoActivo.zonaODistancia;
+  bool get esSuperAbogado => abogadoActivo.esSuperAbogado;
+
 
   // Opciones de incidentes con alto contraste táctil fuertemente tipadas
   final List<OpcionIncidente> opcionesIncidentes = const [
@@ -251,7 +343,11 @@ class ConductorController extends GetxController {
 
   // Retroceder en el Wizard
   void retrocederPaso() {
+    _timerEscalamiento?.cancel();
+    llamadaIniciada.value = false;
     if (pasoActual.value == 2) {
+      casoEscaladoASuperAbogado.value = false;
+      segundosRestantes.value = 60;
       if (tipoSeleccionado.value == TipoIncidente.operativoTransito) {
         pasoActual.value = 0;
       } else if (tipoSeleccionado.value ==
@@ -279,7 +375,8 @@ class ConductorController extends GetxController {
   void reiniciarFlujo() {
     _timerEscalamiento?.cancel();
     llamadaIniciada.value = false;
-    segundosRestantes.value = 120;
+    casoEscaladoASuperAbogado.value = false;
+    segundosRestantes.value = 60;
     pasoActual.value = 0;
     subPasoTriage.value = 0;
     tipoSeleccionado.value = null;
@@ -288,18 +385,27 @@ class ConductorController extends GetxController {
     daniosGraves.value = null;
   }
 
-  // Simulación de llamada directa con temporizador de escalamiento
+  // Simulación de llamada directa con temporizador de escalamiento (1 minuto = 60 segundos)
   void iniciarLlamada() {
+    if (casoEscaladoASuperAbogado.value) return;
     llamadaIniciada.value = true;
     _timerEscalamiento?.cancel();
-    segundosRestantes.value = 120;
+    segundosRestantes.value = 60;
     _timerEscalamiento = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (segundosRestantes.value > 0) {
         segundosRestantes.value--;
       } else {
         timer.cancel();
+        escalarASuperAbogado();
       }
     });
+  }
+
+  /// Escalamiento automático o manual al Super Abogado (Dr. Emir Vásquez)
+  void escalarASuperAbogado() {
+    _timerEscalamiento?.cancel();
+    casoEscaladoASuperAbogado.value = true;
+    llamadaIniciada.value = false;
   }
 
   /// Formatea el enlace de ubicación de Google Maps o mensaje de contingencia
@@ -314,7 +420,10 @@ class ConductorController extends GetxController {
   String obtenerMensajeWhatsApp() {
     final dictamen = obtenerDictamenIA();
     final ubicacion = obtenerEnlaceUbicacion();
-    return "🚨 *ALERTA SOS - ASISTENCIA LEGAL*\n"
+    final encabezado = casoEscaladoASuperAbogado.value
+        ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (TRANSFERIDO A DR. EMIR VÁSQUEZ)*"
+        : "🚨 *ALERTA SOS - ASISTENCIA LEGAL*";
+    return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
         "🚖 *Unidad:* $unidadTaxi - $cooperativa\n"
         "📋 *Placa:* $placaVehiculo\n"
@@ -343,6 +452,18 @@ class ConductorController extends GetxController {
     }
   }
 
+  /// Inicia llamada telefónica directa al número del abogado
+  Future<bool> llamarAbogadoPorTelefono() async {
+    iniciarLlamada();
+    final telefonoLimpio = telefonoAbogado.replaceAll(RegExp(r'[^0-9+]'), '');
+    final uri = Uri.parse("tel:$telefonoLimpio");
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Método de compatibilidad hacia atrás
   void contactarWhatsAppAbogado() {
     contactarAbogadoPorWhatsApp();
@@ -353,6 +474,8 @@ class ConductorController extends GetxController {
     final tipo = tipoSeleccionado.value ?? TipoIncidente.meChoque;
     final severidad = severidadVictimas.value ?? SeveridadVictimas.ninguna;
     final graves = daniosGraves.value ?? false;
+    final String saludoUniversal =
+        "$nombreConductor, mantén la calma. Sigue estos sencillos pasos:";
 
     // =========================================================================
     // CASO 1: OPERATIVO DE TRÁNSITO O RETENCIÓN
@@ -362,7 +485,7 @@ class ConductorController extends GetxController {
         nivel: "GARANTÍAS Y CONTROL VIAL",
         colorNivel: const Color(0xFF2563EB),
         iconoNivel: Icons.verified_user_rounded,
-        saludo: "Hola $nombreConductor ($unidadTaxi), mantén la serenidad.",
+        saludo: saludoUniversal,
         titulo: "Procedimiento de Control Vial y Garantías",
         normativa:
             "Marco legal: Garantías ciudadanas y límites de control operativo (Art. 390 COIP).",
@@ -387,8 +510,7 @@ class ConductorController extends GetxController {
           nivel: "ALERTA POLICIAL — AGRESIÓN FÍSICA GRAVE",
           colorNivel: const Color(0xFF991B1B),
           iconoNivel: Icons.emergency_rounded,
-          saludo:
-              "Hola $nombreConductor ($unidadTaxi), tu integridad es prioridad.",
+          saludo: saludoUniversal,
           titulo: "Agresión Física con Lesiones o Peligro Inminente",
           normativa:
               "Marco legal: Delito de lesiones flagrantes y legítima defensa (Art. 33 y 152 COIP).",
@@ -407,7 +529,7 @@ class ConductorController extends GetxController {
         nivel: "PROTECCIÓN Y CONTENCIÓN PERSONAL",
         colorNivel: const Color(0xFF7C3AED),
         iconoNivel: Icons.shield_rounded,
-        saludo: "Hola $nombreConductor ($unidadTaxi), mantén la calma.",
+        saludo: saludoUniversal,
         titulo: "Altercado Verbal o Conflicto con Pasajero / Tercero",
         normativa:
             "Marco legal: Contravenciones de cuarta clase y resolución pacífica en vía pública.",
@@ -431,7 +553,7 @@ class ConductorController extends GetxController {
           nivel: "ALERTA PENAL MÁXIMA — HOMICIDIO CULPOSO",
           colorNivel: const Color(0xFF991B1B),
           iconoNivel: Icons.warning_rounded,
-          saludo: "$nombreConductor, MANTÉN LA CALMA Y SIGUE ESTE PROTOCOLO.",
+          saludo: saludoUniversal,
           titulo: "Accidente de Tránsito con Persona Fallecida",
           normativa:
               "Marco legal: Procedimiento en presunto Homicidio Culposo (Art. 377 COIP) y Flagrancia.",
@@ -451,7 +573,7 @@ class ConductorController extends GetxController {
           nivel: "ALERTA PENAL PRIORITARIA — LESIONES",
           colorNivel: const Color(0xFFDC2626),
           iconoNivel: Icons.health_and_safety_rounded,
-          saludo: "Hola $nombreConductor ($unidadTaxi), mantén la calma.",
+          saludo: saludoUniversal,
           titulo:
               "Accidente con Víctimas Heridas (Presunto Delito de Lesiones)",
           normativa:
@@ -472,7 +594,7 @@ class ConductorController extends GetxController {
           nivel: "CONTENCIÓN DE DAÑOS MATERIALES",
           colorNivel: const Color(0xFFEA580C),
           iconoNivel: Icons.car_crash_rounded,
-          saludo: "Hola $nombreConductor ($unidadTaxi), respira con calma.",
+          saludo: saludoUniversal,
           titulo: "Colisión con Daños Importantes (Sin Víctimas)",
           normativa:
               "Marco legal: Accidente con solo daños materiales (Art. 380 COIP) — Sin Flagrancia Penal.",
@@ -492,7 +614,7 @@ class ConductorController extends GetxController {
         nivel: "CONCILIACIÓN RÁPIDA EN SITIO",
         colorNivel: const Color(0xFF059669),
         iconoNivel: Icons.check_circle_rounded,
-        saludo: "Hola $nombreConductor ($unidadTaxi), todo tiene solución.",
+        saludo: saludoUniversal,
         titulo: "Roce Menor o Colisión Leve Conciliable",
         normativa:
             "Marco legal: Conciliación directa entre conductores y despeje de calzada.",
@@ -515,7 +637,7 @@ class ConductorController extends GetxController {
         nivel: "ALERTA PENAL — CONDUCTOR IMPACTADO / AFECTADO",
         colorNivel: const Color(0xFF991B1B),
         iconoNivel: Icons.warning_rounded,
-        saludo: "$nombreConductor, MANTÉN LA CALMA: TÚ FUISTE EL IMPACTADO.",
+        saludo: saludoUniversal,
         titulo: "Impacto Recibido con Persona Fallecida",
         normativa:
             "Marco legal: Protección de la parte afectada en siniestro con víctima mortal (Art. 377 COIP).",
@@ -535,7 +657,7 @@ class ConductorController extends GetxController {
         nivel: "VÍCTIMA AFECTADA — AUXILIO Y RECLAMO DE DAÑOS",
         colorNivel: const Color(0xFFDC2626),
         iconoNivel: Icons.health_and_safety_rounded,
-        saludo: "Hola $nombreConductor ($unidadTaxi), mantén la calma.",
+        saludo: saludoUniversal,
         titulo: "Fuiste Chocado y Hay Personas Heridas",
         normativa:
             "Marco legal: Cobertura médica SPPAT y reclamo de indemnización contra causante.",
@@ -555,7 +677,7 @@ class ConductorController extends GetxController {
         nivel: "EXIGENCIA DE INDEMNIZACIÓN Y LUCRO CESANTE",
         colorNivel: const Color(0xFF0284C7),
         iconoNivel: Icons.car_crash_rounded,
-        saludo: "Hola $nombreConductor ($unidadTaxi), estamos de tu lado.",
+        saludo: saludoUniversal,
         titulo: "Taxi Inmovilizado por Impacto de Tercero",
         normativa:
             "Marco legal: Reparación integral de daños y Lucro Cesante por días no laborados.",
@@ -575,7 +697,7 @@ class ConductorController extends GetxController {
       nivel: "COBRO INMEDIATO DE DAÑOS LEVES",
       colorNivel: const Color(0xFF059669),
       iconoNivel: Icons.verified_rounded,
-      saludo: "Hola $nombreConductor ($unidadTaxi), tú tienes la razón legal.",
+      saludo: saludoUniversal,
       titulo: "Roce o Impacto Menor Recibido de Tercero",
       normativa:
           "Marco legal: Arreglo económico voluntario en el sitio por daños materiales.",

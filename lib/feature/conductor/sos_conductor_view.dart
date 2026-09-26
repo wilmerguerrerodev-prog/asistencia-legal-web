@@ -73,7 +73,7 @@ class SosConductorView extends StatelessWidget {
                 }),
               ),
 
-              // 3. ACCESO DIRECTO A BILLETERA DIGITAL (SIEMPRE DISPONIBLE AL FINAL)
+              // 3. ACCESOS DIRECTOS SIEMPRE DISPONIBLES AL FINAL
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   isWideScreen ? 24 : 14,
@@ -81,7 +81,11 @@ class SosConductorView extends StatelessWidget {
                   isWideScreen ? 24 : 14,
                   18,
                 ),
-                child: _buildBilleteraDigitalCompacta(context, isDark),
+                child: Column(
+                  children: [
+                    _buildBilleteraDigitalCompacta(context, isDark),
+                  ],
+                ),
               ),
             ],
           ),
@@ -612,38 +616,77 @@ class SosConductorView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Flexible(
-              child: TextButton.icon(
-                onPressed: controller.retrocederPaso,
-                icon: const Icon(Icons.arrow_back_rounded, size: 16),
-                label: Text(
-                  subPaso == 1 ? "Reevaluar víctimas" : "Cambiar incidente",
-                  overflow: TextOverflow.ellipsis,
-                ),
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF0284C7),
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              child: Material(
+                color: isDark
+                    ? const Color(0xFF1E293B)
+                    : const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: controller.retrocederPaso,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_rounded,
+                          size: 16,
+                          color: isDark
+                              ? const Color(0xFF93C5FD)
+                              : const Color(0xFF1D4ED8),
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            "Regresar",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? const Color(0xFF93C5FD)
+                                  : const Color(0xFF1D4ED8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
             const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2563EB),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                subPaso == 0
-                    ? "PASO 2 DE 3: TRIAGE PENAL"
-                    : "PASO 2 DE 3: ESTADO DEL TAXI",
-                style: const TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: 0.3,
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2563EB),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  subPaso == 0
+                      ? "PASO 2 DE 3: TRIAGE PENAL"
+                      : "PASO 2 DE 3: ESTADO DEL TAXI",
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                  ),
                 ),
               ),
             ),
@@ -852,32 +895,120 @@ class SosConductorView extends StatelessWidget {
       key: const ValueKey('paso_3_dictamen_llamada'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Barra superior con botón volver y reinicio
+        // Barra superior con botón volver y reinicio (estilo cápsula accesible)
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TextButton.icon(
-              onPressed: controller.retrocederPaso,
-              icon: const Icon(Icons.arrow_back_rounded, size: 16),
-              label: const Text("Reevaluar"),
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF0284C7),
-                padding: EdgeInsets.zero,
+            Expanded(
+              child: Material(
+                color: isDark
+                    ? const Color(0xFF1E293B)
+                    : const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: controller.retrocederPaso,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 9, horizontal: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_rounded,
+                          size: 17,
+                          color: isDark
+                              ? const Color(0xFF93C5FD)
+                              : const Color(0xFF1D4ED8),
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            "Regresar",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? const Color(0xFF93C5FD)
+                                  : const Color(0xFF1D4ED8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-            TextButton.icon(
-              onPressed: controller.reiniciarFlujo,
-              icon: const Icon(Icons.refresh_rounded, size: 16),
-              label: const Text("Nuevo caso"),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.grey,
-                padding: EdgeInsets.zero,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Material(
+                color: isDark
+                    ? const Color(0xFF1E293B)
+                    : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: controller.reiniciarFlujo,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 9, horizontal: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF475569)
+                            : const Color(0xFFCBD5E1),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.refresh_rounded,
+                          size: 17,
+                          color: isDark
+                              ? const Color(0xFFCBD5E1)
+                              : const Color(0xFF334155),
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            "Nuevo caso",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? const Color(0xFFE2E8F0)
+                                  : const Color(0xFF334155),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
         ),
 
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
 
         // --- TARJETA DE DICTAMEN DE CONTENCIÓN INMEDIATA IA ---
         Container(
@@ -963,19 +1094,23 @@ class SosConductorView extends StatelessWidget {
                 dictamen.saludo,
                 style: TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: colorNivel,
+                  fontSize: isWide ? 17.5 : 16.5,
+                  fontWeight: FontWeight.w800,
+                  height: 1.25,
+                  letterSpacing: -0.2,
+                  color: const Color(0xFF2563EB),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 5),
               Text(
                 dictamen.titulo,
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: isWide ? 17 : 15,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  fontSize: isWide ? 13.5 : 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: isDark
+                      ? const Color(0xFFCBD5E1)
+                      : const Color(0xFF334155),
                 ),
               ),
 
@@ -995,18 +1130,7 @@ class SosConductorView extends StatelessWidget {
                 color:
                     isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
               ),
-
-              // Reglas de Oro Inmediatas (Contención en sitio)
-              const Text(
-                "INSTRUCCIONES DE PROTECCIÓN EN EL SITIO:",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
 
               ...reglas.asMap().entries.map((entry) {
                 final int idx = entry.key + 1;
@@ -1074,157 +1198,359 @@ class SosConductorView extends StatelessWidget {
         const SizedBox(height: 16),
 
         // --- PASO 4: CONTACTO DE ASISTENCIA INMEDIATA ---
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              width: 1.0,
+        Obx(() {
+          final esEscalado = controller.casoEscaladoASuperAbogado.value;
+          final llamadaEnCurso = controller.llamadaIniciada.value;
+          final seg = controller.segundosRestantes.value;
+          final abogado = controller.abogadoActivo;
+
+          return Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: esEscalado
+                  ? (isDark ? const Color(0xFF141F36) : const Color(0xFFF0FDF4))
+                  : (isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC)),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: esEscalado
+                    ? (isDark ? const Color(0xFF059669) : const Color(0xFF10B981))
+                    : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+                width: esEscalado ? 1.5 : 1.0,
+              ),
             ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Abogado asignado con badge ejecutivo grande
-              Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Ficha interactiva del Abogado Activo
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () =>
+                      _mostrarPerfilAbogadoModal(context, isDark, controller),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color:
+                                isDark ? const Color(0xFF1E293B) : Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: esEscalado
+                                  ? const Color(0xFF059669)
+                                  : const Color(0xFF2563EB)
+                                      .withValues(alpha: 0.25),
+                              width: 1.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.08),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.gavel_rounded,
+                              color: esEscalado
+                                  ? const Color(0xFF059669)
+                                  : const Color(0xFF2563EB),
+                              size: 26,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      abogado.nombre,
+                                      style: const TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.verified,
+                                    size: 16,
+                                    color: esEscalado
+                                        ? const Color(0xFF059669)
+                                        : const Color(0xFF2563EB),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                esEscalado
+                                    ? "${abogado.rol} · ${abogado.despacho}"
+                                    : abogado.especialidad,
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: esEscalado
+                                      ? const Color(0xFF059669)
+                                      : Colors.grey,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 5),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: (esEscalado
+                                          ? const Color(0xFF059669)
+                                          : const Color(0xFF2563EB))
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: (esEscalado
+                                            ? const Color(0xFF059669)
+                                            : const Color(0xFF2563EB))
+                                        .withValues(alpha: 0.25),
+                                    width: 0.8,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.badge_outlined,
+                                      size: 13,
+                                      color: esEscalado
+                                          ? const Color(0xFF059669)
+                                          : const Color(0xFF2563EB),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Flexible(
+                                      child: Text(
+                                        "Ver credencial ›",
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 10.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: esEscalado
+                                              ? (isDark
+                                                  ? const Color(0xFF6EE7B7)
+                                                  : const Color(0xFF047857))
+                                              : (isDark
+                                                  ? const Color(0xFF93C5FD)
+                                                  : const Color(0xFF1D4ED8)),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.gavel_rounded,
-                        color: Color(0xFF2563EB),
-                        size: 26,
+                  ),
+                ),
+
+                // Temporizador mientras se espera respuesta (1 minuto)
+                if (llamadaEnCurso && !esEscalado) ...[
+                  Container(
+                    margin: const EdgeInsets.only(top: 14),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                        width: 1.2,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          controller.nombreAbogado,
-                          style: const TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFF59E0B),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.timer_rounded,
+                                  size: 16, color: Colors.white),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Esperando respuesta · 0:${seg.toString().padLeft(2, '0')}",
+                                    style: const TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12.5,
+                                      color: Color(0xFFD97706),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  const Text(
+                                    "Si no contesta en 1 minuto, te conectaremos con otro abogado.",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
-                          "Especialista en Tránsito y COIP",
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey,
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 38,
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: const Color(0xFFB45309),
+                              side: const BorderSide(
+                                  color: Color(0xFFF59E0B), width: 1.2),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                            ),
+                            onPressed: () => controller.escalarASuperAbogado(),
+                            icon:
+                                const Icon(Icons.swap_horiz_rounded, size: 16),
+                            label: const Text(
+                              "¿No contesta? Conectar con otro abogado ahora",
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Botón Único: Contactar con abogado (Directo wa.me)
-              Container(
-                height: 58,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF25D366),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF25D366).withValues(alpha: 0.35),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                  ),
-                  onPressed: () {
-                    controller.contactarAbogadoPorWhatsApp();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Conectando con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
-                        ),
-                        backgroundColor: const Color(0xFF16A34A),
-                        duration: const Duration(seconds: 4),
-                      ),
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.phone_in_talk_rounded,
-                          size: 20,
-                          color: Color(0xFF25D366),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            "Contactar con abogado",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15,
-                              letterSpacing: 0.2,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                // Botón Principal de Contacto
+                Container(
+                  height: 58,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF25D366),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF25D366).withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ],
                   ),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    onPressed: () {
+                      controller.contactarAbogadoPorWhatsApp();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Conectando con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
+                          ),
+                          backgroundColor: const Color(0xFF16A34A),
+                          duration: const Duration(seconds: 4),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.phone_in_talk_rounded,
+                            size: 20,
+                            color: Color(0xFF25D366),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              esEscalado
+                                  ? "Contactar con ${controller.nombreAbogado}"
+                                  : "Contactar con abogado",
+                              style: const TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontWeight: FontWeight.w800,
+                                fontSize: 15,
+                                letterSpacing: 0.2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+
+                // Nota simple bajo el botón en estado inicial
+                if (!esEscalado && !llamadaEnCurso) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    "⏱️ Si no responde en 1 minuto, te conectaremos con otro abogado disponible.",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
+            ),
+          );
+        }),
       ],
     );
   }
@@ -1349,7 +1675,7 @@ class SosConductorView extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        "Billetera Digital",
+                        "Documentos",
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 13.5,
@@ -1403,6 +1729,7 @@ class SosConductorView extends StatelessWidget {
       ),
     );
   }
+
 
   // Modal para mostrar el documento digital con QR oficial
   void _mostrarBilleteraModal(BuildContext context) {
@@ -1545,6 +1872,528 @@ class SosConductorView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  // Modal de Credencial Oficial y Títulos del Abogado Asignado
+  void _mostrarPerfilAbogadoModal(
+      BuildContext context, bool isDark, ConductorController controller) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 420),
+            padding: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 1. Barra superior: Insignia oficial y botón cerrar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF059669),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified,
+                                    size: 14, color: Colors.white),
+                                SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    "DEFENSA LEGAL CERTIFICADA",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        key: const Key('btn_cerrar_credencial_modal'),
+                        icon: const Icon(Icons.close, size: 22),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 2. Cabecera del Abogado con Avatar e Insignia Judicial
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        // Avatar oficial con anillo y check verificado
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              width: 68,
+                              height: 68,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDark
+                                    ? const Color(0xFF0F172A)
+                                    : Colors.white,
+                                border: Border.all(
+                                  color: const Color(0xFF2563EB),
+                                  width: 2.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF2563EB)
+                                        .withValues(alpha: 0.25),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.gavel_rounded,
+                                  size: 34,
+                                  color: Color(0xFF2563EB),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF2563EB),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.verified,
+                                  size: 15,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          controller.nombreAbogado,
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            color:
+                                isDark ? Colors.white : const Color(0xFF0F172A),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          controller.especialidadAbogado,
+                          style: const TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF2563EB),
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        // Badge de matrícula judicial
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 5),
+                          decoration: BoxDecoration(
+                            color:
+                                isDark ? const Color(0xFF0F172A) : Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: isDark
+                                  ? const Color(0xFF475569)
+                                  : const Color(0xFFCBD5E1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.badge,
+                                  size: 14, color: Color(0xFF2563EB)),
+                              const SizedBox(width: 6),
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 200),
+                                child: Text(
+                                  "Matrícula F.A. ${controller.matriculaAbogado}",
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark
+                                        ? Colors.white
+                                        : const Color(0xFF1E293B),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          controller.entidadAcreditadora,
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 10.5,
+                            color: isDark
+                                ? Colors.white60
+                                : const Color(0xFF64748B),
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // 3. Títulos y Formación Académica Registrada
+                  _buildSeccionCredencial(
+                    isDark: isDark,
+                    titulo: "FORMACIÓN ACADÉMICA (SENESCYT)",
+                    icono: Icons.school_rounded,
+                    children: [
+                      _ItemCredencialWidget(
+                        titulo: controller.tituloGrado,
+                        subtitulo: controller.universidadAbogado,
+                        detalle: controller.abogadoActivo.esSuperAbogado
+                            ? "Registro SENESCYT: #1002-10-843219 · Grado Doctoral y Casación"
+                            : "Registro Oficial SENESCYT: #1005-18-654321 · Grado Superior",
+                        icono: Icons.school_rounded,
+                        isDark: isDark,
+                      ),
+                      _ItemCredencialWidget(
+                        titulo: controller.especialidadPosgrado,
+                        subtitulo: controller.abogadoActivo.esSuperAbogado
+                            ? "Universidad Andina Simón Bolívar · Postgrado"
+                            : "Universidad Andina Simón Bolívar",
+                        detalle: controller.abogadoActivo.esSuperAbogado
+                            ? "Especialización y Casación Penal en Tránsito (COIP)"
+                            : "Especialización en Flagrancia y Peritajes de Tránsito",
+                        icono: Icons.balance_rounded,
+                        isDark: isDark,
+                      ),
+                      _ItemCredencialWidget(
+                        titulo: controller.maestriaAbogado,
+                        subtitulo: controller.abogadoActivo.esSuperAbogado
+                            ? "Maestría en Litigación Oral Estratégica"
+                            : "Postgrado en Litigación Oral y Tránsito",
+                        detalle: controller.abogadoActivo.esSuperAbogado
+                            ? "Defensa de Casos de Alta Complejidad ante Cortes Nacionales"
+                            : "Defensa técnica en Tribunales de Garantías Penales",
+                        icono: Icons.gavel_rounded,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 4. Trayectoria y Respaldo Profesional
+                  _buildSeccionCredencial(
+                    isDark: isDark,
+                    titulo: "TRAYECTORIA Y RESPALDO",
+                    icono: Icons.shield_rounded,
+                    children: [
+                      _ItemCredencialWidget(
+                        titulo: controller.abogadoActivo.esSuperAbogado
+                            ? "Director Jurídico Nacional"
+                            : "Defensa Especializada de Transportistas",
+                        subtitulo: controller.experienciaAbogado,
+                        detalle: controller.casosAtendidos,
+                        icono: Icons.workspace_premium_rounded,
+                        isDark: isDark,
+                      ),
+                      _ItemCredencialWidget(
+                        titulo: controller.abogadoActivo.esSuperAbogado
+                            ? "Despacho Matriz Nacional"
+                            : "Despacho Jurídico Asociado",
+                        subtitulo: controller.despachoAbogado,
+                        detalle: controller.abogadoActivo.esSuperAbogado
+                            ? "Despacho matriz titular que contrató y respalda el servicio legal"
+                            : "Convenio exclusivo de auxilio legal para conductores",
+                        icono: Icons.business_rounded,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 5. Botones de Acción Rápida (Llamar / WhatsApp)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF25D366),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                            controller.contactarAbogadoPorWhatsApp();
+                          },
+                          icon:
+                              const Icon(Icons.chat_bubble_rounded, size: 18),
+                          label: const Text(
+                            "WhatsApp",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2563EB),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop();
+                            controller.llamarAbogadoPorTelefono();
+                          },
+                          icon: const Icon(Icons.phone_rounded, size: 18),
+                          label: const Text(
+                            "Llamar",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // Botón Cerrar
+                  OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:
+                          isDark ? Colors.white70 : const Color(0xFF475569),
+                      side: BorderSide(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFCBD5E1),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text(
+                      "Cerrar credencial",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Contenedor de sección de credencial
+  Widget _buildSeccionCredencial({
+    required bool isDark,
+    required String titulo,
+    required IconData icono,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 1.0,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icono, size: 16, color: const Color(0xFF2563EB)),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  titulo,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                    color: isDark ? Colors.white70 : const Color(0xFF475569),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
+class _ItemCredencialWidget extends StatelessWidget {
+  final String titulo;
+  final String subtitulo;
+  final String detalle;
+  final IconData icono;
+  final bool isDark;
+
+  const _ItemCredencialWidget({
+    required this.titulo,
+    required this.subtitulo,
+    required this.detalle,
+    required this.icono,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 2),
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? const Color(0xFF2563EB).withValues(alpha: 0.2)
+                  : const Color(0xFFEFF6FF),
+              borderRadius: BorderRadius.circular(7),
+              border: Border.all(
+                color: const Color(0xFF2563EB).withValues(alpha: 0.3),
+                width: 0.8,
+              ),
+            ),
+            child: Center(
+              child: Icon(
+                icono,
+                size: 14,
+                color: const Color(0xFF2563EB),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitulo,
+                  style: const TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2563EB),
+                  ),
+                ),
+                const SizedBox(height: 1),
+                Text(
+                  detalle,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
