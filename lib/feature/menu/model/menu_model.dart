@@ -34,7 +34,7 @@ List<MenuModel> menuList = [
     icon: Images.dashboard,
     iconData: Icons.local_taxi_rounded,
     menuTitle: 'LegalTech Cliente',
-    route: RouteHelper.getInitialRoute(),
+    route: RouteHelper.getSosConductorRoute(),
   ),
   MenuModel(
     icon: Images.dashboard,
@@ -235,7 +235,7 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           icon: Images.dashboard,
           iconData: Icons.local_taxi_rounded,
           menuTitle: 'LegalTech Cliente',
-          route: RouteHelper.getInitialRoute(),
+          route: RouteHelper.getSosConductorRoute(),
         ),
         MenuModel(
           icon: Images.dashboard,
@@ -296,7 +296,7 @@ List<MenuModel> getMenuListForRole(UserRole role) {
         MenuModel(
           iconData: Icons.local_taxi_rounded,
           menuTitle: 'Portal Conductor SOS',
-          route: RouteHelper.getInitialRoute(),
+          route: RouteHelper.getSosConductorRoute(),
         ),
         MenuModel(
           iconData: Icons.badge_rounded,

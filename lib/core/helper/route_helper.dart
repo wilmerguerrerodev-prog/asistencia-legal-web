@@ -53,7 +53,6 @@ import 'package:getdash/feature/media_library/media_library_screen.dart';
 import 'package:getdash/feature/support/support_screen.dart';
 import 'package:getdash/feature/users/add_user_screen.dart';
 import 'package:getdash/feature/users/all_users.dart';
-import 'package:getdash/feature/conductor/sos_conductor_view.dart';
 import 'package:getdash/feature/users/user_profile_screen.dart';
 
 class RouteHelper {
@@ -169,13 +168,14 @@ class RouteHelper {
   static String getLegalCooperativesRoute() => legalCooperativesScreen;
   static String getLegalDocumentsRoute() => legalDocumentsScreen;
   static String getLawyerWorkspaceRoute() => lawyerWorkspaceScreen;
+  static String getSosConductorRoute() => sosConductorScreen;
   static String getDashboardScreen1() => dashboardScreen1;
   static String getDashboardScreen2() => dashboardScreen2;
   static String getDashboardScreen3() => dashboardScreen3;
 
   static List<GetPage> routes = [
-    GetPage(name: initial, page: () => const DashboardScreen()),
-    GetPage(name: sosConductorScreen, page: () => const SosConductorView()),
+    GetPage(name: initial, page: () => const LoginScreen()),
+    GetPage(name: sosConductorScreen, page: () => const DashboardScreen()),
     GetPage(name: dashboardScreen1, page:()=> const DashboardScreen1()),
     GetPage(name: dashboardScreen2, page:()=> const DashboardDemoScreen2()),
     GetPage(name: dashboardScreen3, page:()=> const DashboardDemoScreen3()),

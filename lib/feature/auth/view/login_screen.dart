@@ -27,9 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _iniciarSesion({bool isDemo = false}) async {
+  void _iniciarSesion({MockUser? usuarioPreconfigurado}) async {
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(milliseconds: 400));
 
     if (!mounted) return;
 
@@ -37,67 +37,69 @@ class _LoginScreenState extends State<LoginScreen> {
         ? Get.find<ConductorController>()
         : Get.put(ConductorController());
 
-    if (isDemo) {
+    final AuthMockController authController = Get.isRegistered<AuthMockController>()
+        ? Get.find<AuthMockController>()
+        : Get.put(AuthMockController(), permanent: true);
+
+    MockUser userToLogin;
+
+    if (usuarioPreconfigurado != null) {
+      userToLogin = usuarioPreconfigurado;
+      _identificacionController.text = userToLogin.email;
+      _passwordController.text = "123456";
+    } else {
+      final idText = _identificacionController.text.trim();
+
+      if (idText.isEmpty) {
+        setState(() => _isLoading = false);
+        Get.snackbar(
+          "Campo requerido",
+          "Por favor ingresa tu cédula o correo (o toca un acceso rápido demo).",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFEF4444),
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
+          borderRadius: 12,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      final lower = idText.toLowerCase();
+      if (lower.contains('director') || lower.contains('emir')) {
+        userToLogin = AuthMockController.mockAdminLawyer;
+      } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
+        userToLogin = AuthMockController.mockItAdmin;
+      } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+        userToLogin = AuthMockController.mockAssociateLawyer;
+      } else {
+        // Conductor / Cliente
+        userToLogin = AuthMockController.mockClientDriver;
+      }
+    }
+
+    if (userToLogin.role == UserRole.clientDriver) {
+      conductorController.cambiarRol('conductor');
       conductorController.actualizarDatosConductor(
-        nombre: "Carlos Alberto Mendoza",
-        unidad: "Unidad #42",
-        cooperativaNombre: "Cooperativa Los Lagos",
+        nombre: userToLogin.name,
+        unidad: userToLogin.cooperativeName != null ? "Unidad #42" : conductorController.unidadTaxi,
+        cooperativaNombre: userToLogin.cooperativeName ?? conductorController.cooperativa,
         placa: "IBA-1234",
-        telefono: "+593 98 765 4321",
+        telefono: userToLogin.phone ?? conductorController.telefonoConductor,
         cedula: "1002345678",
         licencia: "Tipo C Profesional (30 Puntos)",
       );
-      if (Get.isRegistered<AuthMockController>()) {
-        Get.find<AuthMockController>().switchRole(
-          UserRole.clientDriver,
-          navigate: false,
-        );
-      }
     } else {
-      final idText = _identificacionController.text.trim();
-      final esRolAbogado = idText.toLowerCase().contains('abogado') ||
-          idText.toLowerCase().contains('legal');
-
-      if (esRolAbogado) {
-        conductorController.cambiarRol('abogado');
-        if (Get.isRegistered<AuthMockController>()) {
-          final isDirector = idText.toLowerCase().contains('director') ||
-              idText.toLowerCase().contains('emir');
-          Get.find<AuthMockController>().switchRole(
-            isDirector ? UserRole.adminLawyer : UserRole.associateLawyer,
-            navigate: false,
-          );
-        }
-      } else {
-        conductorController.cambiarRol('conductor');
-        if (Get.isRegistered<AuthMockController>()) {
-          Get.find<AuthMockController>().switchRole(
-            UserRole.clientDriver,
-            navigate: false,
-          );
-        }
-      }
-
-      if (idText.isNotEmpty && !esRolAbogado) {
-        conductorController.actualizarDatosConductor(
-          nombre: idText.contains('@') ? idText.split('@')[0] : "Conductor ($idText)",
-          unidad: conductorController.unidadTaxi,
-          cooperativaNombre: conductorController.cooperativa,
-          placa: conductorController.placaVehiculo,
-          cedula: idText,
-        );
-      }
+      conductorController.cambiarRol('abogado');
     }
 
     setState(() => _isLoading = false);
 
-    final esAbogado = conductorController.rolActivo.value == 'abogado';
+    final esAbogado = userToLogin.role != UserRole.clientDriver;
 
     Get.snackbar(
-      esAbogado ? "¡Bienvenido, Colega!" : "¡Bienvenido!",
-      esAbogado
-          ? "Accediendo al panel de Defensa Legal y Centro de Casos."
-          : "Sesión iniciada correctamente. Protección legal vial activa 24/7.",
+      '${userToLogin.role.iconEmoji} ${userToLogin.role.displayName}',
+      'Sesión iniciada correctamente como ${userToLogin.name}',
       backgroundColor: esAbogado ? const Color(0xFF0F766E) : const Color(0xFF16A34A),
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
@@ -110,17 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
-    if (esAbogado) {
-      final idText = _identificacionController.text.toLowerCase();
-      final isDirector = idText.contains('director') || idText.contains('emir');
-      if (isDirector) {
-        Get.offAllNamed(RouteHelper.legalCenterScreen);
-      } else {
-        Get.offAllNamed(RouteHelper.lawyerWorkspaceScreen);
-      }
-    } else {
-      Get.offAllNamed(RouteHelper.initial);
-    }
+    authController.switchUser(userToLogin, navigate: true);
   }
 
   @override
@@ -373,7 +365,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       elevation: 0,
                     ),
-                    onPressed: _isLoading ? null : () => _iniciarSesion(isDemo: false),
+                    onPressed: _isLoading ? null : () => _iniciarSesion(),
                     child: _isLoading
                         ? const SizedBox(
                             height: 20,
@@ -392,6 +384,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                   ),
+
+                  const SizedBox(height: 20),
+
+                  // Accesos Rápidos Demo (1 Toque)
+                  _buildDemoQuickAccess(context, isDark),
 
                   const SizedBox(height: 20),
 
@@ -425,6 +422,184 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDemoQuickAccess(BuildContext context, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Text(
+                "ACCESOS RÁPIDOS DEMO",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
+                  color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                ),
+              ),
+            ),
+            Expanded(child: Divider(color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0))),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(
+          "Toca un rol para ingresar al instante:",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Plus Jakarta Sans',
+            fontSize: 12,
+            color: isDark ? Colors.white60 : const Color(0xFF64748B),
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildDemoRoleCard(
+          isDark: isDark,
+          title: "Conductor (Carlos Mendoza)",
+          subtitle: "conductor@legaltech.ec • SOS Conductor",
+          badge: "Conductor",
+          icon: Icons.local_taxi_rounded,
+          accentColor: const Color(0xFF2563EB),
+          user: AuthMockController.mockClientDriver,
+        ),
+        const SizedBox(height: 8),
+        _buildDemoRoleCard(
+          isDark: isDark,
+          title: "Abogada en Vía (Andrea Morales)",
+          subtitle: "abogado@legaltech.ec • Mi Despacho",
+          badge: "Abogado",
+          icon: Icons.gavel_rounded,
+          accentColor: const Color(0xFF0F766E),
+          user: AuthMockController.mockAssociateLawyer,
+        ),
+        const SizedBox(height: 8),
+        _buildDemoRoleCard(
+          isDark: isDark,
+          title: "Director Legal (Dr. Emir Vásquez)",
+          subtitle: "director@legaltech.ec • Centro de Mando",
+          badge: "Director",
+          icon: Icons.shield_rounded,
+          accentColor: const Color(0xFF7C3AED),
+          user: AuthMockController.mockAdminLawyer,
+        ),
+        const SizedBox(height: 8),
+        _buildDemoRoleCard(
+          isDark: isDark,
+          title: "Administrador de TI",
+          subtitle: "admin@legaltech.ec • Superadmin",
+          badge: "TI Admin",
+          icon: Icons.admin_panel_settings_rounded,
+          accentColor: const Color(0xFFD97706),
+          user: AuthMockController.mockItAdmin,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDemoRoleCard({
+    required bool isDark,
+    required String title,
+    required String subtitle,
+    required String badge,
+    required IconData icon,
+    required Color accentColor,
+    required MockUser user,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: _isLoading ? null : () => _iniciarSesion(usuarioPreconfigurado: user),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: accentColor, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            badge,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w800,
+                              color: accentColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: 11,
+                        color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 13,
+                color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+              ),
+            ],
           ),
         ),
       ),
