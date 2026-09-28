@@ -132,6 +132,17 @@ class ConductorController extends GetxController {
   final RxString _tipoLicencia = "Tipo C Profesional (30 Puntos)".obs;
   final RxString _fotoConductor = "assets/images/profile_image.jpg".obs;
   final RxBool estaAutenticado = true.obs;
+  // Rol del usuario activo: 'conductor' | 'abogado'
+  final RxString rolActivo = 'conductor'.obs;
+  final RxBool abogadoDisponibleGuardia = true.obs;
+
+  void toggleGuardiaAbogado() {
+    abogadoDisponibleGuardia.value = !abogadoDisponibleGuardia.value;
+  }
+
+  void cambiarRol(String nuevoRol) {
+    rolActivo.value = nuevoRol;
+  }
 
   String get nombreConductor => _nombreConductor.value;
   String get unidadTaxi => _unidadTaxi.value;

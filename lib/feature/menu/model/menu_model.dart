@@ -37,18 +37,9 @@ List<MenuModel> menuList = [
   ),
   MenuModel(
     icon: Images.dashboard,
-    menuTitle: 'Dashboard 1 Demo',
-    route: RouteHelper.getDashboardScreen1(),
-  ),
-  MenuModel(
-    icon: Images.dashboard,
-    menuTitle: 'Dashboard 2 Demo',
-    route: RouteHelper.getDashboardScreen2(),
-  ),
-  MenuModel(
-    icon: Images.dashboard,
-    menuTitle: 'Dashboard 3 Demo',
-    route: RouteHelper.getDashboardScreen3(),
+    iconData: Icons.badge_rounded,
+    menuTitle: 'Mi Perfil',
+    route: RouteHelper.getUserProfileScreen(),
   ),
   MenuModel(
     menuTitle: 'features',

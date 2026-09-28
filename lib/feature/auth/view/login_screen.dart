@@ -48,7 +48,16 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       final idText = _identificacionController.text.trim();
-      if (idText.isNotEmpty) {
+      final esRolAbogado = idText.toLowerCase().contains('abogado') ||
+          idText.toLowerCase().contains('legal');
+
+      if (esRolAbogado) {
+        conductorController.cambiarRol('abogado');
+      } else {
+        conductorController.cambiarRol('conductor');
+      }
+
+      if (idText.isNotEmpty && !esRolAbogado) {
         conductorController.actualizarDatosConductor(
           nombre: idText.contains('@') ? idText.split('@')[0] : "Conductor ($idText)",
           unidad: conductorController.unidadTaxi,
@@ -61,19 +70,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = false);
 
+    final esAbogado = conductorController.rolActivo.value == 'abogado';
+
     Get.snackbar(
-      "¡Bienvenido!",
-      "Sesión iniciada correctamente. Protección legal vial activa 24/7.",
-      backgroundColor: const Color(0xFF16A34A),
+      esAbogado ? "¡Bienvenido, Colega!" : "¡Bienvenido!",
+      esAbogado
+          ? "Accediendo al panel de Defensa Legal y Centro de Casos."
+          : "Sesión iniciada correctamente. Protección legal vial activa 24/7.",
+      backgroundColor: esAbogado ? const Color(0xFF0F766E) : const Color(0xFF16A34A),
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),
       borderRadius: 12,
       duration: const Duration(seconds: 3),
-      icon: const Icon(Icons.verified_user_rounded, color: Colors.white),
+      icon: Icon(
+        esAbogado ? Icons.gavel_rounded : Icons.verified_user_rounded,
+        color: Colors.white,
+      ),
     );
 
-    Get.offAllNamed(RouteHelper.initial);
+    if (esAbogado) {
+      Get.offAllNamed(RouteHelper.getEdutechRoute());
+    } else {
+      Get.offAllNamed(RouteHelper.initial);
+    }
   }
 
   void _iniciarConGoogle() async {

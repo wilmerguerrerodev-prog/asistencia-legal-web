@@ -9,6 +9,8 @@ import 'package:getdash/feature/auth/view/registration_screen.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/feature/language/controller/language_controller.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
+import 'package:getdash/feature/menu/model/menu_model.dart';
+import 'package:getdash/feature/users/user_profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -119,5 +121,47 @@ void main() {
     expect(controller.unidadTaxi, 'Unidad #42');
     expect(controller.cooperativa, 'Cooperativa Los Lagos');
     expect(controller.fotoConductor, 'assets/images/profile_image.jpg');
+  });
+
+  testWidgets('UserProfile: Renders Conductor profile and switches to Lawyer profile',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(375, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        theme: light,
+        home: const UserProfile(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Conductor profile is shown by default
+    expect(find.text('Perfil Conductor'), findsOneWidget);
+    expect(find.text('Perfil Abogado'), findsOneWidget);
+    expect(find.text('Conductor Verificado'), findsOneWidget);
+    expect(find.text('Credenciales de Tránsito (ANT Ecuador)'), findsOneWidget);
+    expect(find.text('Vehículo y Cooperativa'), findsOneWidget);
+    expect(find.text('Protección Vial LegalTech 24/7'), findsOneWidget);
+    expect(find.text('Ir al Botón SOS Vial'), findsOneWidget);
+
+    // Switch to Abogado profile
+    final btnAbogado = find.text('Perfil Abogado');
+    await tester.tap(btnAbogado);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Abogado Acreditado'), findsOneWidget);
+    expect(find.text('Acreditación y Títulos Profesionales'), findsOneWidget);
+    expect(find.text('Despacho y Cobertura Territorial'), findsOneWidget);
+    expect(find.text('En Guardia Activa (Disponible)'), findsOneWidget);
+    expect(find.text('Ir al Panel de Casos'), findsOneWidget);
+  });
+
+  test('MenuDrawer menuList includes Mi Perfil after LegalTech Cliente', () {
+    expect(menuList.length, greaterThanOrEqualTo(2));
+    expect(menuList[0].menuTitle, 'LegalTech Cliente');
+    expect(menuList[1].menuTitle, 'Mi Perfil');
   });
 }

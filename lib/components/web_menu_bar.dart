@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/controller/theme_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/images.dart';
@@ -49,6 +50,29 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
                   },
                 );
               }),
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () {
+                  Get.toNamed(RouteHelper.getUserProfileScreen());
+                },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    size: 20,
+                    color: Color(0xFF2563EB),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
