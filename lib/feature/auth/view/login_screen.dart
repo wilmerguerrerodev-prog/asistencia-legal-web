@@ -170,34 +170,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "LegalTech",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 19,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.3,
-                                color: isDark ? Colors.white : const Color(0xFF0F172A),
-                              ),
-                            ),
-                            const Text(
-                              "ASISTENCIA LEGAL EN RUTA",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.8,
-                                color: Color(0xFF2563EB),
-                              ),
-                            ),
-                          ],
+                      Text(
+                        "LegalTech",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.3,
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
                         ),
                       ),
                     ],
@@ -205,37 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 22),
 
-                  // Pastilla de Bienvenida
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2563EB).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.shield_rounded, size: 14, color: Color(0xFF2563EB)),
-                          SizedBox(width: 5),
-                          Text(
-                            "PORTAL DEL CONDUCTOR",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF2563EB),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
                   Text(
-                    "Inicia Sesión",
+                    "Iniciar Sesión",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
@@ -244,86 +195,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: isDark ? Colors.white : const Color(0xFF0F172A),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Ingresa para reportar emergencias y llevar tus documentos en regla",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 12.5,
-                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
-                    ),
-                  ),
 
                   const SizedBox(height: 22),
-
-                  // 2. Botón Continuar con Google
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
-                      side: BorderSide(
-                        color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
-                        width: 1.2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
-                    ),
-                    onPressed: _isLoading ? null : _iniciarConGoogle,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Image.asset(Images.google, height: 20, width: 20),
-                        const SizedBox(width: 12),
-                        Flexible(
-                          child: Text(
-                            "Continuar con Google",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white : const Color(0xFF0F172A),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // Separador
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          "o con tu cédula o cuenta",
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 11,
-                            color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
 
                   // 3. Formulario de Credenciales
                   Text(
@@ -494,38 +367,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-                  // 5. Botón Acceso Rápido Demo (Para pruebas y presentación)
-                  OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF059669),
-                      side: BorderSide(
-                        color: const Color(0xFF059669).withValues(alpha: 0.5),
-                        width: 1.2,
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      backgroundColor: const Color(0xFF059669).withValues(alpha: 0.08),
-                    ),
-                    onPressed: _isLoading ? null : () => _iniciarSesion(isDemo: true),
-                    icon: const Icon(Icons.bolt_rounded, size: 18),
-                    label: const Text(
-                      "Acceso Demo: Carlos Mendoza (Unidad #42)",
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  // 6. Enlace a Registro
+                  // Enlace a Registro
                   Wrap(
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,

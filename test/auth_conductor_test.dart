@@ -28,7 +28,7 @@ void main() {
     Get.reset();
   });
 
-  testWidgets('LoginScreen: Renders branded conductor login and Google button',
+  testWidgets('LoginScreen: Renders simplified minimalist conductor login',
       (WidgetTester tester) async {
     tester.view.physicalSize = const Size(375, 812);
     tester.view.devicePixelRatio = 1.0;
@@ -44,15 +44,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('LegalTech'), findsOneWidget);
-    expect(find.text('PORTAL DEL CONDUCTOR'), findsOneWidget);
-    expect(find.text('Inicia Sesión'), findsOneWidget);
-    expect(find.text('Continuar con Google'), findsOneWidget);
+    expect(find.text('Iniciar Sesión'), findsNWidgets(2)); // Title and Button
     expect(find.text('Cédula de Identidad o Correo'), findsOneWidget);
     expect(find.text('Contraseña o PIN'), findsOneWidget);
     expect(find.text('Recordar en este teléfono'), findsOneWidget);
-    expect(find.text('Iniciar Sesión'), findsOneWidget);
-    expect(find.text('Acceso Demo: Carlos Mendoza (Unidad #42)'), findsOneWidget);
     expect(find.text('Regístrate aquí'), findsOneWidget);
+    expect(find.text('PORTAL DEL CONDUCTOR'), findsNothing);
+    expect(find.text('Continuar con Google'), findsNothing);
   });
 
   testWidgets('RegistrationScreen: Smart Cédula lookup and driver registration flow',
