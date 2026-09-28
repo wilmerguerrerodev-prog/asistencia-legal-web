@@ -374,10 +374,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ),
                   ),
 
-                  // 2. Indicador Progresivo Tipo Steam
-                  _buildSteamProgressIndicator(isDark),
+                  const SizedBox(height: 18),
 
-                  // 3. Contenido Dinámico con Transición Suave
+                  // 2. Contenido Dinámico con Transición Suave
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 260),
                     child: _pasoActual == 1
@@ -419,133 +418,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  // --- INDICADOR STEAM (Progreso en 2 pasos) ---
-  Widget _buildSteamProgressIndicator(bool isDark) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 14),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              // Indicador Paso 1
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _pasoActual >= 1
-                            ? const Color(0xFF2563EB)
-                            : (isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1)),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "1",
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        "Autenticación",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.5,
-                          fontWeight: _pasoActual == 1 ? FontWeight.w800 : FontWeight.w600,
-                          color: _pasoActual == 1
-                              ? const Color(0xFF2563EB)
-                              : (isDark ? Colors.white54 : const Color(0xFF64748B)),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 11,
-                color: isDark ? Colors.white24 : const Color(0xFF94A3B8),
-              ),
-              const SizedBox(width: 8),
-
-              // Indicador Paso 2
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _pasoActual == 2
-                            ? const Color(0xFF2563EB)
-                            : (isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1)),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "2",
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        "Perfil & Licencia",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 11.5,
-                          fontWeight: _pasoActual == 2 ? FontWeight.w800 : FontWeight.w600,
-                          color: _pasoActual == 2
-                              ? const Color(0xFF2563EB)
-                              : (isDark ? Colors.white54 : const Color(0xFF64748B)),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: _pasoActual == 1 ? 0.5 : 1.0,
-              minHeight: 4,
-              backgroundColor: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
-            ),
-          ),
-        ],
       ),
     );
   }
