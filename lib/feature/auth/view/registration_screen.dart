@@ -149,31 +149,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.badge_rounded, color: Color(0xFF16A34A)),
-              title: const Text(
-                "Vincular foto de Licencia Profesional ANT",
-                style: TextStyle(fontFamily: 'Montserrat', fontSize: 13, fontWeight: FontWeight.w700),
-              ),
-              subtitle: const Text("Importar automáticamente desde el Registro Civil / ANT", style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              onTap: () {
-                Get.back();
-                setState(() {
-                  _fotoPerfil = "assets/images/profile_image.jpg";
-                  _tieneFoto = true;
-                });
-                Get.snackbar(
-                  "✓ Foto ANT vinculada",
-                  "Fotografía oficial de tu licencia profesional importada.",
-                  backgroundColor: const Color(0xFF16A34A),
-                  colorText: Colors.white,
-                  snackPosition: SnackPosition.BOTTOM,
-                  margin: const EdgeInsets.all(16),
-                  borderRadius: 12,
-                );
-              },
-            ),
           ],
         ),
       ),
@@ -351,8 +326,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     Get.snackbar(
-      "✓ Cédula y Foto Verificadas",
-      "Identidad, fotografía y licencia validadas ante ANT / Registro Civil.",
+      "✓ Cédula y Licencia Verificadas",
+      "Identidad y Licencia Profesional (30 puntos) validadas ante ANT.",
       backgroundColor: const Color(0xFF16A34A),
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
