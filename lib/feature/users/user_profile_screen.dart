@@ -311,14 +311,22 @@ class _UserProfileState extends State<UserProfile> {
                         horizontal: isMobile ? 12 : Dimensions.paddingSizeLarge,
                       ),
                       child: Obx(() {
-                        final esConductor = controller.rolActivo.value == 'conductor';
+                        final auth = Get.isRegistered<AuthMockController>()
+                            ? Get.find<AuthMockController>()
+                            : null;
+                        final esConductor = auth != null
+                            ? auth.isClientDriver
+                            : (controller.rolActivo.value == 'conductor');
+                        final showRoleSelector = auth == null || auth.isItAdmin;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // 1. Selector rápido de vista (Conductor / Abogado)
-                            _buildRoleSelector(context, controller, isDark),
-                            const SizedBox(height: 16),
+                            // 1. Selector rápido de vista (Conductor / Abogado) - sólo visible para SuperAdmin TI o tests
+                            if (showRoleSelector) ...[
+                              _buildRoleSelector(context, controller, isDark),
+                              const SizedBox(height: 16),
+                            ],
 
                             // 2. Cabecera principal de Perfil
                             esConductor

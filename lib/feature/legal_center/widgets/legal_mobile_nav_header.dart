@@ -193,15 +193,16 @@ class LegalMobileNavHeader extends StatelessWidget implements PreferredSizeWidge
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Badge interactivo de Rol Actual (Cambio rápido)
+                      // Badge de Rol Actual (interactivo sólo si es IT Admin)
                       if (Get.isRegistered<AuthMockController>())
                         GetBuilder<AuthMockController>(
                           builder: (auth) {
+                            final canSwitch = auth.isItAdmin;
                             return Material(
                               color: Colors.transparent,
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(8),
-                                onTap: () => _showRoleSwitcherSheet(context, auth),
+                                onTap: canSwitch ? () => _showRoleSwitcherSheet(context, auth) : null,
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 6, vertical: 4),
@@ -266,8 +267,10 @@ class LegalMobileNavHeader extends StatelessWidget implements PreferredSizeWidge
                         },
                       ),
 
-                      // Acceso rápido a Portal Conductor SOS (visible si ancho >= 365px)
-                      if (MediaQuery.of(context).size.width >= 365) ...[
+                      // Acceso rápido a Portal Conductor SOS (visible sólo para SuperAdmin TI)
+                      if (MediaQuery.of(context).size.width >= 365 &&
+                          Get.isRegistered<AuthMockController>() &&
+                          Get.find<AuthMockController>().isItAdmin) ...[
                         const SizedBox(width: 2),
                         Material(
                           color: Colors.transparent,
@@ -275,7 +278,7 @@ class LegalMobileNavHeader extends StatelessWidget implements PreferredSizeWidge
                             borderRadius: BorderRadius.circular(8),
                             onTap: () {
                               HapticFeedback.lightImpact();
-                              Get.offAllNamed(RouteHelper.getInitialRoute());
+                              Get.offAllNamed(RouteHelper.getSosConductorRoute());
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3.5),

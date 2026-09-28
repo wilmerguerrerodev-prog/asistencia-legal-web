@@ -43,6 +43,18 @@ List<MenuModel> menuList = [
     route: RouteHelper.getUserProfileScreen(),
   ),
   MenuModel(
+    icon: Images.dashboard,
+    iconData: Icons.shield_rounded,
+    menuTitle: 'Centro de Mando Legal',
+    route: RouteHelper.getLegalCenterRoute(),
+  ),
+  MenuModel(
+    icon: Images.dashboard,
+    iconData: Icons.gavel_rounded,
+    menuTitle: 'Mi Despacho (Abogado)',
+    route: RouteHelper.getLawyerWorkspaceRoute(),
+  ),
+  MenuModel(
     menuTitle: 'features',
   ),
   MenuModel(
@@ -233,9 +245,9 @@ List<MenuModel> getMenuListForRole(UserRole role) {
       return [
         MenuModel(
           icon: Images.dashboard,
-          iconData: Icons.local_taxi_rounded,
-          menuTitle: 'LegalTech Cliente',
-          route: RouteHelper.getSosConductorRoute(),
+          iconData: Icons.shield_rounded,
+          menuTitle: 'Centro de Mando',
+          route: RouteHelper.getLegalCenterRoute(),
         ),
         MenuModel(
           icon: Images.dashboard,

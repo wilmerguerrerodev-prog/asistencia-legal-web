@@ -143,7 +143,7 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       Get.put<ThemeController>(ThemeController(sharedPreferences: prefs));
 
-      authController.switchRole(UserRole.associateLawyer, navigate: false);
+      authController.switchRole(UserRole.itAdmin, navigate: false);
 
       await tester.pumpWidget(
         const GetMaterialApp(
@@ -160,7 +160,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Tap the role badge in the header
-      final roleBadgeFinder = find.text(UserRole.associateLawyer.shortBadge);
+      final roleBadgeFinder = find.text(UserRole.itAdmin.shortBadge);
       expect(roleBadgeFinder, findsOneWidget);
       await tester.tap(roleBadgeFinder);
       await tester.pumpAndSettle();
@@ -168,7 +168,7 @@ void main() {
       // Verify the sheet opened and shows the ACTIVO badge
       expect(find.text("Simulador de Roles (RBAC)"), findsOneWidget);
       expect(find.text("ACTIVO"), findsOneWidget);
-      expect(find.text(UserRole.associateLawyer.displayName), findsOneWidget);
+      expect(find.text(UserRole.itAdmin.displayName), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 
@@ -182,7 +182,7 @@ void main() {
       final prefs = await SharedPreferences.getInstance();
       Get.put<ThemeController>(ThemeController(sharedPreferences: prefs));
 
-      authController.switchRole(UserRole.associateLawyer, navigate: false);
+      authController.switchRole(UserRole.itAdmin, navigate: false);
 
       await tester.pumpWidget(
         const GetMaterialApp(
@@ -198,14 +198,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final roleBadgeFinder = find.text(UserRole.associateLawyer.shortBadge);
+      final roleBadgeFinder = find.text(UserRole.itAdmin.shortBadge);
       expect(roleBadgeFinder, findsOneWidget);
       await tester.tap(roleBadgeFinder);
       await tester.pumpAndSettle();
 
       expect(find.text("Simulador de Roles (RBAC)"), findsOneWidget);
       expect(find.text("ACTIVO"), findsOneWidget);
-      expect(find.text(UserRole.associateLawyer.displayName), findsOneWidget);
+      expect(find.text(UserRole.itAdmin.displayName), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

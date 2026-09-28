@@ -313,31 +313,32 @@ class _MenuDrawerState extends State<MenuDrawer> {
               ],
             ),
           ),
-          InkWell(
-            onTap: () => _showRoleSwitcherDialog(context, auth),
-            borderRadius: BorderRadius.circular(6),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1D4ED8).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "Rol",
-                    style: ubuntuBold.copyWith(
-                      fontSize: 10,
-                      color: const Color(0xFF1D4ED8),
+          if (auth.isItAdmin)
+            InkWell(
+              onTap: () => _showRoleSwitcherDialog(context, auth),
+              borderRadius: BorderRadius.circular(6),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1D4ED8).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Rol",
+                      style: ubuntuBold.copyWith(
+                        fontSize: 10,
+                        color: const Color(0xFF1D4ED8),
+                      ),
                     ),
-                  ),
-                  const Icon(Icons.arrow_drop_down,
-                      size: 14, color: Color(0xFF1D4ED8)),
-                ],
+                    const Icon(Icons.arrow_drop_down,
+                        size: 14, color: Color(0xFF1D4ED8)),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
