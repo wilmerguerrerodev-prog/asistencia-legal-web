@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
@@ -154,6 +153,110 @@ class _UserProfileState extends State<UserProfile> {
                   },
                 ),
                 const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _mostrarDialogoConfirmarCerrarSesion(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 380),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.redAccent,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "¿Cerrar Sesión?",
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "¿Estás seguro de que deseas salir de tu cuenta? Tendrás que ingresar tus credenciales nuevamente.",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: BorderSide(
+                            color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          Get.offAllNamed(RouteHelper.loginScreen);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Sí, Salir",
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -615,81 +718,6 @@ class _UserProfileState extends State<UserProfile> {
   Widget _buildAbogadoDetails(BuildContext context, ConductorController controller, bool isDark) {
     return Column(
       children: [
-        // Estado de Guardia Activa
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          decoration: BoxDecoration(
-            color: controller.abogadoDisponibleGuardia.value
-                ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                : Colors.orange.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: controller.abogadoDisponibleGuardia.value
-                  ? const Color(0xFF10B981).withValues(alpha: 0.35)
-                  : Colors.orange.withValues(alpha: 0.35),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Icon(
-                      controller.abogadoDisponibleGuardia.value
-                          ? Icons.radio_button_checked_rounded
-                          : Icons.radio_button_off_rounded,
-                      color: controller.abogadoDisponibleGuardia.value
-                          ? const Color(0xFF10B981)
-                          : Colors.orange,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            controller.abogadoDisponibleGuardia.value
-                                ? "En Guardia Activa (Disponible)"
-                                : "Fuera de Guardia (No disponible)",
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: controller.abogadoDisponibleGuardia.value
-                                  ? const Color(0xFF10B981)
-                                  : Colors.orange,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            controller.abogadoDisponibleGuardia.value
-                                ? "Recibirá llamadas inmediatas de conductores con SOS"
-                                : "Las alertas se derivarán a los otros abogados de turno",
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Switch(
-                value: controller.abogadoDisponibleGuardia.value,
-                activeThumbColor: const Color(0xFF10B981),
-                onChanged: (val) => controller.toggleGuardiaAbogado(),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-
         // Tarjeta Acreditación Judicial
         _buildInfoCard(
           isDark: isDark,
@@ -716,6 +744,7 @@ class _UserProfileState extends State<UserProfile> {
           title: "Despacho y Cobertura Territorial",
           subtitle: "Jurisdicción asignada para asistencia presencial",
           rows: [
+            _buildDataRow("Disponibilidad", "Servicio y Asistencia 24/7 Activa", isDark, success: true),
             _buildDataRow("Despacho", controller.abogadoZona.despacho, isDark),
             _buildDataRow("Zona de Acción", controller.abogadoZona.zonaODistancia, isDark, highlight: true),
             _buildDataRow("WhatsApp de Guardia", controller.abogadoZona.telefono, isDark, highlight: true),
@@ -838,29 +867,41 @@ class _UserProfileState extends State<UserProfile> {
 
   Widget _buildActionButtons(
       BuildContext context, ConductorController controller, bool esConductor, bool isDark) {
+    if (esConductor) {
+      return OutlinedButton.icon(
+        onPressed: () => _mostrarDialogoConfirmarCerrarSesion(context),
+        icon: const Icon(Icons.logout_rounded, size: 18, color: Colors.redAccent),
+        label: const Text(
+          "Cerrar Sesión",
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.redAccent),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: Colors.redAccent.withValues(alpha: 0.5)),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
+
     return Row(
       children: [
         Expanded(
           flex: 3,
           child: ElevatedButton.icon(
             onPressed: () {
-              if (esConductor) {
-                Get.toNamed(RouteHelper.initial);
-              } else {
-                Get.toNamed(RouteHelper.getEdutechRoute());
-              }
+              Get.toNamed(RouteHelper.getEdutechRoute());
             },
-            icon: Icon(
-              esConductor ? Icons.warning_amber_rounded : Icons.dashboard_customize_rounded,
+            icon: const Icon(
+              Icons.dashboard_customize_rounded,
               color: Colors.white,
               size: 18,
             ),
-            label: Text(
-              esConductor ? "Ir al Botón SOS Vial" : "Ir al Panel de Casos",
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            label: const Text(
+              "Ir al Panel de Casos",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: esConductor ? const Color(0xFFDC2626) : const Color(0xFF0F766E),
+              backgroundColor: const Color(0xFF0F766E),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -872,9 +913,7 @@ class _UserProfileState extends State<UserProfile> {
         Expanded(
           flex: 2,
           child: OutlinedButton.icon(
-            onPressed: () {
-              Get.offAllNamed(RouteHelper.loginScreen);
-            },
+            onPressed: () => _mostrarDialogoConfirmarCerrarSesion(context),
             icon: const Icon(Icons.logout_rounded, size: 18, color: Colors.redAccent),
             label: const Text(
               "Cerrar Sesión",

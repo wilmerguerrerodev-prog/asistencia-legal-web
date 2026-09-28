@@ -145,17 +145,35 @@ void main() {
     expect(find.text('Credenciales de Tránsito (ANT Ecuador)'), findsOneWidget);
     expect(find.text('Vehículo y Cooperativa'), findsOneWidget);
     expect(find.text('Protección Vial LegalTech 24/7'), findsOneWidget);
-    expect(find.text('Ir al Botón SOS Vial'), findsOneWidget);
+    expect(find.text('Ir al Botón SOS Vial'), findsNothing);
+    expect(find.text('Cerrar Sesión'), findsOneWidget);
+
+    // Tap Cerrar Sesión and verify confirmation dialog appears
+    final btnCerrarSesion = find.text('Cerrar Sesión');
+    await tester.ensureVisible(btnCerrarSesion);
+    await tester.tap(btnCerrarSesion);
+    await tester.pumpAndSettle();
+
+    expect(find.text('¿Cerrar Sesión?'), findsOneWidget);
+    expect(find.text('Cancelar'), findsOneWidget);
+    expect(find.text('Sí, Salir'), findsOneWidget);
+
+    // Tap Cancelar and verify dialog closes
+    final btnCancelar = find.text('Cancelar');
+    await tester.tap(btnCancelar);
+    await tester.pumpAndSettle();
+    expect(find.text('¿Cerrar Sesión?'), findsNothing);
 
     // Switch to Abogado profile
     final btnAbogado = find.text('Perfil Abogado');
+    await tester.ensureVisible(btnAbogado);
     await tester.tap(btnAbogado);
     await tester.pumpAndSettle();
 
     expect(find.text('Abogado Acreditado'), findsOneWidget);
     expect(find.text('Acreditación y Títulos Profesionales'), findsOneWidget);
     expect(find.text('Despacho y Cobertura Territorial'), findsOneWidget);
-    expect(find.text('En Guardia Activa (Disponible)'), findsOneWidget);
+    expect(find.text('Servicio y Asistencia 24/7 Activa'), findsOneWidget);
     expect(find.text('Ir al Panel de Casos'), findsOneWidget);
   });
 
