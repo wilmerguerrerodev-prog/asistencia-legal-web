@@ -14,9 +14,18 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  // Control de flujo progresivo tipo Steam (Paso 1: Identidad, Paso 2: Taxi & Clave)
+  // Control de flujo progresivo tipo Steam:
+  // Paso 1: Autenticación rápida (Google, Apple o Correo + Términos)
+  // Paso 2: Datos específicos del perfil (Cédula, Licencia, Taxi y Protección)
   int _pasoActual = 1;
 
+  // Paso 1: Autenticación rápida
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _aceptaTerminos = true;
+
+  // Paso 2: Perfil específico del conductor
   final TextEditingController _cedulaController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _celularController = TextEditingController();
@@ -24,10 +33,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _cooperativaController = TextEditingController();
   final TextEditingController _unidadController = TextEditingController();
   final TextEditingController _placaController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
 
-  bool _obscurePassword = true;
-  bool _aceptaTerminos = true;
   bool _consultandoCedula = false;
   bool _cedulaVerificada = false;
   bool _isLoading = false;
@@ -40,6 +46,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
     _cedulaController.dispose();
     _nombreController.dispose();
     _celularController.dispose();
@@ -47,11 +55,137 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _cooperativaController.dispose();
     _unidadController.dispose();
     _placaController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  /// Consulta inteligente de Cédula (simulada para demo / lista para conectar con FastAPI / ANT)
+  // --- MÉTODOS PASO 1: AUTENTICACIÓN RÁPIDA ---
+
+  void _autenticarConGoogle() {
+    if (!_aceptaTerminos) {
+      Get.snackbar(
+        "Términos requeridos",
+        "Por favor acepta los términos y condiciones para continuar.",
+        backgroundColor: const Color(0xFFDC2626),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+
+    // Simula autenticación rápida con Google
+    if (_emailController.text.isEmpty) {
+      _emailController.text = "conductor.ruta@gmail.com";
+    }
+    if (_nombreController.text.isEmpty) {
+      _nombreController.text = "Carlos Alberto Mendoza";
+    }
+
+    setState(() => _pasoActual = 2);
+
+    Get.snackbar(
+      "✓ Cuenta vinculada con Google",
+      "Ahora ingresa tu cédula y datos de tu unidad de taxi.",
+      backgroundColor: const Color(0xFF2563EB),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
+      icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
+    );
+  }
+
+  void _autenticarConApple() {
+    if (!_aceptaTerminos) {
+      Get.snackbar(
+        "Términos requeridos",
+        "Por favor acepta los términos y condiciones para continuar.",
+        backgroundColor: const Color(0xFFDC2626),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+
+    // Simula autenticación rápida con Apple
+    if (_emailController.text.isEmpty) {
+      _emailController.text = "conductor.ruta@icloud.com";
+    }
+    if (_nombreController.text.isEmpty) {
+      _nombreController.text = "Carlos Alberto Mendoza";
+    }
+
+    setState(() => _pasoActual = 2);
+
+    Get.snackbar(
+      "✓ Cuenta vinculada con Apple ID",
+      "Ahora ingresa tu cédula y datos de tu unidad de taxi.",
+      backgroundColor: const Color(0xFF0F172A),
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      duration: const Duration(seconds: 3),
+      icon: const Icon(Icons.apple, color: Colors.white),
+    );
+  }
+
+  void _avanzarConCorreo() {
+    if (!_aceptaTerminos) {
+      Get.snackbar(
+        "Términos requeridos",
+        "Por favor acepta los términos y condiciones para continuar.",
+        backgroundColor: const Color(0xFFDC2626),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      Get.snackbar(
+        "Correo inválido",
+        "Por favor ingresa un correo electrónico válido para tu cuenta.",
+        backgroundColor: const Color(0xFFD97706),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+
+    final password = _passwordController.text.trim();
+    if (password.length < 4) {
+      Get.snackbar(
+        "Contraseña requerida",
+        "Por favor crea una contraseña o PIN seguro de al menos 4 caracteres.",
+        backgroundColor: const Color(0xFFD97706),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+
+    setState(() => _pasoActual = 2);
+  }
+
+  void _volverPaso1() {
+    setState(() => _pasoActual = 1);
+  }
+
+  // --- MÉTODOS PASO 2: DATOS ESPECÍFICOS DEL PERFIL ---
+
+  /// Consulta inteligente de Cédula (simulada para demo / conectable con ANT y Registro Civil)
   Future<void> _consultarCedula(String cedula) async {
     final cleanCedula = cedula.trim();
     if (cleanCedula.length != 10) {
@@ -72,7 +206,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       _cedulaVerificada = false;
     });
 
-    // Simula consulta de validación al servicio
     await Future.delayed(const Duration(milliseconds: 900));
 
     if (!mounted) return;
@@ -101,41 +234,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  void _avanzarPaso2() {
-    final cedula = _cedulaController.text.trim();
-    if (cedula.isEmpty) {
-      Get.snackbar(
-        "Cédula requerida",
-        "Por favor ingresa tu número de cédula para continuar.",
-        backgroundColor: const Color(0xFFD97706),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-      );
-      return;
-    }
-    setState(() => _pasoActual = 2);
-  }
-
-  void _volverPaso1() {
-    setState(() => _pasoActual = 1);
-  }
-
   void _registrarConductor() async {
-    if (!_aceptaTerminos) {
-      Get.snackbar(
-        "Términos requeridos",
-        "Debes aceptar los términos de cobertura legal para activar la protección.",
-        backgroundColor: const Color(0xFFDC2626),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-      );
-      return;
-    }
-
     final nombre = _nombreController.text.trim().isNotEmpty
         ? _nombreController.text.trim()
         : "Carlos Mendoza";
@@ -189,31 +288,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     Get.offAllNamed(RouteHelper.initial);
   }
 
-  void _completarConGoogle() async {
-    setState(() {
-      _nombreController.text = "Carlos Alberto Mendoza";
-      _cedulaController.text = "1002345678";
-      _celularController.text = "+593 98 765 4321";
-      _cooperativaController.text = "Cooperativa Los Lagos";
-      _unidadController.text = "Unidad #42";
-      _placaController.text = "IBA-1234";
-      _cedulaVerificada = true;
-      _pasoActual = 2; // Avanza directo al paso 2
-    });
-
-    Get.snackbar(
-      "Datos cargados desde Google",
-      "Paso 1 completado. Ahora verifica los datos de tu taxi.",
-      backgroundColor: const Color(0xFF2563EB),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 3),
-      icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -256,8 +330,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           color: const Color(0xFF2563EB),
                           borderRadius: BorderRadius.circular(12),
@@ -273,7 +347,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           child: Icon(Icons.local_taxi_rounded, color: Colors.white, size: 22),
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       Text(
                         "LegalTech",
                         style: TextStyle(
@@ -287,14 +361,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
 
                   Text(
-                    "Registro de Conductor",
+                    _pasoActual == 1 ? "Registro de Cuenta" : "Datos del Conductor",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: 20,
+                      fontSize: 19,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : const Color(0xFF0F172A),
                     ),
@@ -303,17 +377,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   // 2. Indicador Progresivo Tipo Steam
                   _buildSteamProgressIndicator(isDark),
 
-                  // 3. Contenido Dinámico por Pasos con Transición Suave
+                  // 3. Contenido Dinámico con Transición Suave
                   AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 250),
+                    duration: const Duration(milliseconds: 260),
                     child: _pasoActual == 1
-                        ? _buildPaso1(isDark)
-                        : _buildPaso2(isDark),
+                        ? _buildPaso1Autenticacion(isDark)
+                        : _buildPaso2Perfil(isDark),
                   ),
 
                   const SizedBox(height: 18),
 
-                  // 4. Enlace a Login
+                  // 4. Enlace a Iniciar Sesión
                   Wrap(
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -349,7 +423,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // --- INDICADOR STEAM (Barra de progreso de pasos) ---
+  // --- INDICADOR STEAM (Progreso en 2 pasos) ---
   Widget _buildSteamProgressIndicator(bool isDark) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 14),
@@ -393,7 +467,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        "Identidad",
+                        "Autenticación",
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 11.5,
@@ -444,7 +518,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        "Vehículo & Clave",
+                        "Perfil & Licencia",
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 11.5,
@@ -476,16 +550,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
-  // --- PASO 1: IDENTIFICACIÓN Y CONTACTO (Cero fricción) ---
-  Widget _buildPaso1(bool isDark) {
+  // --- PASO 1: PANTALLA DE AUTENTICACIÓN RÁPIDA ---
+  Widget _buildPaso1Autenticacion(bool isDark) {
     return Column(
-      key: const ValueKey("Paso1_Identidad"),
+      key: const ValueKey("Paso1_AutenticacionRapida"),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Botón Google (Opcional para autocompletar)
+        Text(
+          "Elige tu método de entrada rápido:",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 10),
+
+        // Botón Google
         OutlinedButton(
           style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             side: BorderSide(
               color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
               width: 1.2,
@@ -495,16 +580,56 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
             backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           ),
-          onPressed: _completarConGoogle,
+          onPressed: _autenticarConGoogle,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
               Image.asset(Images.google, height: 18, width: 18),
               const SizedBox(width: 10),
               Flexible(
                 child: Text(
-                  "Registrarse con Google",
+                  "Continuar con Google",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        // Botón Apple
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            side: BorderSide(
+              color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+              width: 1.2,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
+          ),
+          onPressed: _autenticarConApple,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.apple,
+                size: 21,
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  "Continuar con Apple",
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
@@ -520,6 +645,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
         const SizedBox(height: 14),
 
+        // Separador "o correo tradicional"
         Row(
           children: [
             Expanded(
@@ -528,9 +654,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                "o ingresa tu cédula",
+                "o con correo tradicional",
                 style: TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   fontSize: 11,
@@ -549,9 +675,161 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
         const SizedBox(height: 14),
 
+        // Campo Correo Electrónico
+        Text(
+          "Correo Electrónico",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
+        _buildTextField(
+          controller: _emailController,
+          hint: "conductor@ejemplo.com",
+          icon: Icons.alternate_email_rounded,
+          keyboardType: TextInputType.emailAddress,
+          isDark: isDark,
+        ),
+
+        const SizedBox(height: 12),
+
+        // Campo Contraseña
+        Text(
+          "Contraseña o PIN de Acceso",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          style: TextStyle(
+            fontFamily: 'Plus Jakarta Sans',
+            fontSize: 13.5,
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+          ),
+          decoration: InputDecoration(
+            hintText: "••••••••",
+            hintStyle: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 13,
+              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+            ),
+            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: Color(0xFF2563EB)),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                size: 19,
+                color: isDark ? Colors.white54 : const Color(0xFF64748B),
+              ),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 14),
+
+        // Checkbox Términos y Condiciones (Como solicitó en el audio en el paso 1)
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 22,
+              height: 22,
+              child: Checkbox(
+                value: _aceptaTerminos,
+                activeColor: const Color(0xFF2563EB),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                onChanged: (val) => setState(() => _aceptaTerminos = val ?? true),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                "Acepto los términos y condiciones del servicio LegalTech y patrocinio legal en ruta.",
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 11.5,
+                  color: isDark ? Colors.white70 : const Color(0xFF475569),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 18),
+
+        // Botón Continuar a Paso 2
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2563EB),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 0,
+          ),
+          onPressed: _avanzarConCorreo,
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  "Continuar a Datos del Conductor",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
+              Icon(Icons.arrow_forward_rounded, size: 18),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // --- PASO 2: FORMULARIO DE DATOS ESPECÍFICOS DEL PERFIL ---
+  Widget _buildPaso2Perfil(bool isDark) {
+    return Column(
+      key: const ValueKey("Paso2_DatosPerfil"),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         _buildSeccionHeader(
-          icono: Icons.person_rounded,
-          titulo: "DATOS PERSONALES Y LICENCIA",
+          icono: Icons.badge_outlined,
+          titulo: "IDENTIDAD Y LICENCIA PROFESIONAL",
           isDark: isDark,
         ),
         const SizedBox(height: 10),
@@ -672,9 +950,29 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
         const SizedBox(height: 12),
 
+        // Tipo de Licencia Profesional (Destacado especialmente según audio)
+        Text(
+          "Tipo de Licencia de Conducir",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
+        _buildTextField(
+          controller: _licenciaController,
+          hint: "Tipo C Profesional (30 Puntos ANT)",
+          icon: Icons.credit_card_rounded,
+          isDark: isDark,
+        ),
+
+        const SizedBox(height: 12),
+
         // Nombres y Apellidos
         Text(
-          "Nombres y Apellidos",
+          "Nombres y Apellidos del Conductor",
           style: TextStyle(
             fontFamily: 'Montserrat',
             fontSize: 12,
@@ -692,7 +990,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
         const SizedBox(height: 12),
 
-        // Teléfono / WhatsApp
+        // Teléfono / WhatsApp (auxilio vial)
         Text(
           "Teléfono / WhatsApp (para auxilio vial)",
           style: TextStyle(
@@ -711,50 +1009,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           isDark: isDark,
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
 
-        // Botón Continuar a Paso 2
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2563EB),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 0,
-          ),
-          onPressed: _avanzarPaso2,
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  "Continuar a Datos del Taxi",
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Icon(Icons.arrow_forward_rounded, size: 18),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // --- PASO 2: DATOS DEL VEHÍCULO Y SEGURIDAD ---
-  Widget _buildPaso2(bool isDark) {
-    return Column(
-      key: const ValueKey("Paso2_Vehiculo"),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
         _buildSeccionHeader(
           icono: Icons.local_taxi_rounded,
           titulo: "DATOS DEL VEHÍCULO / UNIDAD",
@@ -835,117 +1091,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
 
-        // Licencia
-        Text(
-          "Licencia Profesional y Puntos",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white70 : const Color(0xFF334155),
-          ),
-        ),
-        const SizedBox(height: 6),
-        _buildTextField(
-          controller: _licenciaController,
-          hint: "Tipo C Profesional (30 Puntos)",
-          icon: Icons.credit_card_rounded,
-          isDark: isDark,
-        ),
-
-        const SizedBox(height: 12),
-
-        // Contraseña o PIN
-        Text(
-          "Crea tu Contraseña o PIN",
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-            color: isDark ? Colors.white70 : const Color(0xFF334155),
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: _passwordController,
-          obscureText: _obscurePassword,
-          style: TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontSize: 13.5,
-            color: isDark ? Colors.white : const Color(0xFF0F172A),
-          ),
-          decoration: InputDecoration(
-            hintText: "••••••••",
-            hintStyle: TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontSize: 13,
-              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
-            ),
-            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: Color(0xFF2563EB)),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                size: 19,
-                color: isDark ? Colors.white54 : const Color(0xFF64748B),
-              ),
-              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-            ),
-            filled: true,
-            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-            ),
-          ),
-        ),
-
-        const SizedBox(height: 12),
-
-        // Checkbox Términos
-        Row(
-          children: [
-            SizedBox(
-              width: 22,
-              height: 22,
-              child: Checkbox(
-                value: _aceptaTerminos,
-                activeColor: const Color(0xFF2563EB),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-                onChanged: (val) => setState(() => _aceptaTerminos = val ?? true),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                "Acepto los términos de auxilio vial y patrocinio legal en ruta.",
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 11.5,
-                  color: isDark ? Colors.white70 : const Color(0xFF475569),
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 18),
-
-        // Botones Volver y Completar
+        // Botones Volver a Paso 1 y Completar Registro
         Row(
           children: [
             OutlinedButton(

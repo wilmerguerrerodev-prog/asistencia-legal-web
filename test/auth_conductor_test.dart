@@ -68,9 +68,23 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Registro de Conductor'), findsOneWidget);
-    expect(find.text('Registrarse con Google'), findsOneWidget);
-    expect(find.text('DATOS PERSONALES Y LICENCIA'), findsOneWidget);
+    // Step 1: Quick Auth Screen
+    expect(find.text('Registro de Cuenta'), findsOneWidget);
+    expect(find.text('Continuar con Google'), findsOneWidget);
+    expect(find.text('Continuar con Apple'), findsOneWidget);
+    expect(find.text('Correo Electrónico'), findsOneWidget);
+
+    // Fast-track via Google authentication
+    final btnGoogle = find.text('Continuar con Google');
+    await tester.ensureVisible(btnGoogle);
+    await tester.tap(btnGoogle);
+    await tester.pumpAndSettle();
+
+    // Step 2: Driver Profile & License Screen
+    expect(find.text('Datos del Conductor'), findsOneWidget);
+    expect(find.text('IDENTIDAD Y LICENCIA PROFESIONAL'), findsOneWidget);
+    expect(find.text('Tipo de Licencia de Conducir'), findsOneWidget);
+    expect(find.text('DATOS DEL VEHÍCULO / UNIDAD'), findsOneWidget);
 
     // Enter 10-digit Cédula
     final cedulaField = find.widgetWithText(TextField, 'Ej. 1002345678');
@@ -87,15 +101,6 @@ void main() {
 
     expect(find.text('Verificada'), findsOneWidget);
     expect(find.text('Carlos Alberto Mendoza'), findsOneWidget);
-
-    // Advance to Step 2 (Steam-style Progressive Onboarding)
-    final btnAvanzar = find.text('Continuar a Datos del Taxi');
-    await tester.ensureVisible(btnAvanzar);
-    await tester.tap(btnAvanzar);
-    await tester.pumpAndSettle();
-
-    // Step 2 assertions
-    expect(find.text('DATOS DEL VEHÍCULO / UNIDAD'), findsOneWidget);
 
     // Register button
     final btnCompletar = find.text('Completar Registro');
