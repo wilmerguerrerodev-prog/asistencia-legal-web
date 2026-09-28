@@ -122,11 +122,49 @@ class ConductorController extends GetxController {
   final RxBool casoEscaladoASuperAbogado = false.obs;
   Timer? _timerEscalamiento;
 
-  // Datos del conductor
-  final String nombreConductor = "Carlos Mendoza";
-  final String unidadTaxi = "Unidad #42";
-  final String cooperativa = "Coo. Los Lagos";
-  final String placaVehiculo = "IBA-1234";
+  // Datos reactivos del conductor (actualizables desde login / registro)
+  final RxString _nombreConductor = "Carlos Mendoza".obs;
+  final RxString _unidadTaxi = "Unidad #42".obs;
+  final RxString _cooperativa = "Coo. Los Lagos".obs;
+  final RxString _placaVehiculo = "IBA-1234".obs;
+  final RxString _telefonoConductor = "+593 98 765 4321".obs;
+  final RxString _cedulaConductor = "1002345678".obs;
+  final RxString _tipoLicencia = "Tipo C Profesional (30 Puntos)".obs;
+  final RxBool estaAutenticado = true.obs;
+
+  String get nombreConductor => _nombreConductor.value;
+  String get unidadTaxi => _unidadTaxi.value;
+  String get cooperativa => _cooperativa.value;
+  String get placaVehiculo => _placaVehiculo.value;
+  String get telefonoConductor => _telefonoConductor.value;
+  String get cedulaConductor => _cedulaConductor.value;
+  String get tipoLicencia => _tipoLicencia.value;
+
+  /// Actualiza los datos del conductor desde el Login o Registro
+  void actualizarDatosConductor({
+    required String nombre,
+    required String unidad,
+    required String cooperativaNombre,
+    required String placa,
+    String? telefono,
+    String? cedula,
+    String? licencia,
+  }) {
+    _nombreConductor.value = nombre.trim();
+    _unidadTaxi.value = unidad.trim();
+    _cooperativa.value = cooperativaNombre.trim();
+    _placaVehiculo.value = placa.trim().toUpperCase();
+    if (telefono != null && telefono.isNotEmpty) {
+      _telefonoConductor.value = telefono.trim();
+    }
+    if (cedula != null && cedula.isNotEmpty) {
+      _cedulaConductor.value = cedula.trim();
+    }
+    if (licencia != null && licencia.isNotEmpty) {
+      _tipoLicencia.value = licencia.trim();
+    }
+    estaAutenticado.value = true;
+  }
 
   // Abogado de zona más cercano (asignado automáticamente según geolocalización del incidente)
   final AbogadoDefensor abogadoZona = const AbogadoDefensor(

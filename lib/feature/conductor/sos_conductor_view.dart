@@ -1737,6 +1737,7 @@ class SosConductorView extends StatelessWidget {
       context: context,
       builder: (dialogContext) {
         final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
+        final ConductorController controller = Get.find<ConductorController>();
 
         return Dialog(
           shape:
@@ -1814,32 +1815,32 @@ class SosConductorView extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      const _FichaDocRow(
-                          label: "Conductor:", valor: "Carlos Alberto Mendoza"),
+                      _FichaDocRow(
+                          label: "Conductor:", valor: controller.nombreConductor),
                       Divider(
                           height: 12,
                           color: isDark
                               ? const Color(0xFF334155)
                               : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(
+                      _FichaDocRow(
                           label: "Licencia:",
-                          valor: "Tipo C Profesional (30 Puntos)"),
+                          valor: controller.tipoLicencia),
                       Divider(
                           height: 12,
                           color: isDark
                               ? const Color(0xFF334155)
                               : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(
+                      _FichaDocRow(
                           label: "Unidad / Taxi:",
-                          valor: "Unidad #42 · Coo. Los Lagos"),
+                          valor: "${controller.unidadTaxi} · ${controller.cooperativa}"),
                       Divider(
                           height: 12,
                           color: isDark
                               ? const Color(0xFF334155)
                               : const Color(0xFFE2E8F0)),
-                      const _FichaDocRow(
+                      _FichaDocRow(
                           label: "Placa / RTV:",
-                          valor: "IBA-1234 · RTV 2024 Aprobada"),
+                          valor: "${controller.placaVehiculo} · RTV 2024 Aprobada"),
                     ],
                   ),
                 ),
