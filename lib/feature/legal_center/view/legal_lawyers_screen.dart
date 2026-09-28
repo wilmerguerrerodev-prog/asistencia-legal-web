@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
@@ -11,6 +12,7 @@ import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 import '../controller/legal_center_controller.dart';
 import '../widgets/assign_lawyer_case_dialog.dart';
+import '../widgets/legal_mobile_nav_header.dart';
 
 class LegalLawyersScreen extends StatefulWidget {
   const LegalLawyersScreen({super.key});
@@ -96,8 +98,100 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
     });
   }
 
+  void _handleConfirmAssignment(
+    int index,
+    Map<String, dynamic> law,
+    String caseId,
+    bool isQueued,
+    String etaMinutes,
+    String caseTitle,
+  ) {
+    final lawyerName = law["nombre"] as String;
+    setState(() {
+      if (isQueued) {
+        _lawyersData[index]["casosHoy"] = "${law["casosHoy"]} • En cola: $caseId";
+      } else {
+        _lawyersData[index]["estado"] = "En Camino a Siniestro $caseId";
+        _lawyersData[index]["color"] = const Color(0xFFE65100);
+        _lawyersData[index]["casosHoy"] = "1 caso en atención activa ($caseId)";
+        final baseLoc = (law["ubicacion"] as String).split('•').first.trim();
+        _lawyersData[index]["ubicacion"] = "$baseLoc • ETA: $etaMinutes min";
+      }
+    });
+
+    if (isQueued) {
+      _legalController.enqueueCaseForLawyer(caseId, lawyerName, incidentTitle: caseTitle);
+    } else {
+      _legalController.dispatchLawyer(caseId, lawyerName, etaMinutes);
+    }
+  }
+
   void _openAssignCaseDialog(BuildContext context, int index) {
     final law = _lawyersData[index];
+    final isMobile = ResponsiveHelper.isMobile(context);
+
+    // En móviles: Modal Bottom Sheet arrastrable y táctil
+    if (isMobile) {
+      HapticFeedback.mediumImpact();
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (bottomSheetCtx) => DraggableScrollableSheet(
+          initialChildSize: 0.88,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          builder: (ctx, scrollCtrl) => Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.3),
+                  blurRadius: 18,
+                  offset: const Offset(0, -6),
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 10, bottom: 6),
+                    width: 44,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+                    child: AssignLawyerCaseDialog(
+                      lawyer: law,
+                      onConfirmAssignment: ({
+                        required String caseId,
+                        required bool isQueued,
+                        required String etaMinutes,
+                        required String mode,
+                        required String caseTitle,
+                      }) {
+                        _handleConfirmAssignment(index, law, caseId, isQueued, etaMinutes, caseTitle);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Modo Escritorio / Web (Dialog centrado)
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -110,25 +204,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
           required String mode,
           required String caseTitle,
         }) {
-          final lawyerName = law["nombre"] as String;
-          setState(() {
-            if (isQueued) {
-              _lawyersData[index]["casosHoy"] = "${law["casosHoy"]} • En cola: $caseId";
-            } else {
-              _lawyersData[index]["estado"] = "En Camino a Siniestro $caseId";
-              _lawyersData[index]["color"] = const Color(0xFFE65100);
-              _lawyersData[index]["casosHoy"] = "1 caso en atención activa ($caseId)";
-              final baseLoc = (law["ubicacion"] as String).split('•').first.trim();
-              _lawyersData[index]["ubicacion"] = "$baseLoc • ETA: $etaMinutes min";
-            }
-          });
-
-          // Notificar y sincronizar con el controlador central
-          if (isQueued) {
-            _legalController.enqueueCaseForLawyer(caseId, lawyerName, incidentTitle: caseTitle);
-          } else {
-            _legalController.dispatchLawyer(caseId, lawyerName, etaMinutes);
-          }
+          _handleConfirmAssignment(index, law, caseId, isQueued, etaMinutes, caseTitle);
         },
       ),
     );
@@ -138,8 +214,56 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
+    // ==========================================
+    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
+    // ==========================================
+    if (isMobile) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: const LegalMobileNavHeader(
+          activeIndex: 2,
+          title: "Abogados en Vía",
+          subtitle: "Patrullaje legal y asignación",
+        ),
+        body: RefreshIndicator(
+          color: const Color(0xFF1D4ED8),
+          onRefresh: () async {
+            HapticFeedback.lightImpact();
+            setState(() {});
+            _legalController.update();
+            await Future.delayed(const Duration(milliseconds: 350));
+          },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Dimensions.paddingSizeDefault,
+              vertical: Dimensions.paddingSizeSmall,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 12),
+                _buildKPIs(context),
+                const SizedBox(height: 12),
+                _buildLawyersList(context),
+                const SizedBox(height: 12),
+                _buildSLAInfoCard(context),
+                const SizedBox(height: 36),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // ==========================================
+    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
+    // ==========================================
     return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
+      drawer: null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
