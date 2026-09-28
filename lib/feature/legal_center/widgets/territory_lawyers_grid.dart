@@ -86,7 +86,7 @@ class TerritoryLawyersGrid extends StatelessWidget {
                         isMobile ? 'Supervisión por Cantón' : 'Supervisión de Abogados de Territorio por Cantón',
                         style: ubuntuBold.copyWith(
                           fontSize: isMobile ? Dimensions.fontSizeSmall : Dimensions.fontSizeDefault,
-                          color: Theme.of(context).textTheme.bodyLarge!.color,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -251,7 +251,7 @@ class TerritoryLawyersGrid extends StatelessWidget {
                       lawyer.nombre,
                       style: ubuntuBold.copyWith(
                         fontSize: Dimensions.fontSizeDefault,
-                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -305,7 +305,7 @@ class TerritoryLawyersGrid extends StatelessWidget {
                           lawyer.unidadMovil,
                           style: ubuntuRegular.copyWith(
                             fontSize: 10,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -374,7 +374,7 @@ class TerritoryLawyersGrid extends StatelessWidget {
                     'ETA prom. arribo: ${lawyer.tiempoPromedioRespuestaMin} min',
                     style: ubuntuRegular.copyWith(
                       fontSize: 10,
-                      color: Theme.of(context).textTheme.bodySmall!.color,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
                     ),
                   ),
                   Text(

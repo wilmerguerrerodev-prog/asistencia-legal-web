@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import '../model/legal_case_model.dart';
 
 enum LegalDispatchViewMode {
@@ -99,7 +100,7 @@ class LegalCenterController extends GetxController {
   LegalCase? get selectedCase => _selectedCase;
 
   // --- MODO DE VISUALIZACIÓN EN CENTRO DE MANDO (SPLIT VIEW / TABLA / MAPA) ---
-  LegalDispatchViewMode _dispatchViewMode = LegalDispatchViewMode.split;
+  LegalDispatchViewMode _dispatchViewMode = LegalDispatchViewMode.tableOnly;
   LegalDispatchViewMode get dispatchViewMode => _dispatchViewMode;
 
   void setDispatchViewMode(LegalDispatchViewMode mode) {
@@ -174,9 +175,6 @@ class LegalCenterController extends GetxController {
   void animateMapToCase(LegalCase caseItem, {double zoom = 14.8}) {
     _selectedCase = caseItem;
     _selectedLawyer = null;
-    if (_dispatchViewMode == LegalDispatchViewMode.tableOnly) {
-      _dispatchViewMode = LegalDispatchViewMode.split;
-    }
     animateMapToCoordinates(caseItem.lat, caseItem.lng, zoom: zoom);
   }
 
@@ -340,6 +338,22 @@ class LegalCenterController extends GetxController {
         lng: -78.1450,
         casosActivos: 0,
       ),
+      TerritoryLawyer(
+        id: 'LAWYER-001',
+        nombre: 'Dra. Andrea Morales',
+        canton: 'Ibarra',
+        provincia: 'Imbabura',
+        telefono: '+593 99 445 1200',
+        unidadMovil: 'Móvil Legal #07 (Chevrolet D-Max • PCX-8822)',
+        estadoGuardia: LawyerGuardStatus.enLinea,
+        casosRecibidos: 10,
+        casosAtendidosATiempo: 10,
+        tiempoPromedioRespuestaMin: 6,
+        especialidad: 'Defensa penal en flagrancia y peritajes SIAT Ibarra',
+        lat: 0.3520,
+        lng: -78.1230,
+        casosActivos: 1,
+      ),
     ];
   }
 
@@ -407,6 +421,71 @@ class LegalCenterController extends GetxController {
         ],
       ),
       LegalCase(
+        id: '#CASO-1041',
+        taxistaNombre: 'Segundo J. Chimarro',
+        taxistaCedula: '1003849102',
+        taxistaTelefono: '+593 98 554 4332',
+        cooperativa: 'Flota Imbabura',
+        unidad: 'Unidad 28',
+        placa: 'IAA-4912',
+        vehiculoModelo: 'Hyundai Elantra 1.6 (2022)',
+        estadoSeguro: 'Póliza Activa • Seguros Equinoccial',
+        tipoIncidente: '🚗💥 Me chocaron por alcance lateral con herido leve',
+        urgencia: UrgencyLevel.alta,
+        estado: CaseStatus.abogadoDespachado,
+        ubicacionDireccion: 'Av. Mariano Acosta y Víctor Manuel Guzmán, Ibarra',
+        provincia: 'Imbabura',
+        canton: 'Ibarra',
+        tieneHeridosORetencion: true,
+        alertaNivel: AlertaNivel.critico,
+        lat: 0.3480,
+        lng: -78.1215,
+        horaReporte: 'Hace 8 min',
+        dictamenIaCorto:
+            'Art. 379 COIP: Conductor impactado con derecho a indemnización • SPPAT activo para pasajero.',
+        relatoConductor:
+            'Camioneta invadió mi carril al girar en redondel de Ibarra. Pasajero presenta dolor cervical leve, ya llegó paramédico. Requiero que la abogada Dra. Andrea Morales levante el acta y peritaje SIAT para evitar retención del taxi.',
+        articuloCoip: 'Art. 379 y 380 COIP • Daños materiales con lesiones leves y custodia inmediata',
+        dictamenIaRecomendacion:
+            '1. Asistir de inmediato al redondel para vigilar fijación fotográfica SIAT.\n2. Exigir prueba de alcoholemia al causante.\n3. Suscribir acta de entrega de unidad sin internamiento en patio Movidelnor.',
+        abogadoAsignado: 'Dra. Andrea Morales',
+        assignedLawyerId: 'LAWYER-001',
+        horaDespacho: 'En camino (ETA: 4 min)',
+        fueAsignadoAutomaticamente: true,
+        distanciaAbogadoKm: 1.2,
+        motivoAsignacion: 'Asignación directa a abogada de guardia en Ibarra',
+        evidencias: [
+          DriverEvidence(
+            type: 'photo',
+            title: 'Foto Impacto Lateral Redondel',
+            detail: 'JPG • Daño puerta copiloto',
+            icon: Icons.camera_alt_rounded,
+          ),
+          DriverEvidence(
+            type: 'audio',
+            title: 'Audio Conductor en Sitio',
+            detail: 'Duración: 0:24 seg • Ibarra',
+            icon: Icons.mic_rounded,
+          ),
+        ],
+        timeline: [
+          CaseTimelineEvent(
+            time: '10:05',
+            title: 'Siniestro Reportado en Ibarra',
+            description: 'Conductor reportó impacto lateral con herido leve.',
+            icon: Icons.emergency_rounded,
+            color: const Color(0xFFD32F2F),
+          ),
+          CaseTimelineEvent(
+            time: '10:07',
+            title: 'Asignación a Dra. Andrea Morales',
+            description: 'Unidad Móvil #07 en desplazamiento hacia el redondel.',
+            icon: Icons.directions_car_rounded,
+            color: const Color(0xFF0D47A1),
+          ),
+        ],
+      ),
+      LegalCase(
         id: '#CASO-1040',
         taxistaNombre: 'Marco V. Morales',
         taxistaCedula: '1001928374',
@@ -435,6 +514,7 @@ class LegalCenterController extends GetxController {
         dictamenIaRecomendacion:
             'Activar cobertura médica de pasajeros SPPAT. No permitir retención prolongada si SIAT constata posición en vía preferencial.',
         abogadoAsignado: 'Abg. Roberto Andrade',
+        assignedLawyerId: 'ABG-03',
         horaDespacho: 'Hace 8 min (En camino)',
         fueAsignadoAutomaticamente: true,
         distanciaAbogadoKm: 1.8,
@@ -493,6 +573,7 @@ class LegalCenterController extends GetxController {
         dictamenIaRecomendacion:
             'Formalizar acta de mediación directa con firma de desistimiento total. Dra. Elena Torres disponible en Cotacachi para sellar acta.',
         abogadoAsignado: 'Dra. Elena Torres',
+        assignedLawyerId: 'ABG-02',
         horaDespacho: 'Hace 15 min',
         fueAsignadoAutomaticamente: true,
         distanciaAbogadoKm: 2.3,
@@ -551,6 +632,7 @@ class LegalCenterController extends GetxController {
         dictamenIaRecomendacion:
             'Fijar fotos finales, constatar transferencia de valor de repuesto y suscribir recibo de indemnidad recíproca.',
         abogadoAsignado: 'Dr. Marcelo Dávila',
+        assignedLawyerId: 'ABG-01',
         horaDespacho: 'Hace 20 min',
         evidencias: [
           DriverEvidence(
@@ -599,6 +681,7 @@ class LegalCenterController extends GetxController {
         dictamenIaRecomendacion:
             'Ingresar escrito de impugnación con fotos de la señalización temporal.',
         abogadoAsignado: 'Dra. Sofía Proaño',
+        assignedLawyerId: 'ABG-05',
         horaDespacho: 'Hace 45 min',
         evidencias: [],
         timeline: [
@@ -640,6 +723,7 @@ class LegalCenterController extends GetxController {
         dictamenIaRecomendacion:
             'Caso archivado con recibo de conformidad mutua firmado.',
         abogadoAsignado: 'Dra. Sofía Proaño',
+        assignedLawyerId: 'ABG-05',
         horaDespacho: 'Hace 2 horas',
         evidencias: [],
         timeline: [
@@ -648,6 +732,48 @@ class LegalCenterController extends GetxController {
             title: 'Caso Finalizado',
             description: 'Conductor reportó conformidad y reanudó ruta.',
             icon: Icons.task_alt,
+            color: const Color(0xFF2E7D32),
+          ),
+        ],
+      ),
+      LegalCase(
+        id: '#CASO-1029',
+        taxistaNombre: 'Luis H. Alvear',
+        taxistaCedula: '1002345671',
+        taxistaTelefono: '+593 99 887 7665',
+        cooperativa: 'Coop. 24 de Mayo',
+        unidad: 'Unidad 19',
+        placa: 'IBX-2200',
+        vehiculoModelo: 'Kia Soluto (2021)',
+        estadoSeguro: 'Póliza Activa • Seguros Equinoccial',
+        tipoIncidente: 'Rozamiento en redondel Ajaví',
+        urgencia: UrgencyLevel.baja,
+        estado: CaseStatus.atendido,
+        ubicacionDireccion: 'Redondel Ajaví, Ibarra',
+        provincia: 'Imbabura',
+        canton: 'Ibarra',
+        tieneHeridosORetencion: false,
+        alertaNivel: AlertaNivel.menor,
+        lat: 0.3440,
+        lng: -78.1250,
+        horaReporte: 'Hace 3 horas',
+        dictamenIaCorto:
+            'Art. 380 COIP: Acta de mediación suscrita (\$60) sin paralizar la unidad.',
+        relatoConductor:
+            'Roce lateral menor resuelto en sitio con acta de desistimiento firmada ante la abogada Dra. Andrea Morales.',
+        articuloCoip: 'Art. 380 COIP • Conciliación voluntaria extrajudicial',
+        dictamenIaRecomendacion:
+            'Caso resuelto favorablemente.',
+        abogadoAsignado: 'Dra. Andrea Morales',
+        assignedLawyerId: 'LAWYER-001',
+        horaDespacho: 'Hace 3 horas',
+        evidencias: [],
+        timeline: [
+          CaseTimelineEvent(
+            time: '07:30',
+            title: 'Caso Finalizado y Archivada Acta',
+            description: 'Acuerdo económico cumplido y desistimiento firmado.',
+            icon: Icons.check_circle_rounded,
             color: const Color(0xFF2E7D32),
           ),
         ],
@@ -792,6 +918,38 @@ class LegalCenterController extends GetxController {
           c.ubicacionDireccion.toLowerCase().contains(query) ||
           c.canton.toLowerCase().contains(query);
     }).toList();
+  }
+
+  // --- CASOS ASIGNADOS AL ABOGADO EN SESIÓN (ROLE: associateLawyer) ---
+  List<LegalCase> get myAssignedCases {
+    if (Get.isRegistered<AuthMockController>()) {
+      final auth = Get.find<AuthMockController>();
+      final lawyerId = auth.currentUser.value.id;
+      final lawyerName = auth.currentUser.value.name.toLowerCase();
+
+      return _cases.where((c) {
+        if (c.assignedLawyerId != null && c.assignedLawyerId == lawyerId) {
+          return true;
+        }
+        if (c.abogadoAsignado != null &&
+            (c.abogadoAsignado!.toLowerCase().contains(lawyerName) ||
+                lawyerName.contains(c.abogadoAsignado!.toLowerCase()))) {
+          return true;
+        }
+        return false;
+      }).toList();
+    }
+    return _cases.where((c) => c.assignedLawyerId == 'LAWYER-001').toList();
+  }
+
+  // Siniestro activo asignado al abogado de turno (en camino o en atención)
+  LegalCase? get myActiveAssignedCase {
+    final assigned = myAssignedCases;
+    try {
+      return assigned.firstWhere((c) => c.estado != CaseStatus.atendido);
+    } catch (_) {
+      return null;
+    }
   }
 
   // --- BLOQUE 1: CONTADORES RÁPIDOS (KPI CARDS) ---

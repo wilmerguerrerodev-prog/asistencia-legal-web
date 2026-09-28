@@ -7,6 +7,7 @@ import '../controller/legal_center_controller.dart';
 import '../model/legal_case_model.dart';
 import 'legal_call_dialog.dart';
 import 'legal_case_detail_dialog.dart';
+import 'legal_map_detail_dialog.dart';
 
 class LegalRealtimeTable extends StatelessWidget {
   final bool isSplitView;
@@ -15,6 +16,19 @@ class LegalRealtimeTable extends StatelessWidget {
     super.key,
     this.isSplitView = false,
   });
+
+  void _handleCaseMapAction(
+    BuildContext context,
+    LegalCenterController controller,
+    LegalCase c,
+  ) {
+    controller.selectCase(c);
+    if (controller.dispatchViewMode == LegalDispatchViewMode.split) {
+      controller.animateMapToCase(c);
+    } else {
+      LegalMapDetailDialog.show(context, c);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +110,7 @@ class LegalRealtimeTable extends StatelessWidget {
                           'Incidentes en Vía',
                           style: ubuntuBold.copyWith(
                             fontSize: Dimensions.fontSizeSmall,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -146,7 +160,10 @@ class LegalRealtimeTable extends StatelessWidget {
             if (controller.activeKpiFilter != null) ...[
               const SizedBox(height: 6),
               InkWell(
-                onTap: () => controller.toggleKpiFilter(controller.activeKpiFilter!),
+                onTap: () {
+                  final kpi = controller.activeKpiFilter;
+                  if (kpi != null) controller.toggleKpiFilter(kpi);
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
@@ -158,7 +175,7 @@ class LegalRealtimeTable extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Filtro: ${controller.activeKpiFilter!.toUpperCase()}',
+                        'Filtro: ${(controller.activeKpiFilter ?? "").toUpperCase()}',
                         style: ubuntuBold.copyWith(fontSize: 10, color: const Color(0xFFE65100)),
                       ),
                       const SizedBox(width: 4),
@@ -197,7 +214,7 @@ class LegalRealtimeTable extends StatelessWidget {
                 'Incidentes en Vía en Tiempo Real',
                 style: ubuntuBold.copyWith(
                   fontSize: Dimensions.fontSizeDefault,
-                  color: Theme.of(context).textTheme.bodyLarge!.color,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(width: 8),
@@ -218,7 +235,10 @@ class LegalRealtimeTable extends StatelessWidget {
               if (controller.activeKpiFilter != null) ...[
                 const SizedBox(width: 8),
                 InkWell(
-                  onTap: () => controller.toggleKpiFilter(controller.activeKpiFilter!),
+                  onTap: () {
+                    final kpi = controller.activeKpiFilter;
+                    if (kpi != null) controller.toggleKpiFilter(kpi);
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
@@ -230,7 +250,7 @@ class LegalRealtimeTable extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Filtro: ${controller.activeKpiFilter!.toUpperCase()}',
+                          'Filtro: ${(controller.activeKpiFilter ?? "").toUpperCase()}',
                           style: ubuntuBold.copyWith(fontSize: 10, color: const Color(0xFFE65100)),
                         ),
                         const SizedBox(width: 4),
@@ -279,7 +299,7 @@ class LegalRealtimeTable extends StatelessWidget {
               'No hay incidentes pendientes en este territorio.',
               style: ubuntuBold.copyWith(
                 fontSize: Dimensions.fontSizeDefault,
-                color: Theme.of(context).textTheme.bodyLarge!.color,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
             const SizedBox(height: 4),
@@ -317,7 +337,7 @@ class LegalRealtimeTable extends StatelessWidget {
         ),
         headingTextStyle: ubuntuBold.copyWith(
           fontSize: 11,
-          color: Theme.of(context).textTheme.bodyLarge!.color,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           letterSpacing: 0.3,
         ),
         dataRowMinHeight: 70,
@@ -343,7 +363,9 @@ class LegalRealtimeTable extends StatelessWidget {
               }
               return null;
             }),
-            onSelectChanged: (_) => controller.selectCase(c),
+            onSelectChanged: (_) {
+              _handleCaseMapAction(context, controller, c);
+            },
             cells: [
               // 1. COLUMNA ALERTA (Badge de color: Rojo, Amarillo, Azul)
               DataCell(_buildAlertBadge(c)),
@@ -632,7 +654,7 @@ class LegalRealtimeTable extends StatelessWidget {
                     style: ubuntuBold.copyWith(
                       fontSize: 11,
                       color: isAssigned
-                          ? Theme.of(context).textTheme.bodyLarge!.color
+                          ? Theme.of(context).textTheme.bodyLarge?.color
                           : const Color(0xFFE65100),
                     ),
                     maxLines: 1,
@@ -698,7 +720,9 @@ class LegalRealtimeTable extends StatelessWidget {
               size: 16,
             ),
           ),
-          onPressed: () => controller.animateMapToCase(c),
+          onPressed: () {
+            _handleCaseMapAction(context, controller, c);
+          },
         ),
         const SizedBox(width: 4),
 
@@ -756,8 +780,14 @@ class LegalRealtimeTable extends StatelessWidget {
       itemBuilder: (context, index) {
         final c = cases[index];
 
-        return Container(
-          padding: const EdgeInsets.all(12),
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              _handleCaseMapAction(context, controller, c);
+            },
+            child: Container(
+              padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -858,9 +888,11 @@ class LegalRealtimeTable extends StatelessWidget {
               _buildMobileActionRow(context, controller, c),
             ],
           ),
-        );
-      },
+        ),
+      ),
     );
+  },
+);
   }
 
   // --- BOTONES DE ACCIÓN PARA MÓVIL (Touch targets ergonómicos y sin desbordamiento) ---
@@ -888,7 +920,9 @@ class LegalRealtimeTable extends StatelessWidget {
               'Mapa',
               style: ubuntuBold.copyWith(fontSize: 11, color: const Color(0xFF0D47A1)),
             ),
-            onPressed: () => controller.animateMapToCase(c),
+            onPressed: () {
+              _handleCaseMapAction(context, controller, c);
+            },
           ),
         ),
         const SizedBox(width: 6),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/feature/conductor/widgets/incidente_vector_icon.dart';
 import 'package:getdash/utils/dimensions.dart';
@@ -73,7 +74,7 @@ class SosConductorView extends StatelessWidget {
                 }),
               ),
 
-              // 3. ACCESO DIRECTO A BILLETERA DIGITAL (SIEMPRE DISPONIBLE AL FINAL)
+              // 3. ACCESO DIRECTO A DOCUMENTOS (SIEMPRE DISPONIBLE AL FINAL)
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   isWideScreen ? 24 : 14,
@@ -81,7 +82,7 @@ class SosConductorView extends StatelessWidget {
                   isWideScreen ? 24 : 14,
                   18,
                 ),
-                child: _buildBilleteraDigitalCompacta(context, isDark),
+                child: _buildDocumentosCompacta(context, isDark),
               ),
             ],
           ),
@@ -97,10 +98,24 @@ class SosConductorView extends StatelessWidget {
       backgroundColor:
           isDark ? const Color(0xFF0B132B) : const Color(0xFFEBF3FC),
       appBar: AppBar(
-        title: const Text("Portal Conductor — Asistencia Legal"),
+        title: const Text(
+          "Portal Conductor SOS",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: const Color(0xFF0F172A),
         foregroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+          tooltip: "Volver",
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Get.offAllNamed(RouteHelper.getInitialRoute());
+            }
+          },
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -1305,8 +1320,8 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
-  // --- 3. BILLETERA DIGITAL COMPACTA (ACCESO DIRECTO A PAPELES EN COLOR SÓLIDO) ---
-  Widget _buildBilleteraDigitalCompacta(BuildContext context, bool isDark) {
+  // --- 3. DOCUMENTOS COMPACTA (ACCESO DIRECTO A PAPELES EN COLOR SÓLIDO) ---
+  Widget _buildDocumentosCompacta(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
@@ -1349,7 +1364,7 @@ class SosConductorView extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Text(
-                        "Billetera Digital",
+                        "Documentos",
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 13.5,
@@ -1388,7 +1403,7 @@ class SosConductorView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10)),
               elevation: 0,
             ),
-            onPressed: () => _mostrarBilleteraModal(context),
+            onPressed: () => _mostrarDocumentosModal(context),
             icon: const Icon(Icons.qr_code_2_rounded, size: 18),
             label: const Text(
               "Ver QR",
@@ -1405,7 +1420,7 @@ class SosConductorView extends StatelessWidget {
   }
 
   // Modal para mostrar el documento digital con QR oficial
-  void _mostrarBilleteraModal(BuildContext context) {
+  void _mostrarDocumentosModal(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogContext) {

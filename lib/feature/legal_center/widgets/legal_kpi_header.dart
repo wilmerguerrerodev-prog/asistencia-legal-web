@@ -124,7 +124,7 @@ class LegalKpiHeader extends StatelessWidget {
                   title,
                   style: ubuntuMedium.copyWith(
                     fontSize: isMobile ? 11 : Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.75),
+                    color: (Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey).withValues(alpha: 0.75),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -145,7 +145,7 @@ class LegalKpiHeader extends StatelessWidget {
             value,
             style: ubuntuBold.copyWith(
               fontSize: valueIsText ? (isMobile ? 13 : Dimensions.fontSizeDefault) : (isMobile ? 20 : Dimensions.fontSizeOverLarge),
-              color: isAlert ? const Color(0xFFD32F2F) : Theme.of(context).textTheme.bodyLarge!.color,
+              color: isAlert ? const Color(0xFFD32F2F) : Theme.of(context).textTheme.bodyLarge?.color,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -155,7 +155,7 @@ class LegalKpiHeader extends StatelessWidget {
             subtitle,
             style: ubuntuRegular.copyWith(
               fontSize: isMobile ? 9 : Dimensions.fontSizeExtraSmall,
-              color: Theme.of(context).textTheme.bodySmall!.color!.withValues(alpha: 0.6),
+              color: (Theme.of(context).textTheme.bodySmall?.color ?? Colors.grey).withValues(alpha: 0.6),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

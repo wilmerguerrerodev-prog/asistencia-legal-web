@@ -16,8 +16,8 @@ void main() {
   });
 
   group('LegalCenterController - Mapa y Despacho Interactivo', () {
-    test('Estado inicial del mapa: modo split, capas activas y centro en Imbabura', () {
-      expect(controller.dispatchViewMode, LegalDispatchViewMode.split);
+    test('Estado inicial del mapa: modo solo tabla, capas activas y centro en Imbabura', () {
+      expect(controller.dispatchViewMode, LegalDispatchViewMode.tableOnly);
       expect(controller.showIncidentsLayer, isTrue);
       expect(controller.showLawyersLayer, isTrue);
       expect(controller.showRoutesLayer, isTrue);
@@ -109,14 +109,14 @@ void main() {
       expect(distKm, lessThan(2.0)); // Están en Otavalo a ~0.6-0.8 km
     });
 
-    test('animateMapToCase() activa modo split si estaba en tableOnly', () {
+    test('animateMapToCase() preserva tableOnly y enfoca caso para visualización modal', () {
       controller.setDispatchViewMode(LegalDispatchViewMode.tableOnly);
       expect(controller.dispatchViewMode, LegalDispatchViewMode.tableOnly);
 
       final testCase = controller.allCases.first;
       controller.animateMapToCase(testCase);
 
-      expect(controller.dispatchViewMode, LegalDispatchViewMode.split);
+      expect(controller.dispatchViewMode, LegalDispatchViewMode.tableOnly);
       expect(controller.selectedCase?.id, testCase.id);
       expect(controller.targetMapLat, closeTo(testCase.lat, 0.0001));
     });

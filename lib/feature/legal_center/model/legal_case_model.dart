@@ -206,6 +206,7 @@ class LegalCase {
   final bool tieneHeridosORetencion;
   AlertaNivel? _alertaNivel;
   String? abogadoAsignado;
+  String? assignedLawyerId;
   String? horaDespacho;
   bool fueAsignadoAutomaticamente;
   double? distanciaAbogadoKm;
@@ -239,6 +240,7 @@ class LegalCase {
     this.tieneHeridosORetencion = false,
     AlertaNivel? alertaNivel,
     this.abogadoAsignado,
+    this.assignedLawyerId,
     this.horaDespacho,
     this.fueAsignadoAutomaticamente = false,
     this.distanciaAbogadoKm,

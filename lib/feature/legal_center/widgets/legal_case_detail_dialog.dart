@@ -152,7 +152,7 @@ class LegalCaseDetailDialog extends StatelessWidget {
                         '${c.tipoIncidente} • ${c.canton}, ${c.provincia}',
                         style: ubuntuRegular.copyWith(
                           fontSize: Dimensions.fontSizeSmall,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -318,7 +318,7 @@ class LegalCaseDetailDialog extends StatelessWidget {
             style: ubuntuRegular.copyWith(
               fontSize: Dimensions.fontSizeSmall,
               height: 1.4,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ],
@@ -487,7 +487,7 @@ class LegalCaseDetailDialog extends StatelessWidget {
                         event.description,
                         style: ubuntuRegular.copyWith(
                           fontSize: Dimensions.fontSizeExtraSmall,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                       ),
                     ],

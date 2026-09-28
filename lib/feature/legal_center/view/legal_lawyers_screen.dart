@@ -416,10 +416,10 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: ubuntuRegular.copyWith(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6))),
+                Text(title, style: ubuntuRegular.copyWith(fontSize: 11, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6))),
                 const SizedBox(height: 2),
                 Text(value, style: ubuntuBold.copyWith(fontSize: 18, color: color)),
-                Text(sub, style: ubuntuRegular.copyWith(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.5)), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(sub, style: ubuntuRegular.copyWith(fontSize: 10, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.5)), maxLines: 1, overflow: TextOverflow.ellipsis),
               ],
             ),
           ),
@@ -730,7 +730,7 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                 const SizedBox(height: 2),
                 Text(
                   "Todas las unidades móviles cuentan con terminal digital de actas transaccionales, alcoholímetro homologado para contrapruebas y enlace directo con peritos de tránsito.",
-                  style: ubuntuRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.8)),
+                  style: ubuntuRegular.copyWith(fontSize: Dimensions.fontSizeSmall, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.8)),
                 ),
               ],
             ),

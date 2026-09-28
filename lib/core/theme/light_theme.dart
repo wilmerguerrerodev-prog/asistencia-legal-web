@@ -25,6 +25,17 @@ ThemeData light = ThemeData(
       primary: Color(0xFF056AB4),
       secondary: Color(0xFFFF9900),
       tertiary: Color(0xFFd35221)).copyWith(surface: const Color(0xffFCFCFC)).copyWith(error: const Color(0xFFFF6767)),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Color(0xFF1E293B)),
+    bodyMedium: TextStyle(color: Color(0xFF334155)),
+    bodySmall: TextStyle(color: Color(0xFF64748B)),
+    titleLarge: TextStyle(color: Color(0xFF0F172A)),
+    titleMedium: TextStyle(color: Color(0xFF1E293B)),
+    titleSmall: TextStyle(color: Color(0xFF334155)),
+    labelLarge: TextStyle(color: Color(0xFF1E293B)),
+    labelMedium: TextStyle(color: Color(0xFF475569)),
+    labelSmall: TextStyle(color: Color(0xFF64748B)),
+  ),
   // colorScheme: const ColorScheme.light(
   //     primary: Colors.white,
   //     secondary: Color(0xFFFF9681),

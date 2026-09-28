@@ -15,8 +15,38 @@ import 'package:firebase_core/firebase_core.dart';
 import 'core/helper/language_di.dart' as di;
 
 Future<void> main() async {
-  // TestWidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('🚨 [FlutterError]: ${details.exceptionAsString()}');
+  };
+
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Material(
+      color: const Color(0xFFF8FAFC),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.sync_rounded, color: Color(0xFF0D47A1), size: 32),
+              const SizedBox(height: 6),
+              Text(
+                'Actualizando vista...',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey.shade800,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
 
   if (ResponsiveHelper.isMobilePhone()) {
     HttpOverrides.global = MyHttpOverrides();

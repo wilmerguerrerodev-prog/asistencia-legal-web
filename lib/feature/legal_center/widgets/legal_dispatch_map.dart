@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 import '../controller/legal_center_controller.dart';
@@ -16,11 +17,13 @@ import 'legal_case_detail_dialog.dart';
 class LegalDispatchMap extends StatefulWidget {
   final bool isFullScreen;
   final VoidCallback? onToggleFullScreen;
+  final bool showFloatingIncidentCard;
 
   const LegalDispatchMap({
     super.key,
     this.isFullScreen = false,
     this.onToggleFullScreen,
+    this.showFloatingIncidentCard = true,
   });
 
   @override
@@ -37,8 +40,9 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
   static const LatLng _defaultCenter = LatLng(0.2450, -78.2500);
   static const double _defaultZoom = 12.6;
 
-  int _lastHandledMoveCounter = -1;
+  int _lastHandledMoveCounter = 0;
   bool _cardMinimized = false;
+  AnimationController? _moveAnimationController;
 
   @override
   void initState() {
@@ -59,23 +63,52 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
 
   @override
   void dispose() {
-    _pulseController.dispose();
-    _mapController.dispose();
+    try {
+      _moveAnimationController?.stop();
+      _moveAnimationController?.dispose();
+    } catch (_) {}
+    _moveAnimationController = null;
+    try {
+      _pulseController.stop();
+      _pulseController.dispose();
+    } catch (_) {}
+    try {
+      _mapController.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
   /// Animación fluida de cámara hacia coordenadas de destino
   void _animatedMapMove(LatLng destLocation, double destZoom) {
+    if (!mounted) return;
+
+    _moveAnimationController?.stop();
+    _moveAnimationController?.dispose();
+    _moveAnimationController = null;
+
+    double startLat;
+    double startLng;
+    double startZoom;
+    try {
+      startLat = _mapController.camera.center.latitude;
+      startLng = _mapController.camera.center.longitude;
+      startZoom = _mapController.camera.zoom;
+    } catch (_) {
+      startLat = _defaultCenter.latitude;
+      startLng = _defaultCenter.longitude;
+      startZoom = _defaultZoom;
+    }
+
     final latTween = Tween<double>(
-      begin: _mapController.camera.center.latitude,
+      begin: startLat,
       end: destLocation.latitude,
     );
     final lngTween = Tween<double>(
-      begin: _mapController.camera.center.longitude,
+      begin: startLng,
       end: destLocation.longitude,
     );
     final zoomTween = Tween<double>(
-      begin: _mapController.camera.zoom,
+      begin: startZoom,
       end: destZoom,
     );
 
@@ -83,6 +116,7 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
       duration: const Duration(milliseconds: 550),
       vsync: this,
     );
+    _moveAnimationController = animationController;
 
     final Animation<double> animation = CurvedAnimation(
       parent: animationController,
@@ -90,16 +124,24 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
     );
 
     animationController.addListener(() {
-      _mapController.move(
-        LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
-        zoomTween.evaluate(animation),
-      );
+      if (!mounted) return;
+      try {
+        _mapController.move(
+          LatLng(latTween.evaluate(animation), lngTween.evaluate(animation)),
+          zoomTween.evaluate(animation),
+        );
+      } catch (_) {}
     });
 
     animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
-        animationController.dispose();
+        if (_moveAnimationController == animationController) {
+          _moveAnimationController = null;
+        }
+        try {
+          animationController.dispose();
+        } catch (_) {}
       }
     });
 
@@ -111,16 +153,23 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
     return GetBuilder<LegalCenterController>(
       builder: (controller) {
         // Sincronización de movimiento de cámara si el controller lo solicitó
+        final targetLat = controller.targetMapLat;
+        final targetLng = controller.targetMapLng;
         if (controller.mapMoveCounter != _lastHandledMoveCounter &&
-            controller.targetMapLat != null &&
-            controller.targetMapLng != null) {
+            targetLat != null &&
+            targetLng != null) {
+          final targetZoom = controller.targetMapZoom;
           _lastHandledMoveCounter = controller.mapMoveCounter;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _animatedMapMove(
-              LatLng(controller.targetMapLat!, controller.targetMapLng!),
-              controller.targetMapZoom,
-            );
-          });
+
+          if (_lastHandledMoveCounter > 0) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              _animatedMapMove(
+                LatLng(targetLat, targetLng),
+                targetZoom,
+              );
+            });
+          }
         }
 
         final selectedCase = controller.selectedCase;
@@ -131,6 +180,15 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
 
         final screenWidth = MediaQuery.of(context).size.width;
         final isMobileMap = screenWidth < 600;
+
+        final isAssociateLawyer = Get.isRegistered<AuthMockController>() &&
+            Get.find<AuthMockController>().isAssociateLawyer;
+        final currentLawyerId = isAssociateLawyer
+            ? Get.find<AuthMockController>().currentUser.value.id
+            : null;
+        final currentLawyerName = isAssociateLawyer
+            ? Get.find<AuthMockController>().currentUser.value.name.toLowerCase()
+            : null;
 
         return ClipRRect(
           borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
@@ -196,15 +254,34 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
                       markers: [
                         // 1. Taxis con Incidentes
                         if (controller.showIncidentsLayer)
-                          ...controller.filteredCases.map(
-                            (c) => _buildIncidentMarker(controller, c),
-                          ),
+                          ...(isAssociateLawyer
+                                  ? controller.filteredCases.where((c) =>
+                                      (c.assignedLawyerId == currentLawyerId ||
+                                          (c.abogadoAsignado != null &&
+                                              currentLawyerName != null &&
+                                              (c.abogadoAsignado
+                                                      ?.toLowerCase()
+                                                      .contains(currentLawyerName) ??
+                                                  false))) &&
+                                      c.estado != CaseStatus.atendido)
+                                  : controller.filteredCases)
+                              .map(
+                                (c) => _buildIncidentMarker(controller, c),
+                              ),
 
                         // 2. Abogados de Territorio (Unidades Móviles)
                         if (controller.showLawyersLayer)
-                          ...controller.territoryLawyers.map(
-                            (l) => _buildLawyerMarker(controller, l),
-                          ),
+                          ...(isAssociateLawyer
+                                  ? controller.territoryLawyers.where((l) =>
+                                      l.id == currentLawyerId ||
+                                      (currentLawyerName != null &&
+                                          l.nombre
+                                              .toLowerCase()
+                                              .contains(currentLawyerName)))
+                                  : controller.territoryLawyers)
+                              .map(
+                                (l) => _buildLawyerMarker(controller, l),
+                              ),
 
                         // 3. Etiqueta flotante de ETA en el punto medio de la ruta
                         if (controller.showRoutesLayer &&
@@ -243,7 +320,7 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
                   ),
 
                 // CARD EMERGENTE FLOTANTE: DETALLE DEL INCIDENTE SELECCIONADO
-                if (selectedCase != null)
+                if (selectedCase != null && widget.showFloatingIncidentCard)
                   Positioned(
                     left: isMobileMap ? 8 : 14,
                     right: isMobileMap ? 8 : 14,

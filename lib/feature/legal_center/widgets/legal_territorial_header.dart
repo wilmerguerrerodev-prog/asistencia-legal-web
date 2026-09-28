@@ -255,7 +255,7 @@ class LegalTerritorialHeader extends StatelessWidget {
                   style: ubuntuBold.copyWith(
                     fontSize: 11,
                     height: 1.1,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                   items: items.map((item) {
                     return DropdownMenuItem<String>(
@@ -461,7 +461,7 @@ class LegalTerritorialHeader extends StatelessWidget {
                           title,
                           style: ubuntuBold.copyWith(
                             fontSize: Dimensions.fontSizeSmall,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
