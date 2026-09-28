@@ -250,7 +250,7 @@ class _LegalDocumentsScreenState extends State<LegalDocumentsScreen> {
                       label: Text("${c.id} • ${c.taxistaNombre} (${c.placa})"),
                       labelStyle: ubuntuMedium.copyWith(
                         fontSize: 11,
-                        color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium!.color,
+                        color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                       selectedColor: const Color(0xFF7B1FA2),
                       onSelected: (_) => ctrl.selectCase(c),
@@ -291,7 +291,7 @@ class _LegalDocumentsScreenState extends State<LegalDocumentsScreen> {
                       label: Text("${c.id} • ${c.taxistaNombre} (${c.placa})"),
                       labelStyle: ubuntuMedium.copyWith(
                         fontSize: 11,
-                        color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium!.color,
+                        color: isSelected ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                       selectedColor: const Color(0xFF7B1FA2),
                       onSelected: (_) => ctrl.selectCase(c),
@@ -377,7 +377,7 @@ class _LegalDocumentsScreenState extends State<LegalDocumentsScreen> {
                           label: Text(t["titulo"] as String),
                           labelStyle: ubuntuMedium.copyWith(
                             fontSize: 11,
-                            color: isSel ? Colors.white : Theme.of(context).textTheme.bodyMedium!.color,
+                            color: isSel ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                           selectedColor: const Color(0xFF7B1FA2),
                           onSelected: (_) => setState(() => _selectedTemplateIndex = idx),

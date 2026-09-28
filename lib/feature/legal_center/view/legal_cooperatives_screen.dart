@@ -319,10 +319,10 @@ class _LegalCooperativesScreenState extends State<LegalCooperativesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(title, style: ubuntuRegular.copyWith(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6)), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(title, style: ubuntuRegular.copyWith(fontSize: 11, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6)), maxLines: 1, overflow: TextOverflow.ellipsis),
                 const SizedBox(height: 2),
                 Text(value, style: ubuntuBold.copyWith(fontSize: 16, color: color)),
-                Text(sub, style: ubuntuRegular.copyWith(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.5)), maxLines: 1, overflow: TextOverflow.ellipsis),
+                Text(sub, style: ubuntuRegular.copyWith(fontSize: 10, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.5)), maxLines: 1, overflow: TextOverflow.ellipsis),
               ],
             ),
           ),

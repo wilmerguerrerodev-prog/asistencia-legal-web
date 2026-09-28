@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/utils/images.dart';
 
@@ -222,3 +223,71 @@ List<MenuModel> menuList = [
         route: RouteHelper.getRegistrationScreen()),
   ]),
 ];
+
+List<MenuModel> getMenuListForRole(UserRole role) {
+  switch (role) {
+    case UserRole.itAdmin:
+      return menuList; // Acceso total para SuperAdmin TI
+
+    case UserRole.adminLawyer:
+      return [
+        MenuModel(
+          icon: Images.dashboard,
+          iconData: Icons.local_taxi_rounded,
+          menuTitle: 'LegalTech Cliente',
+          route: RouteHelper.getInitialRoute(),
+        ),
+        MenuModel(
+          icon: Images.dashboard,
+          iconData: Icons.gavel_rounded,
+          menuTitle: 'asistencia_juridica',
+          subMenus: [
+            SubMenu(
+              subMenuTitle: 'dashboard_abogado',
+              route: RouteHelper.getEdutechRoute(),
+            ),
+            SubMenu(
+              subMenuTitle: 'casos_siniestros',
+              route: RouteHelper.getLegalCasesRoute(),
+            ),
+            SubMenu(
+              subMenuTitle: 'abogados_territorio',
+              route: RouteHelper.getLegalLawyersRoute(),
+            ),
+            SubMenu(
+              subMenuTitle: 'cooperativas_flotas',
+              route: RouteHelper.getLegalCooperativesRoute(),
+            ),
+            SubMenu(
+              subMenuTitle: 'dictamenes_actas',
+              route: RouteHelper.getLegalDocumentsRoute(),
+            ),
+          ],
+        ),
+      ];
+
+    case UserRole.associateLawyer:
+      return [
+        MenuModel(
+          iconData: Icons.shield_rounded,
+          menuTitle: 'Mi Despacho',
+          route: RouteHelper.getLawyerWorkspaceRoute(),
+        ),
+        MenuModel(
+          iconData: Icons.description_rounded,
+          menuTitle: 'Dictámenes & Actas',
+          route: RouteHelper.getLegalDocumentsRoute(),
+        ),
+      ];
+
+    case UserRole.clientDriver:
+      return [
+        MenuModel(
+          iconData: Icons.local_taxi_rounded,
+          menuTitle: 'Portal Conductor SOS',
+          route: RouteHelper.getInitialRoute(),
+        ),
+      ];
+  }
+}
+

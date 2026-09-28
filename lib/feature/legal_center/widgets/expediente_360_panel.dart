@@ -125,7 +125,7 @@ class Expediente360Panel extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: ubuntuBold.copyWith(
                               fontSize: Dimensions.fontSizeLarge,
-                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -144,7 +144,7 @@ class Expediente360Panel extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: ubuntuRegular.copyWith(
                         fontSize: Dimensions.fontSizeExtraSmall,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                   ],
@@ -281,7 +281,7 @@ class Expediente360Panel extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuBold.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -426,7 +426,7 @@ class Expediente360Panel extends StatelessWidget {
                             maxLines: 1,
                             style: ubuntuBold.copyWith(
                               fontSize: Dimensions.fontSizeDefault,
-                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                           Text(
@@ -435,7 +435,7 @@ class Expediente360Panel extends StatelessWidget {
                             maxLines: 1,
                             style: ubuntuRegular.copyWith(
                               fontSize: Dimensions.fontSizeExtraSmall,
-                              color: Theme.of(context).textTheme.bodySmall!.color,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
                             ),
                           ),
                         ],
@@ -551,7 +551,7 @@ class Expediente360Panel extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuMedium.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -601,7 +601,7 @@ class Expediente360Panel extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: ubuntuRegular.copyWith(
                   fontSize: 10,
-                  color: Theme.of(context).textTheme.bodySmall!.color,
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
               ),
             ),
@@ -614,7 +614,7 @@ class Expediente360Panel extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           style: ubuntuBold.copyWith(
             fontSize: Dimensions.fontSizeSmall,
-            color: Theme.of(context).textTheme.bodyLarge!.color,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ],
@@ -644,7 +644,7 @@ class Expediente360Panel extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuBold.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -655,7 +655,7 @@ class Expediente360Panel extends StatelessWidget {
             caseItem.ubicacionDireccion,
             style: ubuntuMedium.copyWith(
               fontSize: Dimensions.fontSizeSmall,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           const SizedBox(height: 8),
@@ -863,7 +863,7 @@ class Expediente360Panel extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuBold.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -883,7 +883,7 @@ class Expediente360Panel extends StatelessWidget {
                 fontSize: Dimensions.fontSizeSmall,
                 fontStyle: FontStyle.italic,
                 height: 1.4,
-                color: Theme.of(context).textTheme.bodyMedium!.color,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ),
@@ -892,7 +892,7 @@ class Expediente360Panel extends StatelessWidget {
             'Evidencias Adjuntas al Expediente:',
             style: ubuntuBold.copyWith(
               fontSize: Dimensions.fontSizeSmall,
-              color: Theme.of(context).textTheme.bodyLarge!.color,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           const SizedBox(height: 8),
@@ -919,14 +919,14 @@ class Expediente360Panel extends StatelessWidget {
                           ev.title,
                           style: ubuntuMedium.copyWith(
                             fontSize: Dimensions.fontSizeExtraSmall,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         Text(
                           ev.detail,
                           style: ubuntuRegular.copyWith(
                             fontSize: 9,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                         ),
                       ],
@@ -964,7 +964,7 @@ class Expediente360Panel extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuBold.copyWith(
                     fontSize: Dimensions.fontSizeSmall,
-                    color: Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -1009,7 +1009,7 @@ class Expediente360Panel extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: ubuntuBold.copyWith(
                                   fontSize: Dimensions.fontSizeSmall,
-                                  color: Theme.of(context).textTheme.bodyLarge!.color,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                               ),
                             ),
@@ -1028,7 +1028,7 @@ class Expediente360Panel extends StatelessWidget {
                           event.description,
                           style: ubuntuRegular.copyWith(
                             fontSize: Dimensions.fontSizeExtraSmall,
-                            color: Theme.of(context).textTheme.bodySmall!.color,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                         ),
                       ],

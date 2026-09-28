@@ -20,6 +20,17 @@ ThemeData dark = ThemeData(
   cardColor: const Color(0xFF10324A),
   textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(
       foregroundColor: const Color(0xFFFFFFFF))), colorScheme: const ColorScheme.dark(primary: Color(0xFF056AB4), secondary: Color(0xFFf57d00), tertiary: (Color(0xFFFF6767))).copyWith(surface: const Color(0xff010D15)).copyWith(error: const Color(0xFFdd3135)),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Color(0xFFF8FAFC)),
+    bodyMedium: TextStyle(color: Color(0xFFE2E8F0)),
+    bodySmall: TextStyle(color: Color(0xFF94A3B8)),
+    titleLarge: TextStyle(color: Color(0xFFFFFFFF)),
+    titleMedium: TextStyle(color: Color(0xFFF8FAFC)),
+    titleSmall: TextStyle(color: Color(0xFFE2E8F0)),
+    labelLarge: TextStyle(color: Color(0xFFF8FAFC)),
+    labelMedium: TextStyle(color: Color(0xFFCBD5E1)),
+    labelSmall: TextStyle(color: Color(0xFF94A3B8)),
+  ),
 );
 
 // semi-dark-light-color

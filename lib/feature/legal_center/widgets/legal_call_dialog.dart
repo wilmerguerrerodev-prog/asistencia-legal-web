@@ -210,7 +210,7 @@ class LegalCallDialog extends StatelessWidget {
                   subtitle,
                   style: ubuntuRegular.copyWith(
                     fontSize: Dimensions.fontSizeExtraSmall,
-                    color: Theme.of(context).textTheme.bodySmall!.color,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

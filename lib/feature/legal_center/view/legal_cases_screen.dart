@@ -304,7 +304,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
               label,
               style: ubuntuMedium.copyWith(
                 fontSize: 11,
-                color: isSelected ? color : Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.7),
+                color: isSelected ? color : (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.7),
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -348,7 +348,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                         "Toque un caso para ver el Expediente 360°",
                         style: ubuntuRegular.copyWith(
                           fontSize: Dimensions.fontSizeExtraSmall,
-                          color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6),
+                          color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -364,7 +364,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                         "Haga clic en un caso para ver el Expediente 360°",
                         style: ubuntuRegular.copyWith(
                           fontSize: Dimensions.fontSizeExtraSmall,
-                          color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6),
+                          color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -473,7 +473,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
             const SizedBox(height: 2),
             Text(
               "${c.unidad} • Placa: ${c.placa} • ${c.vehiculoModelo}",
-              style: ubuntuRegular.copyWith(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6)),
+              style: ubuntuRegular.copyWith(fontSize: 11, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 6),
             Row(
@@ -568,7 +568,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                   Text(c.taxistaNombre, style: ubuntuBold.copyWith(fontSize: 13)),
                   Text(
                     "${c.unidad} • Placa ${c.placa} • ${c.cooperativa}",
-                    style: ubuntuRegular.copyWith(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.6)),
+                    style: ubuntuRegular.copyWith(fontSize: 11, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.6)),
                   ),
                 ],
               ),
@@ -581,7 +581,7 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                   Text(c.tipoIncidente, style: ubuntuMedium.copyWith(fontSize: 12)),
                   Text(
                     c.ubicacionDireccion,
-                    style: ubuntuRegular.copyWith(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium!.color!.withValues(alpha: 0.5)),
+                    style: ubuntuRegular.copyWith(fontSize: 11, color: (Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey).withValues(alpha: 0.5)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

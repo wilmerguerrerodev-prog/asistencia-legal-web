@@ -50,7 +50,7 @@ class CooperativeFilterChips extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: ubuntuBold.copyWith(
                               fontSize: Dimensions.fontSizeDefault,
-                              color: Theme.of(context).textTheme.bodyLarge!.color,
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                         ),
@@ -63,7 +63,7 @@ class CooperativeFilterChips extends StatelessWidget {
                       '${controller.filteredCases.length} casos mostrados',
                       style: ubuntuRegular.copyWith(
                         fontSize: Dimensions.fontSizeSmall,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                   ],
@@ -117,7 +117,7 @@ class CooperativeFilterChips extends StatelessWidget {
                                   fontSize: Dimensions.fontSizeSmall,
                                   color: isSelected
                                       ? Colors.white
-                                      : Theme.of(context).textTheme.bodyLarge!.color,
+                                      : Theme.of(context).textTheme.bodyLarge?.color,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -138,7 +138,7 @@ class CooperativeFilterChips extends StatelessWidget {
                                     fontSize: Dimensions.fontSizeExtraSmall,
                                     color: isSelected
                                         ? Colors.white
-                                        : Theme.of(context).textTheme.bodyLarge!.color,
+                                        : Theme.of(context).textTheme.bodyLarge?.color,
                                   ),
                                 ),
                               ),

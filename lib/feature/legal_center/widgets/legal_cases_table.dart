@@ -64,7 +64,7 @@ class LegalCasesTable extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: ubuntuBold.copyWith(
                                         fontSize: Dimensions.fontSizeLarge,
-                                        color: Theme.of(context).textTheme.bodyLarge!.color,
+                                        color: Theme.of(context).textTheme.bodyLarge?.color,
                                       ),
                                     ),
                                     Text(
@@ -73,7 +73,7 @@ class LegalCasesTable extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: ubuntuRegular.copyWith(
                                         fontSize: Dimensions.fontSizeSmall,
-                                        color: Theme.of(context).textTheme.bodySmall!.color,
+                                        color: Theme.of(context).textTheme.bodySmall?.color,
                                       ),
                                     ),
                                   ],
@@ -125,7 +125,7 @@ class LegalCasesTable extends StatelessWidget {
                         const SizedBox(height: 10),
                         Text(
                           'No hay casos que coincidan con el filtro actual.',
-                          style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall!.color),
+                          style: ubuntuMedium.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
                         ),
                       ],
                     ),
@@ -245,7 +245,7 @@ class LegalCasesTable extends StatelessWidget {
                       '${c.unidad} • ${c.placa}',
                       style: ubuntuMedium.copyWith(
                         fontSize: Dimensions.fontSizeExtraSmall,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -254,7 +254,7 @@ class LegalCasesTable extends StatelessWidget {
                         '• ${c.tipoIncidente}',
                         style: ubuntuRegular.copyWith(
                           fontSize: Dimensions.fontSizeExtraSmall,
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                          color: Theme.of(context).textTheme.bodySmall?.color,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -314,7 +314,7 @@ class LegalCasesTable extends StatelessWidget {
         ),
         headingTextStyle: ubuntuBold.copyWith(
           fontSize: Dimensions.fontSizeSmall,
-          color: Theme.of(context).textTheme.bodyLarge!.color,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
         dataRowMinHeight: 65,
         dataRowMaxHeight: 70,
@@ -357,7 +357,7 @@ class LegalCasesTable extends StatelessWidget {
                       c.horaReporte,
                       style: ubuntuRegular.copyWith(
                         fontSize: 10,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                   ],
@@ -378,7 +378,7 @@ class LegalCasesTable extends StatelessWidget {
                       '${c.unidad} • Placa: ${c.placa}',
                       style: ubuntuRegular.copyWith(
                         fontSize: 11,
-                        color: Theme.of(context).textTheme.bodySmall!.color,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
                   ],

@@ -262,7 +262,7 @@ class _LegalEscalationDialogState extends State<LegalEscalationDialog> {
                                     : FontWeight.normal,
                                 color: isOptionDisassoc
                                     ? const Color(0xFF37474F)
-                                    : Theme.of(context).textTheme.bodyLarge!.color,
+                                    : Theme.of(context).textTheme.bodyLarge?.color,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/web_menu_bar.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
@@ -16,6 +17,9 @@ import '../widgets/legal_realtime_table.dart';
 import '../widgets/legal_territorial_header.dart';
 import '../widgets/territory_lawyers_grid.dart';
 import '../widgets/legal_dispatch_map.dart';
+
+/// Alias oficial de compatibilidad para el Centro de Mando Legal y TI
+typedef LegalCenterAdminScreen = LegalCenterScreen;
 
 class LegalCenterScreen extends StatefulWidget {
   const LegalCenterScreen({super.key});
@@ -185,6 +189,9 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
 
   // --- BANNER DE ENCABEZADO EJECUTIVO MINIMALISTA ---
   Widget _buildExecutiveHeader(BuildContext context, bool isMobile) {
+    final isItAdmin = Get.isRegistered<AuthMockController>() &&
+        Get.find<AuthMockController>().isItAdmin;
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
@@ -192,18 +199,24 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         vertical: isMobile ? 10 : 14,
       ),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF0D47A1),
-            Color(0xFF1565C0),
-          ],
+        gradient: LinearGradient(
+          colors: isItAdmin
+              ? [const Color(0xFF0F172A), const Color(0xFF1E293B)]
+              : [const Color(0xFF0D47A1), const Color(0xFF1565C0)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
         borderRadius: BorderRadius.circular(Dimensions.radiusDefault),
+        border: isItAdmin
+            ? Border.all(
+                color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                width: 1.2,
+              )
+            : null,
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0D47A1).withValues(alpha: 0.25),
+            color: (isItAdmin ? const Color(0xFF38BDF8) : const Color(0xFF0D47A1))
+                .withValues(alpha: 0.25),
             blurRadius: 10,
             offset: const Offset(0, 3),
           ),
@@ -218,8 +231,8 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
-              Icons.gavel_rounded,
-              color: Colors.white,
+              isItAdmin ? Icons.terminal_rounded : Icons.gavel_rounded,
+              color: isItAdmin ? const Color(0xFF38BDF8) : Colors.white,
               size: isMobile ? 18 : 22,
             ),
           ),
@@ -229,20 +242,56 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Panel de Control LegalTech • Despacho Inmediato',
-                  style: ubuntuBold.copyWith(
-                    fontSize: isMobile ? Dimensions.fontSizeDefault : Dimensions.fontSizeLarge,
-                    color: Colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        isItAdmin
+                            ? 'Modo SuperAdmin TI • Telemetría Completa'
+                            : 'Panel de Control LegalTech • Despacho Inmediato',
+                        style: ubuntuBold.copyWith(
+                          fontSize: isMobile
+                              ? Dimensions.fontSizeDefault
+                              : Dimensions.fontSizeLarge,
+                          color: Colors.white,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    if (isItAdmin) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF38BDF8).withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: const Color(0xFF38BDF8)
+                                .withValues(alpha: 0.6),
+                          ),
+                        ),
+                        child: Text(
+                          "SuperAdmin TI",
+                          style: ubuntuBold.copyWith(
+                            fontSize: 10,
+                            color: const Color(0xFF38BDF8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Gestión ejecutiva de siniestros viales y supervisión de abogados en territorio ecuatoriano.',
+                  isItAdmin
+                      ? 'Monitoreo global de infraestructura, logs técnicos, flotas activas y servidores de despacho.'
+                      : 'Gestión ejecutiva de siniestros viales y supervisión de abogados en territorio ecuatoriano.',
                   style: ubuntuRegular.copyWith(
-                    fontSize: isMobile ? Dimensions.fontSizeExtraSmall : Dimensions.fontSizeSmall,
+                    fontSize: isMobile
+                        ? Dimensions.fontSizeExtraSmall
+                        : Dimensions.fontSizeSmall,
                     color: Colors.white.withValues(alpha: 0.85),
                   ),
                   maxLines: isMobile ? 1 : 2,
@@ -266,14 +315,16 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF00E676),
+                    decoration: BoxDecoration(
+                      color: isItAdmin
+                          ? const Color(0xFF38BDF8)
+                          : const Color(0xFF00E676),
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Despacho Activo 24/7',
+                    isItAdmin ? 'Telemetría: 24ms' : 'Despacho Activo 24/7',
                     style: ubuntuBold.copyWith(
                       fontSize: Dimensions.fontSizeExtraSmall,
                       color: Colors.white,
@@ -375,7 +426,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                   fontSize: isMobile ? 11 : Dimensions.fontSizeSmall,
                   color: isSelected
                       ? Colors.white
-                      : Theme.of(context).textTheme.bodyLarge!.color,
+                      : Theme.of(context).textTheme.bodyLarge?.color,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -396,7 +447,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                   fontSize: 10,
                   color: isSelected
                       ? Colors.white
-                      : Theme.of(context).textTheme.bodyLarge!.color,
+                      : Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
             ),
@@ -607,12 +658,16 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         if (isLargeDesktop) {
           // Distribución en paralelo split-view de alta fidelidad para escritorio
           return Row(
+            key: const ValueKey('view_mode_split_desktop'),
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // 1. Tabla reactiva de incidentes en tiempo real
               const Expanded(
                 flex: 6,
-                child: LegalRealtimeTable(isSplitView: true),
+                child: LegalRealtimeTable(
+                  key: ValueKey('realtime_table_split'),
+                  isSplitView: true,
+                ),
               ),
               const SizedBox(width: 14),
 
@@ -622,6 +677,7 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
                 child: SizedBox(
                   height: adaptiveMapHeight,
                   child: LegalDispatchMap(
+                    key: const ValueKey('dispatch_map_split_desktop'),
                     onToggleFullScreen: () {
                       ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly);
                     },
@@ -633,13 +689,18 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         } else {
           // Pantallas de smartphone, tablet o laptop compacta: apiladas armónicamente
           return Column(
+            key: const ValueKey('view_mode_split_mobile'),
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const LegalRealtimeTable(isSplitView: true),
+              const LegalRealtimeTable(
+                key: ValueKey('realtime_table_split_mobile'),
+                isSplitView: true,
+              ),
               const SizedBox(height: 14),
               SizedBox(
                 height: adaptiveMapHeight,
                 child: LegalDispatchMap(
+                  key: const ValueKey('dispatch_map_split_mobile'),
                   onToggleFullScreen: () {
                     ctrl.setDispatchViewMode(LegalDispatchViewMode.mapOnly);
                   },
@@ -650,12 +711,17 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
         }
 
       case LegalDispatchViewMode.tableOnly:
-        return const LegalRealtimeTable(isSplitView: false);
+        return const LegalRealtimeTable(
+          key: ValueKey('view_mode_table_only'),
+          isSplitView: false,
+        );
 
       case LegalDispatchViewMode.mapOnly:
         return SizedBox(
+          key: const ValueKey('view_mode_map_only'),
           height: fullScreenMapHeight,
           child: LegalDispatchMap(
+            key: const ValueKey('dispatch_map_fullscreen'),
             isFullScreen: true,
             onToggleFullScreen: () {
               ctrl.setDispatchViewMode(LegalDispatchViewMode.split);
