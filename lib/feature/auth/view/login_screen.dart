@@ -183,14 +183,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 22),
+                  const SizedBox(height: 8),
+
+                  Text(
+                    "¡Qué gusto verte de nuevo!",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
 
                   Text(
                     "Iniciar Sesión",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Montserrat',
-                      fontSize: 22,
+                      fontSize: 21,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : const Color(0xFF0F172A),
                     ),

@@ -361,7 +361,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
+
+                  Text(
+                    "Bienvenido a LegalTech",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
 
                   Text(
                     _pasoActual == 1 ? "Registro de Cuenta" : "Datos del Conductor",
