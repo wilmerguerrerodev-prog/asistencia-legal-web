@@ -130,6 +130,7 @@ class ConductorController extends GetxController {
   final RxString _telefonoConductor = "+593 98 765 4321".obs;
   final RxString _cedulaConductor = "1002345678".obs;
   final RxString _tipoLicencia = "Tipo C Profesional (30 Puntos)".obs;
+  final RxString _fotoConductor = "assets/images/profile_image.jpg".obs;
   final RxBool estaAutenticado = true.obs;
 
   String get nombreConductor => _nombreConductor.value;
@@ -139,6 +140,7 @@ class ConductorController extends GetxController {
   String get telefonoConductor => _telefonoConductor.value;
   String get cedulaConductor => _cedulaConductor.value;
   String get tipoLicencia => _tipoLicencia.value;
+  String get fotoConductor => _fotoConductor.value;
 
   /// Actualiza los datos del conductor desde el Login o Registro
   void actualizarDatosConductor({
@@ -149,6 +151,7 @@ class ConductorController extends GetxController {
     String? telefono,
     String? cedula,
     String? licencia,
+    String? foto,
   }) {
     _nombreConductor.value = nombre.trim();
     _unidadTaxi.value = unidad.trim();
@@ -162,6 +165,9 @@ class ConductorController extends GetxController {
     }
     if (licencia != null && licencia.isNotEmpty) {
       _tipoLicencia.value = licencia.trim();
+    }
+    if (foto != null && foto.isNotEmpty) {
+      _fotoConductor.value = foto.trim();
     }
     estaAutenticado.value = true;
   }

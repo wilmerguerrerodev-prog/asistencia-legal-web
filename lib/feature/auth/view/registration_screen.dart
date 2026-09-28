@@ -37,6 +37,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool _consultandoCedula = false;
   bool _cedulaVerificada = false;
   bool _isLoading = false;
+  String? _fotoPerfil;
+  bool _tieneFoto = false;
 
   @override
   void initState() {
@@ -56,6 +58,126 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     _unidadController.dispose();
     _placaController.dispose();
     super.dispose();
+  }
+
+  // --- MODAL PARA SUBIR / CAPTURAR FOTO DEL CONDUCTOR ---
+  void _seleccionarFotoConductor() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.add_a_photo_rounded, color: Color(0xFF2563EB), size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  "Foto Oficial del Conductor",
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              "Sube una foto clara de tu rostro para garantizar la identificación directa y confianza del pasajero.",
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: 12,
+                color: isDark ? Colors.white60 : const Color(0xFF64748B),
+              ),
+            ),
+            const SizedBox(height: 14),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_rounded, color: Color(0xFF2563EB)),
+              title: const Text(
+                "Tomar foto / Selfie",
+                style: TextStyle(fontFamily: 'Montserrat', fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text("Usar cámara del dispositivo", style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              onTap: () {
+                Get.back();
+                setState(() {
+                  _fotoPerfil = "assets/images/profile_image.jpg";
+                  _tieneFoto = true;
+                });
+                Get.snackbar(
+                  "✓ Foto capturada",
+                  "Foto del conductor verificada correctamente.",
+                  backgroundColor: const Color(0xFF16A34A),
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: 12,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_rounded, color: Color(0xFF2563EB)),
+              title: const Text(
+                "Seleccionar de la galería",
+                style: TextStyle(fontFamily: 'Montserrat', fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text("Elegir foto guardada en tu teléfono", style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              onTap: () {
+                Get.back();
+                setState(() {
+                  _fotoPerfil = "assets/images/profile_image.jpg";
+                  _tieneFoto = true;
+                });
+                Get.snackbar(
+                  "✓ Foto cargada",
+                  "Foto del conductor actualizada correctamente.",
+                  backgroundColor: const Color(0xFF16A34A),
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: 12,
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.badge_rounded, color: Color(0xFF16A34A)),
+              title: const Text(
+                "Vincular foto de Licencia Profesional ANT",
+                style: TextStyle(fontFamily: 'Montserrat', fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text("Importar automáticamente desde el Registro Civil / ANT", style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 11)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              onTap: () {
+                Get.back();
+                setState(() {
+                  _fotoPerfil = "assets/images/profile_image.jpg";
+                  _tieneFoto = true;
+                });
+                Get.snackbar(
+                  "✓ Foto ANT vinculada",
+                  "Fotografía oficial de tu licencia profesional importada.",
+                  backgroundColor: const Color(0xFF16A34A),
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.BOTTOM,
+                  margin: const EdgeInsets.all(16),
+                  borderRadius: 12,
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // --- MÉTODOS PASO 1: AUTENTICACIÓN RÁPIDA ---
@@ -81,6 +203,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
     }
+    _tieneFoto = true;
+    _fotoPerfil = "assets/images/profile_image.jpg";
 
     setState(() => _pasoActual = 2);
 
@@ -118,6 +242,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
     }
+    _tieneFoto = true;
+    _fotoPerfil = "assets/images/profile_image.jpg";
 
     setState(() => _pasoActual = 2);
 
@@ -213,6 +339,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
       _consultandoCedula = false;
       _cedulaVerificada = true;
+      _tieneFoto = true;
+      _fotoPerfil = "assets/images/profile_image.jpg";
       if (_nombreController.text.isEmpty) {
         _nombreController.text = "Carlos Alberto Mendoza";
       }
@@ -223,8 +351,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     });
 
     Get.snackbar(
-      "✓ Cédula Verificada",
-      "Identidad y Licencia Profesional validadas ante ANT / Registro Civil.",
+      "✓ Cédula y Foto Verificadas",
+      "Identidad, fotografía y licencia validadas ante ANT / Registro Civil.",
       backgroundColor: const Color(0xFF16A34A),
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
@@ -269,6 +397,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ? _cedulaController.text.trim()
           : "1002345678",
       licencia: _licenciaController.text.trim(),
+      foto: _fotoPerfil,
     );
 
     setState(() => _isLoading = false);
@@ -712,6 +841,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       key: const ValueKey("Paso2_DatosPerfil"),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // 1. Fotografía Oficial del Conductor (Vital para confianza y seguridad)
+        _buildFotoConductorSelector(isDark),
+
+        const SizedBox(height: 16),
+
         _buildSeccionHeader(
           icono: Icons.badge_outlined,
           titulo: "IDENTIDAD Y LICENCIA PROFESIONAL",
@@ -1029,6 +1163,134 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  // --- SELECTOR VISUAL DE FOTOGRAFÍA DEL CONDUCTOR ---
+  Widget _buildFotoConductorSelector(bool isDark) {
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              GestureDetector(
+                onTap: _seleccionarFotoConductor,
+                child: Container(
+                  width: 94,
+                  height: 94,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                    border: Border.all(
+                      color: _tieneFoto
+                          ? const Color(0xFF16A34A)
+                          : const Color(0xFF2563EB),
+                      width: 2.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: (_tieneFoto
+                                ? const Color(0xFF16A34A)
+                                : const Color(0xFF2563EB))
+                            .withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: _tieneFoto
+                        ? Image.asset(
+                            _fotoPerfil ?? "assets/images/profile_image.jpg",
+                            fit: BoxFit.cover,
+                            width: 94,
+                            height: 94,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.person_rounded,
+                                size: 44,
+                                color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                              ),
+                              Text(
+                                "Sin foto",
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                                ),
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+
+              // Botón circular flotante para cambiar/añadir foto
+              GestureDetector(
+                onTap: _seleccionarFotoConductor,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _tieneFoto ? const Color(0xFF16A34A) : const Color(0xFF2563EB),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      _tieneFoto ? Icons.check_rounded : Icons.camera_alt_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            _tieneFoto ? "Foto de Perfil Verificada" : "Foto Oficial del Conductor",
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 12.5,
+              fontWeight: FontWeight.w800,
+              color: _tieneFoto
+                  ? const Color(0xFF16A34A)
+                  : (isDark ? Colors.white : const Color(0xFF0F172A)),
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          InkWell(
+            onTap: _seleccionarFotoConductor,
+            borderRadius: BorderRadius.circular(6),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Text(
+                _tieneFoto ? "Tocar para cambiar fotografía" : "Tocar para subir selfie o foto de carnet",
+                style: const TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2563EB),
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

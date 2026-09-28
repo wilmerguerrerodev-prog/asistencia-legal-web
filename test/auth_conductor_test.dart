@@ -85,6 +85,7 @@ void main() {
 
     // Step 2: Driver Profile & License Screen
     expect(find.text('Datos del Conductor'), findsOneWidget);
+    expect(find.text('Foto de Perfil Verificada'), findsOneWidget);
     expect(find.text('IDENTIDAD Y LICENCIA PROFESIONAL'), findsOneWidget);
     expect(find.text('Tipo de Licencia de Conducir'), findsOneWidget);
     expect(find.text('DATOS DEL VEHÍCULO / UNIDAD'), findsOneWidget);
@@ -117,5 +118,6 @@ void main() {
     expect(controller.nombreConductor, 'Carlos Alberto Mendoza');
     expect(controller.unidadTaxi, 'Unidad #42');
     expect(controller.cooperativa, 'Cooperativa Los Lagos');
+    expect(controller.fotoConductor, 'assets/images/profile_image.jpg');
   });
 }
