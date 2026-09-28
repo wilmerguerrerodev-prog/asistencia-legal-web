@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 8),
 
                   Text(
-                    "¡Qué gusto verte de nuevo!",
+                    "Bienvenido a LegalTech",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',

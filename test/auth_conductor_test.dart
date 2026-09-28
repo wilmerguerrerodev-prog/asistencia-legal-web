@@ -44,7 +44,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('LegalTech'), findsOneWidget);
-    expect(find.text('¡Qué gusto verte de nuevo!'), findsOneWidget);
+    expect(find.text('Bienvenido a LegalTech'), findsOneWidget);
     expect(find.text('Iniciar Sesión'), findsNWidgets(2)); // Title and Button
     expect(find.text('Cédula de Identidad o Correo'), findsOneWidget);
     expect(find.text('Contraseña o PIN'), findsOneWidget);
