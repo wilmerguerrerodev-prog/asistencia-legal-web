@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/web_menu_bar.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
@@ -19,6 +21,22 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.isRegistered<AuthMockController>()) {
+      final auth = Get.find<AuthMockController>();
+      final conductorController = Get.isRegistered<ConductorController>()
+          ? Get.find<ConductorController>()
+          : Get.put(ConductorController());
+      if (auth.isAssociateLawyer || auth.isAdminLawyer || auth.isItAdmin) {
+        conductorController.cambiarRol('abogado');
+      } else {
+        conductorController.cambiarRol('conductor');
+      }
+    }
+  }
 
   void _abrirModalCambiarFoto(BuildContext context, ConductorController controller) {
     showModalBottomSheet(
@@ -351,7 +369,12 @@ class _UserProfileState extends State<UserProfile> {
         children: [
           Expanded(
             child: InkWell(
-              onTap: () => controller.cambiarRol('conductor'),
+              onTap: () {
+                controller.cambiarRol('conductor');
+                if (Get.isRegistered<AuthMockController>()) {
+                  Get.find<AuthMockController>().switchRole(UserRole.clientDriver, navigate: false);
+                }
+              },
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -401,7 +424,12 @@ class _UserProfileState extends State<UserProfile> {
           ),
           Expanded(
             child: InkWell(
-              onTap: () => controller.cambiarRol('abogado'),
+              onTap: () {
+                controller.cambiarRol('abogado');
+                if (Get.isRegistered<AuthMockController>()) {
+                  Get.find<AuthMockController>().switchRole(UserRole.associateLawyer, navigate: false);
+                }
+              },
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -889,7 +917,11 @@ class _UserProfileState extends State<UserProfile> {
           flex: 3,
           child: ElevatedButton.icon(
             onPressed: () {
-              Get.toNamed(RouteHelper.getEdutechRoute());
+              if (Get.isRegistered<AuthMockController>() && Get.find<AuthMockController>().isAssociateLawyer) {
+                Get.toNamed(RouteHelper.getLawyerWorkspaceRoute());
+              } else {
+                Get.toNamed(RouteHelper.getEdutechRoute());
+              }
             },
             icon: const Icon(
               Icons.dashboard_customize_rounded,

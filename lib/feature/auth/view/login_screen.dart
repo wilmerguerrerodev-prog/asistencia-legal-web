@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
-import 'package:getdash/utils/images.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,6 +47,12 @@ class _LoginScreenState extends State<LoginScreen> {
         cedula: "1002345678",
         licencia: "Tipo C Profesional (30 Puntos)",
       );
+      if (Get.isRegistered<AuthMockController>()) {
+        Get.find<AuthMockController>().switchRole(
+          UserRole.clientDriver,
+          navigate: false,
+        );
+      }
     } else {
       final idText = _identificacionController.text.trim();
       final esRolAbogado = idText.toLowerCase().contains('abogado') ||
@@ -53,8 +60,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (esRolAbogado) {
         conductorController.cambiarRol('abogado');
+        if (Get.isRegistered<AuthMockController>()) {
+          final isDirector = idText.toLowerCase().contains('director') ||
+              idText.toLowerCase().contains('emir');
+          Get.find<AuthMockController>().switchRole(
+            isDirector ? UserRole.adminLawyer : UserRole.associateLawyer,
+            navigate: false,
+          );
+        }
       } else {
         conductorController.cambiarRol('conductor');
+        if (Get.isRegistered<AuthMockController>()) {
+          Get.find<AuthMockController>().switchRole(
+            UserRole.clientDriver,
+            navigate: false,
+          );
+        }
       }
 
       if (idText.isNotEmpty && !esRolAbogado) {
@@ -90,44 +111,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (esAbogado) {
-      Get.offAllNamed(RouteHelper.getEdutechRoute());
+      final idText = _identificacionController.text.toLowerCase();
+      final isDirector = idText.contains('director') || idText.contains('emir');
+      if (isDirector) {
+        Get.offAllNamed(RouteHelper.legalCenterScreen);
+      } else {
+        Get.offAllNamed(RouteHelper.lawyerWorkspaceScreen);
+      }
     } else {
       Get.offAllNamed(RouteHelper.initial);
     }
-  }
-
-  void _iniciarConGoogle() async {
-    setState(() => _isLoading = true);
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-
-    final ConductorController conductorController = Get.isRegistered<ConductorController>()
-        ? Get.find<ConductorController>()
-        : Get.put(ConductorController());
-
-    conductorController.actualizarDatosConductor(
-      nombre: "Carlos Alberto Mendoza (Google)",
-      unidad: "Unidad #42",
-      cooperativaNombre: "Cooperativa Los Lagos",
-      placa: "IBA-1234",
-      cedula: "1002345678",
-    );
-
-    setState(() => _isLoading = false);
-
-    Get.snackbar(
-      "Cuenta de Google vinculada",
-      "Autenticación exitosa con Google. Bienvenido, Carlos.",
-      backgroundColor: const Color(0xFF2563EB),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 3),
-      icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
-    );
-
-    Get.offAllNamed(RouteHelper.initial);
   }
 
   @override

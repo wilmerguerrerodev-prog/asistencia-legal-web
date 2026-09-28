@@ -58,11 +58,6 @@ class AuthMockController extends GetxController {
   // Usuario activo en sesión mock (por defecto AdminLawyer para vista ejecutiva)
   final Rx<MockUser> currentUser = Rx<MockUser>(mockAdminLawyer);
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
   MockUser get user => currentUser.value;
   UserRole get role => currentUser.value.role;
 

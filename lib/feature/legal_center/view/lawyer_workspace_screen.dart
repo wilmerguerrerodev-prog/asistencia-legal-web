@@ -4,11 +4,9 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
-import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/legal_center/controller/legal_center_controller.dart';
 import 'package:getdash/feature/legal_center/model/legal_case_model.dart';
 import 'package:getdash/feature/legal_center/widgets/expediente_360_panel.dart';
-import 'package:getdash/feature/legal_center/widgets/legal_call_dialog.dart';
 import 'package:getdash/feature/legal_center/widgets/legal_mobile_nav_header.dart';
 import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/components/web_menu_bar.dart';
@@ -26,7 +24,6 @@ class LawyerWorkspaceScreen extends StatefulWidget {
 
 class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
   late final LegalCenterController _legalController;
-  late final AuthMockController _authController;
 
   // Filtro de estado para "Mis Casos": 0=Todos, 1=En Camino, 2=En Audiencia, 3=Finalizados
   int _selectedStatusFilter = 0;
@@ -34,10 +31,6 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
   @override
   void initState() {
     super.initState();
-    _authController = Get.isRegistered<AuthMockController>()
-        ? Get.find<AuthMockController>()
-        : Get.put(AuthMockController());
-
     _legalController = Get.isRegistered<LegalCenterController>()
         ? Get.find<LegalCenterController>()
         : Get.put(LegalCenterController());
@@ -561,7 +554,7 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                 scale: isMobile ? 0.85 : 0.95,
                 child: Switch(
                   value: isAvailable,
-                  activeColor: const Color(0xFF10B981),
+                  activeThumbColor: const Color(0xFF10B981),
                   activeTrackColor:
                       const Color(0xFF10B981).withValues(alpha: 0.35),
                   inactiveThumbColor: const Color(0xFF94A3B8),

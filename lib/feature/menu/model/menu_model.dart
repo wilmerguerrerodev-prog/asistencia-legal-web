@@ -239,6 +239,12 @@ List<MenuModel> getMenuListForRole(UserRole role) {
         ),
         MenuModel(
           icon: Images.dashboard,
+          iconData: Icons.badge_rounded,
+          menuTitle: 'Mi Perfil',
+          route: RouteHelper.getUserProfileScreen(),
+        ),
+        MenuModel(
+          icon: Images.dashboard,
           iconData: Icons.gavel_rounded,
           menuTitle: 'asistencia_juridica',
           subMenus: [
@@ -278,6 +284,11 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           menuTitle: 'Dictámenes & Actas',
           route: RouteHelper.getLegalDocumentsRoute(),
         ),
+        MenuModel(
+          iconData: Icons.badge_rounded,
+          menuTitle: 'Mi Perfil',
+          route: RouteHelper.getUserProfileScreen(),
+        ),
       ];
 
     case UserRole.clientDriver:
@@ -286,6 +297,11 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           iconData: Icons.local_taxi_rounded,
           menuTitle: 'Portal Conductor SOS',
           route: RouteHelper.getInitialRoute(),
+        ),
+        MenuModel(
+          iconData: Icons.badge_rounded,
+          menuTitle: 'Mi Perfil',
+          route: RouteHelper.getUserProfileScreen(),
         ),
       ];
   }

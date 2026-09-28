@@ -103,20 +103,23 @@ void main() {
     });
 
     test('Menu items are strictly filtered according to RBAC matrix', () {
-      // 1. associateLawyer: sees Mi Despacho, Dictámenes & Actas
+      // 1. associateLawyer: sees Mi Despacho, Dictámenes & Actas, Mi Perfil
       final associateMenu = getMenuListForRole(UserRole.associateLawyer);
       final associateTitles = associateMenu.map((m) => m.menuTitle).toList();
       expect(associateTitles, contains('Mi Despacho'));
       expect(associateTitles, isNot(contains('Mis Casos Asignados')));
       expect(associateTitles, contains('Dictámenes & Actas'));
-      expect(associateTitles.length, 2);
+      expect(associateTitles, contains('Mi Perfil'));
+      expect(associateTitles.length, 3);
       expect(associateTitles, isNot(contains('Abogados')));
       expect(associateTitles, isNot(contains('Cooperativas')));
 
-      // 2. clientDriver: sees Portal Conductor SOS
+      // 2. clientDriver: sees Portal Conductor SOS and Mi Perfil
       final driverMenu = getMenuListForRole(UserRole.clientDriver);
       final driverTitles = driverMenu.map((m) => m.menuTitle).toList();
       expect(driverTitles, contains('Portal Conductor SOS'));
+      expect(driverTitles, contains('Mi Perfil'));
+      expect(driverTitles.length, 2);
       expect(driverTitles, isNot(contains('Siniestros')));
       expect(driverTitles, isNot(contains('Abogados')));
 
@@ -124,9 +127,9 @@ void main() {
       final itAdminMenu = getMenuListForRole(UserRole.itAdmin);
       expect(itAdminMenu.length, menuList.length);
 
-      // 4. adminLawyer: sees dispatch modules
+      // 4. adminLawyer: sees dispatch modules, client, and Mi Perfil
       final adminLawyerMenu = getMenuListForRole(UserRole.adminLawyer);
-      expect(adminLawyerMenu.length, 2);
+      expect(adminLawyerMenu.length, 3);
       expect(adminLawyerMenu.last.subMenus?.length, 5);
     });
 
@@ -143,14 +146,14 @@ void main() {
       authController.switchRole(UserRole.associateLawyer, navigate: false);
 
       await tester.pumpWidget(
-        GetMaterialApp(
+        const GetMaterialApp(
           home: Scaffold(
-            appBar: const LegalMobileNavHeader(
+            appBar: LegalMobileNavHeader(
               title: 'Mi Despacho',
               subtitle: 'Espacio de trabajo',
               activeIndex: 0,
             ),
-            body: const Center(child: Text('Content')),
+            body: Center(child: Text('Content')),
           ),
         ),
       );
@@ -182,14 +185,14 @@ void main() {
       authController.switchRole(UserRole.associateLawyer, navigate: false);
 
       await tester.pumpWidget(
-        GetMaterialApp(
+        const GetMaterialApp(
           home: Scaffold(
-            appBar: const LegalMobileNavHeader(
+            appBar: LegalMobileNavHeader(
               title: 'Mi Despacho',
               subtitle: 'Espacio de trabajo',
               activeIndex: 0,
             ),
-            body: const Center(child: Text('Content')),
+            body: Center(child: Text('Content')),
           ),
         ),
       );
@@ -219,8 +222,8 @@ void main() {
       authController.switchRole(UserRole.adminLawyer, navigate: false);
 
       await tester.pumpWidget(
-        GetMaterialApp(
-          home: const LegalCenterScreen(),
+        const GetMaterialApp(
+          home: LegalCenterScreen(),
         ),
       );
       await tester.pump(const Duration(milliseconds: 300));
