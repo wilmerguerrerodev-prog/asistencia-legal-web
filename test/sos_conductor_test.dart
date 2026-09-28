@@ -325,14 +325,14 @@ void main() {
     expect(controller.casoEscaladoASuperAbogado.value, true);
     expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
     expect(controller.abogadoActivo.esSuperAbogado, true);
-    expect(controller.telefonoAbogado, '+593 99 876 5432');
+    expect(controller.telefonoAbogado, '+593 98 845 6189');
     expect(controller.matriculaAbogado,
         '17-2010-415 · Pichincha / Corte Nacional');
 
     // Comprobar que el mensaje de WhatsApp se actualiza con los datos del Dr. Emir Vásquez
     final mensaje = controller.obtenerMensajeWhatsApp();
     expect(mensaje, contains('TRANSFERIDO A DR. EMIR VÁSQUEZ'));
-    expect(controller.obtenerEnlaceWhatsApp(), startsWith('https://wa.me/593998765432'));
+    expect(controller.obtenerEnlaceWhatsApp(), startsWith('https://wa.me/593988456189'));
 
     // Reiniciar flujo y verificar regreso a estado inicial con abogado de zona
     controller.reiniciarFlujo();

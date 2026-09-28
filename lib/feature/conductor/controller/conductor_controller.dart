@@ -208,7 +208,7 @@ class ConductorController extends GetxController {
     rol: "Director Jurídico Nacional",
     zonaODistancia: "Dirección Jurídica General · Despacho Matriz",
     especialidad: "Director General de Asistencia Legal para Conductores",
-    telefono: "+593 99 876 5432",
+    telefono: "+593 98 845 6189",
     matricula: "17-2010-415 · Pichincha / Corte Nacional",
     entidadAcreditadora: "Consejo de la Judicatura del Ecuador",
     universidad: "Universidad Central del Ecuador",
