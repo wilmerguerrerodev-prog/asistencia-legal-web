@@ -66,20 +66,24 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   Widget expandedMenuList(isExpanded, selectedIndex, AuthMockController auth) {
     final activeList = _getMenuList();
+    final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Material(
+    final content = Material(
       color: Theme.of(context).primaryColorLight,
-      child: SizedBox(
-        width: 260,
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          controlTile(true),
-          _buildRoleSwitcherTile(context, auth),
-          Expanded(
-            child: ListView.builder(
-              itemCount: activeList.length,
-              itemBuilder: (BuildContext context, int index) {
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: SizedBox(
+          width: 275,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              controlTile(true),
+              _buildRoleSwitcherTile(context, auth),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: activeList.length,
+                  itemBuilder: (BuildContext context, int index) {
                 MenuModel menuModel = activeList[index];
                 bool selected = selectedIndex == index;
                 return Theme(
@@ -165,8 +169,24 @@ class _MenuDrawerState extends State<MenuDrawer> {
         ],
       ),
     ),
-  );
-}
+  ),
+);
+
+    if (isMobile) {
+      return Drawer(
+        backgroundColor: Theme.of(context).primaryColorLight,
+        elevation: 8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(20),
+            bottomRight: Radius.circular(20),
+          ),
+        ),
+        child: content,
+      );
+    }
+    return content;
+  }
 
   Widget controlMenuButton() {
     return Padding(
@@ -179,54 +199,80 @@ class _MenuDrawerState extends State<MenuDrawer> {
   }
 
   Widget controlTile(bool isExpanded) {
-    final bool showTitle = isExpanded || ResponsiveHelper.isMobile(context);
+    final isMobile = ResponsiveHelper.isMobile(context);
+    final bool showTitle = isExpanded || isMobile;
     return Align(
       alignment: showTitle ? Alignment.centerLeft : Alignment.center,
       child: Padding(
         padding: EdgeInsets.only(
-          top: 20,
-          bottom: 25,
+          top: isMobile ? 12 : 20,
+          bottom: 18,
           left: showTitle ? 16 : 8,
           right: showTitle ? 16 : 8,
         ),
-        child: InkWell(
-          onTap: () {
-            if (!ResponsiveHelper.isMobile(context)) {
-              Get.find<MenuDrawerController>().toggleMenuDrawer();
-            }
-          },
-          borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.gavel_rounded,
-                    color: Theme.of(context).primaryColor,
-                    size: 22,
-                  ),
+        child: Row(
+          mainAxisAlignment: isMobile ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                if (!isMobile) {
+                  Get.find<MenuDrawerController>().toggleMenuDrawer();
+                }
+              },
+              borderRadius: BorderRadius.circular(Dimensions.radiusSmall),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.gavel_rounded,
+                        color: Theme.of(context).primaryColor,
+                        size: 22,
+                      ),
+                    ),
+                    if (showTitle) ...[
+                      const SizedBox(width: 12),
+                      Text(
+                        "LegalTech",
+                        style: ubuntuBold.copyWith(
+                          color: Theme.of(context).textTheme.bodyMedium!.color,
+                          fontSize: Dimensions.fontSizeLarge,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                if (showTitle) ...[
-                  const SizedBox(width: 12),
-                  Text(
-                    "LegalTech",
-                    style: ubuntuBold.copyWith(
-                      color: Theme.of(context).textTheme.bodyMedium!.color,
-                      fontSize: Dimensions.fontSizeLarge,
-                      letterSpacing: 0.5,
+              ),
+            ),
+            if (isMobile)
+              InkWell(
+                onTap: () => Navigator.pop(context),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.2),
                     ),
                   ),
-                ],
-              ],
-            ),
-          ),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 18,
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -239,9 +285,12 @@ class _MenuDrawerState extends State<MenuDrawer> {
       duration: const Duration(seconds: 1),
       width: 100,
       color: Colors.black,
-      child: Column(
-        children: [
-          controlTile(isExpanded),
+      child: SafeArea(
+        top: true,
+        bottom: true,
+        child: Column(
+          children: [
+            controlTile(isExpanded),
           Expanded(
             child: ListView.builder(
                 itemCount: activeList.length,
@@ -280,8 +329,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildRoleSwitcherTile(BuildContext context, AuthMockController auth) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

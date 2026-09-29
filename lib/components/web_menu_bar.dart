@@ -13,11 +13,14 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).cardColor,
-      padding: const EdgeInsets.symmetric(
-        horizontal: Dimensions.paddingSizeDefault,
-        vertical: Dimensions.paddingSizeSmall,
-      ),
-      child: Row(
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: Dimensions.paddingSizeDefault,
+            vertical: 8,
+          ),
+          child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -109,10 +112,12 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
   @override
   Size get preferredSize => const Size(Dimensions.webMaxWidth, 80);
 }
