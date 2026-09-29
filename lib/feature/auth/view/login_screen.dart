@@ -225,6 +225,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    // Notificar al sistema operativo (iOS Llavero de iCloud / Android Google Autofill) para guardar credenciales
+    TextInput.finishAutofillContext();
+
     authController.switchUser(userToLogin, navigate: true);
   }
 
@@ -329,109 +332,122 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 22),
 
-                  // 3. Formulario de Credenciales
-                  Text(
-                    "Cédula de Identidad o Correo",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white70 : const Color(0xFF334155),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: _identificacionController,
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 13.5,
-                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "Ej. 1002345678 o correo",
-                      hintStyle: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 13,
-                        color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
-                      ),
-                      prefixIcon: const Icon(Icons.badge_outlined, size: 20, color: Color(0xFF2563EB)),
-                      filled: true,
-                      fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                  // 3. Formulario de Credenciales con Autocompletado del Sistema (iCloud Keychain / Google)
+                  AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Cédula de Identidad o Correo",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white70 : const Color(0xFF334155),
+                          ),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: _identificacionController,
+                          autofillHints: const [AutofillHints.username, AutofillHints.email],
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.text,
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 13.5,
+                            color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Ej. 1002345678 o correo",
+                            hintStyle: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 13,
+                              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+                            ),
+                            prefixIcon: const Icon(Icons.badge_outlined, size: 20, color: Color(0xFF2563EB)),
+                            filled: true,
+                            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+                            ),
+                          ),
                         ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-                      ),
-                    ),
-                  ),
 
-                  const SizedBox(height: 14),
+                        const SizedBox(height: 14),
 
-                  Text(
-                    "Contraseña o PIN",
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white70 : const Color(0xFF334155),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 13.5,
-                      color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "••••••••",
-                      hintStyle: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 13,
-                        color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
-                      ),
-                      prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: Color(0xFF2563EB)),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                        Text(
+                          "Contraseña o PIN",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white70 : const Color(0xFF334155),
+                          ),
                         ),
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                      ),
-                      filled: true,
-                      fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          autofillHints: const [AutofillHints.password],
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _iniciarSesion(),
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 13.5,
+                            color: isDark ? Colors.white : const Color(0xFF0F172A),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "••••••••",
+                            hintStyle: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 13,
+                              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+                            ),
+                            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20, color: Color(0xFF2563EB)),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                                size: 19,
+                                color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                              ),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
+                            filled: true,
+                            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+                            ),
+                          ),
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
-                      ),
+                      ],
                     ),
                   ),
 

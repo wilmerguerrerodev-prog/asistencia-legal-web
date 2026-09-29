@@ -463,6 +463,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       icon: const Icon(Icons.shield_rounded, color: Colors.white),
     );
 
+    // Notificar al gestor de contraseñas de iOS / Android para sugerir guardar la nueva contraseña
+    TextInput.finishAutofillContext();
+
     Get.offAllNamed(RouteHelper.initial);
   }
 
@@ -615,10 +618,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   // --- PASO 1: PANTALLA DE AUTENTICACIÓN RÁPIDA ---
   Widget _buildPaso1Autenticacion(bool isDark) {
-    return Column(
-      key: const ValueKey("Paso1_AutenticacionRapida"),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return AutofillGroup(
+      child: Column(
+        key: const ValueKey("Paso1_AutenticacionRapida"),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         Text(
           "Elige tu método de entrada rápido:",
           style: TextStyle(
@@ -755,6 +759,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           icon: Icons.alternate_email_rounded,
           keyboardType: TextInputType.emailAddress,
           isDark: isDark,
+          autofillHints: const [AutofillHints.email, AutofillHints.username],
         ),
 
         const SizedBox(height: 12),
@@ -773,6 +778,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           controller: _passwordController,
           obscureText: _obscurePassword,
+          autofillHints: const [AutofillHints.newPassword],
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _avanzarConCorreo(),
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 13.5,
@@ -881,15 +889,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 
   // --- PASO 2: FORMULARIO DE DATOS ESPECÍFICOS DEL PERFIL ---
   Widget _buildPaso2Perfil(bool isDark) {
-    return Column(
-      key: const ValueKey("Paso2_DatosPerfil"),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return AutofillGroup(
+      child: Column(
+        key: const ValueKey("Paso2_DatosPerfil"),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         // 1. Fotografía Oficial del Conductor (Vital para confianza y seguridad)
         _buildFotoConductorSelector(isDark),
 
@@ -916,6 +926,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           controller: _cedulaController,
           keyboardType: TextInputType.number,
+          autofillHints: const [AutofillHints.newUsername, AutofillHints.username],
+          textInputAction: TextInputAction.next,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
@@ -1054,6 +1066,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           hint: "Ej. Carlos Alberto Mendoza",
           icon: Icons.person_outline_rounded,
           isDark: isDark,
+          autofillHints: const [AutofillHints.name],
         ),
 
         const SizedBox(height: 12),
@@ -1075,6 +1088,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           icon: Icons.phone_rounded,
           keyboardType: TextInputType.phone,
           isDark: isDark,
+          autofillHints: const [AutofillHints.telephoneNumber],
         ),
 
         const SizedBox(height: 16),
@@ -1182,6 +1196,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           controller: _passwordController,
           obscureText: _obscurePassword,
+          autofillHints: const [AutofillHints.newPassword],
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _registrarConductor(),
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 13.5,
@@ -1278,6 +1295,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
       ],
+      ),
     );
   }
 
@@ -1442,10 +1460,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     required IconData icon,
     required bool isDark,
     TextInputType keyboardType = TextInputType.text,
+    Iterable<String>? autofillHints,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      autofillHints: autofillHints,
       style: TextStyle(
         fontFamily: 'Plus Jakarta Sans',
         fontSize: 13.5,
