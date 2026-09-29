@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 import '../controller/legal_center_controller.dart';
 import '../model/legal_case_model.dart';
 import 'legal_escalation_dialog.dart';
+import 'register_lawyer_dialog.dart';
 
 class TerritoryLawyersGrid extends StatelessWidget {
   const TerritoryLawyersGrid({super.key});
@@ -135,6 +137,52 @@ class TerritoryLawyersGrid extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          Builder(
+            builder: (ctx) {
+              final authCtrl = Get.isRegistered<AuthMockController>()
+                  ? Get.find<AuthMockController>()
+                  : null;
+              final canRegister = authCtrl == null ||
+                  authCtrl.isAdminLawyer ||
+                  authCtrl.isItAdmin;
+
+              if (!canRegister) return const SizedBox.shrink();
+
+              return Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2563EB),
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 8 : 12,
+                      vertical: 6,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  icon: const Icon(Icons.person_add_alt_1_rounded, size: 14),
+                  label: Text(
+                    isMobile ? "+ Registrar" : "+ Registrar Abogado",
+                    style: ubuntuBold.copyWith(
+                      fontSize: 11,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onPressed: () {
+                    RegisterLawyerDialog.show(
+                      context,
+                      onRegistered: (newLawyer) {
+                        controller.update();
+                      },
+                    );
+                  },
+                ),
+              );
+            },
           ),
         ],
       ),

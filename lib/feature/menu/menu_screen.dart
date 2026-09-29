@@ -5,6 +5,7 @@ import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
+import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
@@ -19,6 +20,112 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+  void _mostrarDialogoConfirmarCerrarSesion(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 380),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.redAccent,
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "¿Cerrar Sesión?",
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "¿Estás seguro de que deseas salir de tu cuenta en LegalTech? Tendrás que ingresar tus credenciales nuevamente.",
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          side: BorderSide(
+                            color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          if (Get.isRegistered<MenuDrawerController>()) {
+                            Get.find<MenuDrawerController>().closeMobileDrawer();
+                          }
+                          Get.offAllNamed(RouteHelper.loginScreen);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          "Sí, Salir",
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
   @override
   void initState() {
     super.initState();
@@ -176,6 +283,47 @@ class _MenuDrawerState extends State<MenuDrawer> {
               },
             ),
           ),
+          const Divider(height: 1),
+          // Botón Cerrar Sesión al pie del menú lateral
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: InkWell(
+              onTap: () {
+                if (Get.isRegistered<MenuDrawerController>()) {
+                  Get.find<MenuDrawerController>().closeMobileDrawer();
+                }
+                _mostrarDialogoConfirmarCerrarSesion(context);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.redAccent.withValues(alpha: 0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.logout_rounded,
+                      size: 20,
+                      color: Colors.redAccent,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      "Cerrar Sesión",
+                      style: ubuntuBold.copyWith(
+                        fontSize: Dimensions.fontSizeSmall,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     ),
@@ -330,6 +478,30 @@ class _MenuDrawerState extends State<MenuDrawer> {
                     ),
                   );
                 }),
+          ),
+          const Divider(height: 1, color: Colors.white24),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Tooltip(
+              message: "Cerrar Sesión",
+              child: InkWell(
+                onTap: () => _mostrarDialogoConfirmarCerrarSesion(context),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    size: 20,
+                    color: Colors.redAccent,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

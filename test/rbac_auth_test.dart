@@ -127,10 +127,12 @@ void main() {
       final itAdminMenu = getMenuListForRole(UserRole.itAdmin);
       expect(itAdminMenu.length, menuList.length);
 
-      // 4. adminLawyer: sees dispatch modules, client, and Mi Perfil
+      // 4. adminLawyer: sees dispatch modules, client, and Mi Perfil (without redundant dashboard_abogado)
       final adminLawyerMenu = getMenuListForRole(UserRole.adminLawyer);
       expect(adminLawyerMenu.length, 3);
-      expect(adminLawyerMenu.last.subMenus?.length, 5);
+      expect(adminLawyerMenu.last.subMenus?.length, 4);
+      final subTitles = adminLawyerMenu.last.subMenus?.map((s) => s.subMenuTitle).toList();
+      expect(subTitles, isNot(contains('dashboard_abogado')));
     });
 
     testWidgets('Role switcher bottom sheet renders without overflow on 360px mobile', (tester) async {

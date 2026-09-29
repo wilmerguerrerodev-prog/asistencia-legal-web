@@ -3,17 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 import '../controller/legal_center_controller.dart';
 import '../widgets/assign_lawyer_case_dialog.dart';
-import '../widgets/legal_mobile_nav_header.dart';
+import '../widgets/register_lawyer_dialog.dart';
 
 class LegalLawyersScreen extends StatefulWidget {
   const LegalLawyersScreen({super.key});
@@ -389,22 +388,95 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
-            child: isMobile
-                ? Column(
+            child: Builder(
+              builder: (ctx) {
+                final authCtrl = Get.isRegistered<AuthMockController>()
+                    ? Get.find<AuthMockController>()
+                    : null;
+                final canRegister = authCtrl == null ||
+                    authCtrl.isAdminLawyer ||
+                    authCtrl.isItAdmin;
+
+                final registerButton = canRegister
+                    ? ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2563EB),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          elevation: 0,
+                        ),
+                        icon: const Icon(Icons.person_add_alt_1_rounded,
+                            size: 16),
+                        label: const Text(
+                          "+ Registrar Nuevo Abogado",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        onPressed: () {
+                          RegisterLawyerDialog.show(
+                            context,
+                            onRegistered: (newLawyer) {
+                              setState(() {
+                                _lawyersData.insert(0, newLawyer);
+                              });
+                            },
+                          );
+                        },
+                      )
+                    : const SizedBox.shrink();
+
+                if (isMobile) {
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Cuerpo de Abogados de Turno (${_lawyersData.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
-                      const SizedBox(height: 6),
-                      _buildGpsBadge(),
+                      Text(
+                        "Cuerpo de Abogados de Turno (${_lawyersData.length})",
+                        style: ubuntuBold.copyWith(
+                            fontSize: Dimensions.fontSizeDefault),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _buildGpsBadge(),
+                          registerButton,
+                        ],
+                      ),
                     ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Cuerpo de Abogados de Turno (${_lawyersData.length})", style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeDefault)),
-                      _buildGpsBadge(),
-                    ],
-                  ),
+                  );
+                }
+
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Cuerpo de Abogados de Turno (${_lawyersData.length})",
+                      style: ubuntuBold.copyWith(
+                          fontSize: Dimensions.fontSizeDefault),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildGpsBadge(),
+                        if (canRegister) ...[
+                          const SizedBox(width: 12),
+                          registerButton,
+                        ],
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
           const Divider(height: 1),
           ListView.separated(

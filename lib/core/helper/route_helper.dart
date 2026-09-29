@@ -15,6 +15,7 @@ import 'package:getdash/feature/coupons/add_coupon_screen.dart';
 import 'package:getdash/feature/coupons/coupon_screen.dart';
 import 'package:getdash/feature/auth/view/login_screen.dart';
 import 'package:getdash/feature/auth/view/registration_screen.dart';
+import 'package:getdash/feature/auth/view/change_temporary_password_screen.dart';
 import 'package:getdash/feature/dashboarddemo1/dahboard_screen_demo1.dart';
 import 'package:getdash/feature/dashboarddemo2/dashboard_screen_demo2.dart';
 import 'package:getdash/feature/dashboarddemo3/dashboard_screeen_demo3.dart';
@@ -59,6 +60,7 @@ class RouteHelper {
   static const String initial = '/';
   static const String sosConductorScreen = '/sos';
   static const String lawyerWorkspaceScreen = '/lawyerWorkspace';
+  static const String changeTemporaryPasswordScreen = '/changeTemporaryPassword';
   static const String forgotPassword = '/forgot-password';
   static const String supportScreen = '/help-and-support';
   static const String couponScreen = '/couponScreen';
@@ -168,6 +170,7 @@ class RouteHelper {
   static String getLegalCooperativesRoute() => legalCooperativesScreen;
   static String getLegalDocumentsRoute() => legalDocumentsScreen;
   static String getLawyerWorkspaceRoute() => lawyerWorkspaceScreen;
+  static String getChangeTemporaryPasswordRoute() => changeTemporaryPasswordScreen;
   static String getSosConductorRoute() => sosConductorScreen;
   static String getDashboardScreen1() => dashboardScreen1;
   static String getDashboardScreen2() => dashboardScreen2;
@@ -286,5 +289,8 @@ class RouteHelper {
     GetPage(
         name: lawyerWorkspaceScreen,
         page: () => const LawyerWorkspaceScreen()),
+    GetPage(
+        name: changeTemporaryPasswordScreen,
+        page: () => const ChangeTemporaryPasswordScreen()),
   ];
 }

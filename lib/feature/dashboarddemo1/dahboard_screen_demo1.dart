@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/dashboarddemo1/widgets/messege_section.dart';
 import 'package:getdash/feature/dashboarddemo1/widgets/new_product.dart';
 import 'package:getdash/feature/dashboarddemo1/widgets/demo_one_summery_card.dart';
 import 'package:getdash/feature/dashboarddemo1/widgets/user_overview.dart';
 import 'package:getdash/feature/dashboarddemo1/widgets/user_section.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/responsive.dart';
 

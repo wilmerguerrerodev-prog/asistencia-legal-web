@@ -70,6 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
         userToLogin = AuthMockController.mockAdminLawyer;
       } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
         userToLogin = AuthMockController.mockItAdmin;
+      } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
+        userToLogin = AuthMockController.mockTempLawyer;
       } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
         userToLogin = AuthMockController.mockAssociateLawyer;
       } else {
@@ -480,6 +482,16 @@ class _LoginScreenState extends State<LoginScreen> {
           icon: Icons.gavel_rounded,
           accentColor: const Color(0xFF0F766E),
           user: AuthMockController.mockAssociateLawyer,
+        ),
+        const SizedBox(height: 8),
+        _buildDemoRoleCard(
+          isDark: isDark,
+          title: "Nuevo Abogado (Dr. Carlos Revelo)",
+          subtitle: "carlos.revelo@legaltech.ec • Clave Temporal",
+          badge: "1er Login",
+          icon: Icons.lock_clock_rounded,
+          accentColor: const Color(0xFF0284C7),
+          user: AuthMockController.mockTempLawyer,
         ),
         const SizedBox(height: 8),
         _buildDemoRoleCard(

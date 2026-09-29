@@ -3,13 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -321,13 +319,13 @@ class _UserProfileState extends State<UserProfile> {
               // 2. Cabecera principal de Perfil
               esConductor
                   ? _buildConductorHeader(context, controller, isDark)
-                  : _buildAbogadoHeader(context, controller, isDark),
+                  : _buildAbogadoHeader(context, controller, isDark, auth),
               const SizedBox(height: 18),
 
               // 3. Tarjetas detalladas de datos
               esConductor
                   ? _buildConductorDetails(context, controller, isDark)
-                  : _buildAbogadoDetails(context, controller, isDark),
+                  : _buildAbogadoDetails(context, controller, isDark, auth),
               const SizedBox(height: 24),
 
               // 4. Botones de acción rápida
@@ -580,105 +578,6 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  /// Cabecera con foto y acreditación del Abogado
-  Widget _buildAbogadoHeader(BuildContext context, ConductorController controller, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 90,
-            height: 90,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFF0F766E), width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF0F766E).withValues(alpha: 0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: const ClipOval(
-              child: Icon(Icons.person_outline_rounded, size: 52, color: Color(0xFF0F766E)),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            controller.abogadoZona.nombre,
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 6),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F766E).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF0F766E).withValues(alpha: 0.3)),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.verified_user_rounded, size: 14, color: Color(0xFF0F766E)),
-                SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    "Abogado Acreditado",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF0F766E),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "Matrícula: ${controller.abogadoZona.matricula}",
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            controller.abogadoZona.entidadAcreditadora,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Detalles completos del Conductor (ANT, Taxi, Cobertura 24/7)
   Widget _buildConductorDetails(BuildContext context, ConductorController controller, bool isDark) {
     return Column(
@@ -733,11 +632,302 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  /// Detalles completos del Abogado (Judicatura, Guardia, Métricas)
-  Widget _buildAbogadoDetails(BuildContext context, ConductorController controller, bool isDark) {
+  /// Cabecera con foto y acreditación del Abogado (Director Legal Dr. Emir Vásquez o Abogada Asociada)
+  Widget _buildAbogadoHeader(
+    BuildContext context,
+    ConductorController controller,
+    bool isDark,
+    AuthMockController? auth,
+  ) {
+    final isDirector = auth == null || auth.isAdminLawyer || auth.isItAdmin;
+
+    final nombre = isDirector ? "Dr. Emir Vásquez Zambrano" : "Dra. Andrea Morales";
+    final rolLabel = isDirector
+        ? "Director Jurídico · Penalista y Consultor Político"
+        : "Abogada Asociada en Vía";
+    final matricula = isDirector
+        ? "10-2012-389 · Imbabura"
+        : "10-2019-512 · Imbabura";
+    const entidad = "Consejo de la Judicatura del Ecuador";
+    const badgeLabel = "Abogado Acreditado";
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 92,
+            height: 92,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDirector
+                  ? (isDark ? const Color(0xFF1E3A8A) : const Color(0xFFEFF6FF))
+                  : (isDark ? const Color(0xFF0F766E) : const Color(0xFFCCFBF1)),
+              border: Border.all(
+                color: isDirector ? const Color(0xFF2563EB) : const Color(0xFF0F766E),
+                width: 3,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (isDirector ? const Color(0xFF2563EB) : const Color(0xFF0F766E))
+                      .withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                isDirector ? "EV" : "AM",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: isDirector ? const Color(0xFF2563EB) : const Color(0xFF0F766E),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            nombre,
+            style: TextStyle(
+              fontFamily: 'Montserrat',
+              fontSize: 21,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : const Color(0xFF0F172A),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            rolLabel,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDirector
+                  ? (isDark ? const Color(0xFF93C5FD) : const Color(0xFF1D4ED8))
+                  : (isDark ? const Color(0xFF5EEAD4) : const Color(0xFF0F766E)),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: (isDirector ? const Color(0xFF1D4ED8) : const Color(0xFF0F766E))
+                  .withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (isDirector ? const Color(0xFF1D4ED8) : const Color(0xFF0F766E))
+                    .withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.verified_user_rounded,
+                  size: 14,
+                  color: isDirector ? const Color(0xFF1D4ED8) : const Color(0xFF0F766E),
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    badgeLabel,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: isDirector ? const Color(0xFF1D4ED8) : const Color(0xFF0F766E),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Matrícula: $matricula",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            entidad,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Detalles completos del Abogado (Director Legal Dr. Emir Vásquez o Asociada)
+  Widget _buildAbogadoDetails(
+    BuildContext context,
+    ConductorController controller,
+    bool isDark,
+    AuthMockController? auth,
+  ) {
+    final isDirector = auth == null || auth.isAdminLawyer || auth.isItAdmin;
+
+    if (isDirector) {
+      return Column(
+        children: [
+          // Banner de Perfil y Trayectoria
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF0FDF4),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFBBF7D0),
+                width: 1.2,
+              ),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF16A34A).withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.format_quote_rounded,
+                    color: Color(0xFF16A34A),
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Perfil y Trayectoria",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        "Emir Vásquez Zambrano es un abogado penalista, consultor político ecuatoriano y magíster en derecho penal y consultoría política, con destacada actividad pública y profesional en la provincia de Imbabura y el Ecuador.",
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          height: 1.45,
+                          color: isDark ? Colors.grey.shade300 : const Color(0xFF334155),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Tarjeta 1: Acreditación y Títulos Profesionales
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.account_balance_rounded,
+            iconColor: const Color(0xFF1D4ED8),
+            title: "Acreditación y Títulos Profesionales",
+            subtitle: "Registro oficial del Consejo de la Judicatura del Ecuador",
+            rows: [
+              _buildDataRow("Profesión", "Abogado Penalista y Consultor Político", isDark, highlight: true),
+              _buildDataRow("Matrícula Foro", "10-2012-389 · Imbabura / Corte Nacional", isDark, highlight: true),
+              _buildDataRow("Ente Rector", "Consejo de la Judicatura del Ecuador", isDark),
+              _buildDataRow("Título de Grado", "Abogado de los Tribunales y Juzgados de la República", isDark),
+              _buildDataRow("Maestría Penal", "Magíster en Derecho Penal", isDark, success: true),
+              _buildDataRow("Maestría Consultoría", "Máster en Consultoría Política (MAICOP)", isDark, success: true),
+              _buildDataRow("Especialización", "Especialización en Gestión de Gobiernos y Campañas", isDark),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Tarjeta 2: Reconocimientos y Participación Académica
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.emoji_events_rounded,
+            iconColor: const Color(0xFFF59E0B),
+            title: "Reconocimientos y Participación Académica",
+            subtitle: "Galardones internacionales, docencia y análisis en medios",
+            rows: [
+              _buildDataRow("Galardones Internacionales", "Premios Golden Victory Awards", isDark, highlight: true),
+              _buildDataRow("Reconocimiento Nacional", "Condecoración Eloy Alfaro", isDark, highlight: true),
+              _buildDataRow("Participación Académica", "Conferencista en la Cumbre Mundial de Comunicación Política", isDark, success: true),
+              _buildDataRow("En Medios de Comunicación", "Invitado frecuente y analista de coyuntura en Radio Gran Colombia y medios de Imbabura", isDark),
+              _buildDataRow("Red Social Oficial", "@Emir_Vasquez (X / Twitter)", isDark, highlight: true),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Tarjeta 3: Despacho y Cobertura Territorial
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.shield_rounded,
+            iconColor: const Color(0xFF0F766E),
+            title: "Despacho y Cobertura Territorial",
+            subtitle: "Dirección estratégica de la red de auxilio vial LegalTech",
+            rows: [
+              _buildDataRow("Disponibilidad", "Dirección y Supervisión de Red Vial 24/7", isDark, success: true),
+              _buildDataRow("Despacho Matriz", "Vásquez & Asociados · Central Nacional LegalTech", isDark),
+              _buildDataRow("Jurisdicción Principal", "Provincia de Imbabura (Ibarra, Otavalo, Cotacachi) & Cobertura Nacional", isDark, highlight: true),
+              _buildDataRow("Teléfono Directo", "+593 98 776 5544", isDark, highlight: true),
+              _buildDataRow("Correo Institucional", "emir.vasquez@legaltech.ec", isDark),
+              _buildDataRow("Litigación & Defensas", "Más de 1.800 procesos penales y peritajes viales resueltos", isDark, success: true),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Tarjeta 4: Servicio y Asistencia 24/7 Activa
+          _buildInfoCard(
+            isDark: isDark,
+            icon: Icons.support_agent_rounded,
+            iconColor: const Color(0xFF10B981),
+            title: "Servicio y Asistencia 24/7 Activa",
+            subtitle: "Supervisión permanente y escalamiento inmediato ante demoras",
+            rows: [
+              _buildDataRow("Disponibilidad", "Monitoreo Continuo 24 Horas al Día", isDark, success: true),
+              _buildDataRow("Protocolo de Escalamiento", "Notificación automática al Dr. Emir Vásquez si el abogado asociado no toma el caso a tiempo", isDark, highlight: true),
+              _buildDataRow("Defensa Inmediata", "Flagrancias, Audiencias COIP y Tránsito", isDark),
+              _buildDataRow("Línea de Urgencias", "+593 98 776 5544", isDark, highlight: true),
+            ],
+          ),
+        ],
+      );
+    }
+
+    // Perfil Abogada Asociada en Territorio (Dra. Andrea Morales)
     return Column(
       children: [
-        // Tarjeta Acreditación Judicial
+        // Tarjeta Acreditación Judicial Asociada
         _buildInfoCard(
           isDark: isDark,
           icon: Icons.account_balance_rounded,
@@ -745,30 +935,46 @@ class _UserProfileState extends State<UserProfile> {
           title: "Acreditación y Títulos Profesionales",
           subtitle: "Registro oficial del Consejo de la Judicatura del Ecuador",
           rows: [
-            _buildDataRow("Matrícula Foro", controller.abogadoZona.matricula, isDark, highlight: true),
-            _buildDataRow("Ente Rector", controller.abogadoZona.entidadAcreditadora, isDark),
-            _buildDataRow("Título de Grado", controller.abogadoZona.tituloGrado, isDark),
-            _buildDataRow("Alma Máter", controller.abogadoZona.universidad, isDark),
-            _buildDataRow("Especialidad", controller.abogadoZona.especialidadPosgrado, isDark),
-            _buildDataRow("Maestría", controller.abogadoZona.maestria, isDark),
+            _buildDataRow("Matrícula Foro", "10-2019-512 · Imbabura", isDark, highlight: true),
+            _buildDataRow("Ente Rector", "Consejo de la Judicatura del Ecuador", isDark),
+            _buildDataRow("Título de Grado", "Abogada de los Tribunales y Juzgados de la República", isDark),
+            _buildDataRow("Alma Máter", "Universidad Técnica del Norte", isDark),
+            _buildDataRow("Especialidad", "Especialista Superior en Derecho Penal y Tránsito (COIP)", isDark),
+            _buildDataRow("Maestría", "Magíster en Litigación Oral y Solución de Controversias", isDark),
           ],
         ),
         const SizedBox(height: 16),
 
-        // Tarjeta Despacho y Cobertura
+        // Tarjeta Despacho y Cobertura Territorial
         _buildInfoCard(
           isDark: isDark,
           icon: Icons.location_on_rounded,
           iconColor: const Color(0xFF3B82F6),
           title: "Despacho y Cobertura Territorial",
-          subtitle: "Jurisdicción asignada para asistencia presencial",
+          subtitle: "Jurisdicción asignada para asistencia presencial inmediata",
           rows: [
-            _buildDataRow("Disponibilidad", "Servicio y Asistencia 24/7 Activa", isDark, success: true),
-            _buildDataRow("Despacho", controller.abogadoZona.despacho, isDark),
-            _buildDataRow("Zona de Acción", controller.abogadoZona.zonaODistancia, isDark, highlight: true),
-            _buildDataRow("WhatsApp de Guardia", controller.abogadoZona.telefono, isDark, highlight: true),
-            _buildDataRow("Experiencia", controller.abogadoZona.experiencia, isDark),
-            _buildDataRow("Casos Resueltos", controller.abogadoZona.casosAtendidos, isDark, success: true),
+            _buildDataRow("Disponibilidad", "Servicio Activo 24/7 (Monitoreo Continuo)", isDark, success: true),
+            _buildDataRow("Jurisdicción Asignada", "Ibarra · Provincia de Imbabura", isDark, highlight: true),
+            _buildDataRow("Supervisión Inmediata", "Dr. Emir Vásquez Zambrano (Dirección Legal)", isDark),
+            _buildDataRow("Línea Móvil de Turno", "+593 99 445 1200", isDark, highlight: true),
+            _buildDataRow("Experiencia en Vía", "+8 años en auxilio inmediato y peritajes de tránsito", isDark),
+            _buildDataRow("Casos Atendidos", "Más de 380 siniestros resueltos con éxito", isDark, success: true),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Tarjeta Servicio y Asistencia 24/7 Activa
+        _buildInfoCard(
+          isDark: isDark,
+          icon: Icons.support_agent_rounded,
+          iconColor: const Color(0xFF10B981),
+          title: "Servicio y Asistencia 24/7 Activa",
+          subtitle: "Cobertura ininterrumpida y alerta al Director Legal",
+          rows: [
+            _buildDataRow("Disponibilidad", "Servicio y Guardia Activa 24 Horas", isDark, success: true),
+            _buildDataRow("Monitoreo Permanente", "Los abogados asociados deben estar atentos de inmediato", isDark, highlight: true),
+            _buildDataRow("Protocolo de Escalamiento", "Casos no tomados a tiempo se notifican al Dr. Emir Vásquez", isDark, highlight: true),
+            _buildDataRow("Jurisdicción Operativa", "Ibarra, Otavalo, Cotacachi y red vial de Imbabura", isDark),
           ],
         ),
       ],
@@ -854,17 +1060,20 @@ class _UserProfileState extends State<UserProfile> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+          Expanded(
+            flex: 4,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
             ),
           ),
-          const SizedBox(width: 12),
-          Flexible(
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 5,
             child: Text(
               value,
               textAlign: TextAlign.end,

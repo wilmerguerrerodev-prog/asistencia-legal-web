@@ -56,6 +56,10 @@ class MockUser {
   final String? canton;
   final String? phone;
   final bool isAvailable;
+  final bool debeCambiarClave;
+  final String? cedula;
+  final String? matriculaForo;
+  final String? temporaryPassword;
 
   const MockUser({
     required this.id,
@@ -67,6 +71,10 @@ class MockUser {
     this.canton,
     this.phone,
     this.isAvailable = true,
+    this.debeCambiarClave = false,
+    this.cedula,
+    this.matriculaForo,
+    this.temporaryPassword,
   });
 
   MockUser copyWith({
@@ -79,6 +87,10 @@ class MockUser {
     String? canton,
     String? phone,
     bool? isAvailable,
+    bool? debeCambiarClave,
+    String? cedula,
+    String? matriculaForo,
+    String? temporaryPassword,
   }) {
     return MockUser(
       id: id ?? this.id,
@@ -90,6 +102,10 @@ class MockUser {
       canton: canton ?? this.canton,
       phone: phone ?? this.phone,
       isAvailable: isAvailable ?? this.isAvailable,
+      debeCambiarClave: debeCambiarClave ?? this.debeCambiarClave,
+      cedula: cedula ?? this.cedula,
+      matriculaForo: matriculaForo ?? this.matriculaForo,
+      temporaryPassword: temporaryPassword ?? this.temporaryPassword,
     );
   }
 }
