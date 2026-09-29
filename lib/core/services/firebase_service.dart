@@ -248,6 +248,10 @@ class FirebaseService {
     String? canton,
     String? cedula,
     String? matriculaForo,
+    String? placa,
+    String? unidadTaxi,
+    String? licencia,
+    String? foto,
     bool debeCambiarClave = false,
   }) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -263,6 +267,10 @@ class FirebaseService {
         'canton': canton ?? 'Ibarra',
         'cedula': cedula,
         'matriculaForo': matriculaForo,
+        'placa': placa,
+        'unidadTaxi': unidadTaxi,
+        'licencia': licencia,
+        'foto': foto,
         'debeCambiarClave': debeCambiarClave,
         'isAvailable': true,
         'subscriptionStatus': 'active',

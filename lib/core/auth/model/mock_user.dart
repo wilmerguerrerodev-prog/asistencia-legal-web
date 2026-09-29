@@ -60,6 +60,10 @@ class MockUser {
   final String? cedula;
   final String? matriculaForo;
   final String? temporaryPassword;
+  final String? placa;
+  final String? unidadTaxi;
+  final String? licencia;
+  final String? foto;
 
   const MockUser({
     required this.id,
@@ -75,6 +79,10 @@ class MockUser {
     this.cedula,
     this.matriculaForo,
     this.temporaryPassword,
+    this.placa,
+    this.unidadTaxi,
+    this.licencia,
+    this.foto,
   });
 
   MockUser copyWith({
@@ -91,6 +99,10 @@ class MockUser {
     String? cedula,
     String? matriculaForo,
     String? temporaryPassword,
+    String? placa,
+    String? unidadTaxi,
+    String? licencia,
+    String? foto,
   }) {
     return MockUser(
       id: id ?? this.id,
@@ -106,6 +118,10 @@ class MockUser {
       cedula: cedula ?? this.cedula,
       matriculaForo: matriculaForo ?? this.matriculaForo,
       temporaryPassword: temporaryPassword ?? this.temporaryPassword,
+      placa: placa ?? this.placa,
+      unidadTaxi: unidadTaxi ?? this.unidadTaxi,
+      licencia: licencia ?? this.licencia,
+      foto: foto ?? this.foto,
     );
   }
 }

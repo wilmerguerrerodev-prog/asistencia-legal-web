@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/utils/images.dart';
 
@@ -374,6 +377,55 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       licencia: _licenciaController.text.trim(),
       foto: _fotoPerfil,
     );
+
+    // Registro y persistencia real en Firebase Auth y Cloud Firestore
+    final email = _emailController.text.trim().isNotEmpty
+        ? _emailController.text.trim()
+        : 'conductor.${DateTime.now().millisecondsSinceEpoch}@legaltech.ec';
+    final password = _passwordController.text.trim().isNotEmpty
+        ? _passwordController.text.trim()
+        : 'LegalTech2026!';
+
+    try {
+      final cred = await FirebaseService().signUp(
+        email: email,
+        password: password,
+        name: nombre,
+        role: UserRole.clientDriver,
+        phone: _celularController.text.trim().isNotEmpty
+            ? _celularController.text.trim()
+            : "+593 98 765 4321",
+        cooperativeName: cooperativa,
+        cedula: _cedulaController.text.trim().isNotEmpty
+            ? _cedulaController.text.trim()
+            : "1002345678",
+        placa: placa,
+        unidadTaxi: unidad,
+        licencia: _licenciaController.text.trim(),
+        foto: _fotoPerfil,
+      );
+
+      if (Get.isRegistered<AuthMockController>()) {
+        final authController = Get.find<AuthMockController>();
+        final newDriver = MockUser(
+          id: cred?.user?.uid ?? 'DRIVER-${DateTime.now().millisecondsSinceEpoch}',
+          name: nombre,
+          email: email,
+          role: UserRole.clientDriver,
+          cooperativeName: cooperativa,
+          canton: 'Otavalo',
+          phone: _celularController.text.trim(),
+          cedula: _cedulaController.text.trim(),
+          placa: placa,
+          unidadTaxi: unidad,
+          licencia: _licenciaController.text.trim(),
+          foto: _fotoPerfil,
+        );
+        authController.switchUser(newDriver, navigate: false);
+      }
+    } catch (e) {
+      debugPrint('Error registrando conductor en Firebase: $e');
+    }
 
     setState(() => _isLoading = false);
 

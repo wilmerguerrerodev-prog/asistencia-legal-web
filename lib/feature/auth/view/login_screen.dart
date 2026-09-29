@@ -95,6 +95,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 debeCambiarClave: data['debeCambiarClave'] == true,
                 matriculaForo: data['matriculaForo'],
                 cedula: data['cedula'],
+                placa: data['placa'],
+                unidadTaxi: data['unidadTaxi'],
+                licencia: data['licencia'],
+                foto: data['foto'],
               );
             } else {
               userToLogin = AuthMockController.mockClientDriver.copyWith(
