@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _recordarSesion = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _isSeedingFirebase = false;
 
   @override
   void dispose() {
@@ -49,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text = "123456";
     } else {
       final idText = _identificacionController.text.trim();
+      final passText = _passwordController.text.trim();
 
       if (idText.isEmpty) {
         setState(() => _isLoading = false);
@@ -65,16 +69,65 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      final lower = idText.toLowerCase();
-      if (lower.contains('director') || lower.contains('emir')) {
-        userToLogin = AuthMockController.mockAdminLawyer;
-      } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
-        userToLogin = AuthMockController.mockItAdmin;
-      } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
-        userToLogin = AuthMockController.mockAssociateLawyer;
+      // Si ingresó correo y contraseña, intenta Firebase Auth real
+      if (idText.contains('@') && passText.isNotEmpty) {
+        try {
+          final cred = await FirebaseService().signIn(email: idText, password: passText);
+          if (cred?.user != null) {
+            final doc = await FirebaseService().getUserProfile(cred!.user!.uid);
+            if (doc.exists && doc.data() != null) {
+              final data = doc.data()!;
+              final roleStr = data['role'] ?? 'clientDriver';
+              final userRole = UserRole.values.firstWhere(
+                (r) => r.name == roleStr,
+                orElse: () => UserRole.clientDriver,
+              );
+
+              userToLogin = MockUser(
+                id: cred.user!.uid,
+                name: data['name'] ?? idText,
+                email: idText,
+                role: userRole,
+                cooperativeId: data['cooperativeId'],
+                cooperativeName: data['cooperativeName'],
+                canton: data['canton'] ?? 'Ibarra',
+                phone: data['phone'],
+              );
+            } else {
+              userToLogin = AuthMockController.mockClientDriver.copyWith(
+                id: cred.user!.uid,
+                name: cred.user!.email?.split('@').first ?? 'Usuario',
+                email: idText,
+              );
+            }
+          } else {
+            userToLogin = AuthMockController.mockClientDriver;
+          }
+        } catch (e) {
+          debugPrint('Firebase Auth falló o modo offline: $e');
+          // Fallback a mapeo rápido si las credenciales coinciden con los roles de prueba
+          final lower = idText.toLowerCase();
+          if (lower.contains('director') || lower.contains('emir')) {
+            userToLogin = AuthMockController.mockAdminLawyer;
+          } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
+            userToLogin = AuthMockController.mockItAdmin;
+          } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+            userToLogin = AuthMockController.mockAssociateLawyer;
+          } else {
+            userToLogin = AuthMockController.mockClientDriver;
+          }
+        }
       } else {
-        // Conductor / Cliente
-        userToLogin = AuthMockController.mockClientDriver;
+        final lower = idText.toLowerCase();
+        if (lower.contains('director') || lower.contains('emir')) {
+          userToLogin = AuthMockController.mockAdminLawyer;
+        } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
+          userToLogin = AuthMockController.mockItAdmin;
+        } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+          userToLogin = AuthMockController.mockAssociateLawyer;
+        } else {
+          userToLogin = AuthMockController.mockClientDriver;
+        }
       }
     }
 
@@ -501,8 +554,111 @@ class _LoginScreenState extends State<LoginScreen> {
           accentColor: const Color(0xFFD97706),
           user: AuthMockController.mockItAdmin,
         ),
+        const SizedBox(height: 14),
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.cloud_sync_rounded, color: Color(0xFF2563EB), size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      "Base de Datos en la Nube (Firebase)",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "Crea y sincroniza las colecciones iniciales (users, cooperativas, casos_legales, emergencias_sos) en tu consola de Firebase.",
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 11,
+                  color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0D9488),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                ),
+                onPressed: _isSeedingFirebase ? null : _poblarBaseDeDatosFirebase,
+                icon: _isSeedingFirebase
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : const Icon(Icons.bolt_rounded, size: 18),
+                label: Text(
+                  _isSeedingFirebase ? "Sincronizando con Firebase..." : "Inicializar Datos en Firebase",
+                  style: const TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
+  }
+
+  void _poblarBaseDeDatosFirebase() async {
+    setState(() => _isSeedingFirebase = true);
+    HapticFeedback.mediumImpact();
+
+    final result = await FirebaseService().seedDatabase();
+
+    setState(() => _isSeedingFirebase = false);
+
+    if (result['success'] == true) {
+      Get.snackbar(
+        "🔥 ¡Base de Datos Inicializada!",
+        "Se crearon exitosamente en tu Firebase Console: "
+        "${result['usersCreated']} usuarios, ${result['coopsCreated']} cooperativas, "
+        "${result['casesCreated']} casos y ${result['emergenciesCreated']} alertas SOS.",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF0D9488),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 5),
+        margin: const EdgeInsets.all(16),
+        icon: const Icon(Icons.check_circle_rounded, color: Colors.white, size: 28),
+      );
+    } else {
+      Get.snackbar(
+        "Aviso de Inicialización",
+        "Detalle: ${result['error'] ?? 'Verifica conexión a internet'}",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFFE11D48),
+        colorText: Colors.white,
+        duration: const Duration(seconds: 4),
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   Widget _buildDemoRoleCard({

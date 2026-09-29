@@ -12,6 +12,7 @@ import 'core/initial_binding/initial_binding.dart';
 import 'core/theme/dark_theme.dart';
 import 'core/theme/light_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'core/helper/language_di.dart' as di;
 
 Future<void> main() async {
@@ -101,18 +102,11 @@ class MyHttpOverrides extends HttpOverrides {
 
 void _initFirebaseInBackground() async {
   try {
-    if (GetPlatform.isLinux || GetPlatform.isWeb) {
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: "AIzaSyDP6eaZUIlOlWWo9s3gYLP4oc-38D2LRbE",
-          appId: "1:77949901400:web:296c7ecd69d110f934882d",
-          messagingSenderId: '361171276071',
-          projectId: 'get-dash-7237b',
-        ),
-      );
-    } else {
-      await Firebase.initializeApp();
-    }
-  } catch (_) {}
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init error: $e');
+  }
 }
 
