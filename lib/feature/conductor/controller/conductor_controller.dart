@@ -103,7 +103,7 @@ class ConductorController extends GetxController {
 
   // Sub-paso del triage:
   // 0 = ¿Estado de las personas / víctimas?
-  // 1 = ¿Daños materiales graves / taxi inmovilizado?
+  // 1 = ¿Daños materiales graves / vehículo inmovilizado?
   final RxInt subPasoTriage = 0.obs;
 
   // Respuestas del triage
@@ -480,7 +480,7 @@ class ConductorController extends GetxController {
         : "🚨 *ALERTA SOS - ASISTENCIA LEGAL*";
     return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
-        "🚖 *Unidad:* $unidadTaxi - $cooperativa\n"
+        "🚘 *Unidad:* $unidadTaxi - $cooperativa\n"
         "📋 *Placa:* $placaVehiculo\n"
         "⚖️ *Diagnóstico:* ${dictamen.titulo}\n\n"
         "📍 *Ubicación del incidente:*\n"
@@ -546,12 +546,12 @@ class ConductorController extends GetxController {
             "Marco legal: Garantías ciudadanas y límites de control operativo (Art. 390 COIP).",
         reglas: const [
           "SOLICITA EL MOTIVO FORMAL: Tienes derecho a que el agente te informe de manera clara la presunta infracción cometida.",
-          "RETENCIÓN VEHICULAR CONDICIONADA: No procede retención del taxi por fallas leves o llantas sin peritaje técnico en el sitio.",
+          "RETENCIÓN VEHICULAR CONDICIONADA: No procede retención del vehículo por fallas leves o llantas sin peritaje técnico en el sitio.",
           "DERECHO CONSTITUCIONAL A FILMAR: Puedes registrar en video todo el procedimiento policial como garantía de transparencia.",
           "DOCUMENTOS DIGITALES VÁLIDOS: Entrega tu licencia y matrícula digital desde la app; no permitas retención de cédula física.",
         ],
         accionInmediata:
-            "Si el agente insiste en trasladar el taxi en grúa, presiona el botón y pon a tu abogado en altavoz.",
+            "Si el agente insiste en trasladar el vehículo en grúa, presiona el botón y pon a tu abogado en altavoz.",
       );
     }
 
@@ -589,7 +589,7 @@ class ConductorController extends GetxController {
         normativa:
             "Marco legal: Contravenciones de cuarta clase y resolución pacífica en vía pública.",
         reglas: const [
-          "PERMANECE EN EL INTERIOR DEL TAXI: Bloquea los seguros y mantén la serenidad para evitar que el conflicto escale.",
+          "PERMANECE EN EL INTERIOR DEL VEHÍCULO: Bloquea los seguros y mantén la serenidad para evitar que el conflicto escale.",
           "NO RESPONDAS INSULTOS: Mantener la calma te posiciona jurídicamente como la parte agraviada en el parte.",
           "REGISTRA AUDIO DE LA CONVERSACIÓN: El audio ambiental sirve como prueba admisible de carreras impagas o amenazas.",
           "TRASLADO A LA UPC: Si el pasajero se niega a pagar o se torna amenazante, traslada la unidad a la UPC más cercana.",
@@ -615,7 +615,7 @@ class ConductorController extends GetxController {
           reglas: const [
             "DERECHO CONSTITUCIONAL AL SILENCIO: No admitas culpas verbales ni digas 'fue mi culpa'. Cualquier dicho será usado en tu contra.",
             "PRESERVA TU INTEGRIDAD FÍSICA: Si existe peligro de linchamiento por terceros, dirígete de inmediato a la UPC más cercana.",
-            "NO MUEVAS EL VEHÍCULO: La posición final del taxi y huellas de frenado son la prueba pericial clave del SIAT.",
+            "NO MUEVAS EL VEHÍCULO: La posición final del vehículo y huellas de frenado son la prueba pericial clave del SIAT.",
             "NO FIRMES NINGÚN DOCUMENTO: No firmes partes ni actas sin la presencia y autorización de tu abogado defensor.",
           ],
           accionInmediata:
@@ -685,7 +685,7 @@ class ConductorController extends GetxController {
     }
 
     // =========================================================================
-    // CASO 4: ME CHOCARON (EL TAXISTA ES LA PARTE AFECTADA / VÍCTIMA)
+    // CASO 4: ME CHOCARON (EL CONDUCTOR ES LA PARTE AFECTADA / VÍCTIMA)
     // =========================================================================
     if (severidad == SeveridadVictimas.fallecido) {
       return DictamenLegal(
@@ -699,7 +699,7 @@ class ConductorController extends GetxController {
         reglas: const [
           "DEJA CLARO TU ROL DE AFECTADO: Notifica de inmediato al agente que tú fuiste embestido por el otro vehículo.",
           "EXIGE RETENCIÓN DEL CAUSANTE: Asegúrate de que la policía retenga al conductor que causó el impacto.",
-          "PRESERVA LA POSICIÓN DEL IMPACTO: El punto de impacto en tu taxi demuestra pericialmente que fuiste chocado.",
+          "PRESERVA LA POSICIÓN DEL IMPACTO: El punto de impacto en tu vehículo demuestra pericialmente que fuiste chocado.",
           "NO ASUMAS CULPAS AJENAS: No firmes ningún acta que sugiera culpabilidad compartida.",
         ],
         accionInmediata:
@@ -720,7 +720,7 @@ class ConductorController extends GetxController {
           "PRIORIZA ATENCIÓN AL 911: Solicita ambulancia para tus pasajeros o para ti si resultaste herido.",
           "SPPAT DEL CAUSANTE: La cobertura médica de urgencia debe activarse con el seguro del vehículo que te impactó.",
           "IDENTIFICA AL CAUSANTE: Anota placa, modelo y datos del conductor antes de que intente retirarse del sitio.",
-          "RECLAMO FORMAL: El abogado formulará la acusación particular para el pago de todas las curaciones y daños del taxi.",
+          "RECLAMO FORMAL: El abogado formulará la acusación particular para el pago de todas las curaciones y daños del vehículo.",
         ],
         accionInmediata:
             "Llama a tu abogado para que supervise que el parte policial señale al verdadero causante.",
@@ -733,12 +733,12 @@ class ConductorController extends GetxController {
         colorNivel: const Color(0xFF0284C7),
         iconoNivel: Icons.car_crash_rounded,
         saludo: saludoUniversal,
-        titulo: "Taxi Inmovilizado por Impacto de Tercero",
+        titulo: "Vehículo Inmovilizado por Impacto de Tercero",
         normativa:
             "Marco legal: Reparación integral de daños y Lucro Cesante por días no laborados.",
         reglas: const [
           "EL QUE IMPACTA POR ALCANCE PAGA: Quien choca por detrás o invade carril debe responder por el 100% de los daños.",
-          "EXIGE EL LUCRO CESANTE: Tienes derecho legal al pago del taller más el valor diario de tu carrera mientras el taxi no ruede.",
+          "EXIGE EL LUCRO CESANTE: Tienes derecho legal al pago del taller más el valor diario de tu jornada mientras el vehículo no ruede.",
           "FOTOGRAFÍA AL OTRO CONDUCTOR: Foto de su matrícula, licencia y aseguradora. No permitas que se retire sin garantía.",
           "NO ACEPTES VALORES MÍNIMOS: El abogado calculará el valor real del daño para que no salgas perdiendo dinero.",
         ],

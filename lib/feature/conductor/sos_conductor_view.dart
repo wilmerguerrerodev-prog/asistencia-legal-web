@@ -246,8 +246,8 @@ class SosConductorView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.local_taxi_rounded,
-                    color: Color(0xFFD97706), size: 15),
+                const Icon(Icons.directions_car_rounded,
+                    color: Color(0xFF2563EB), size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -368,8 +368,8 @@ class SosConductorView extends StatelessWidget {
         _buildStepIndicator(
           pasoActual: 1,
           totalPasos: 3,
-          titulo: "¡Hola! ¿Cuál es tu problema?",
-          subtitulo: "¿Cómo podemos ayudarte?",
+          titulo: "¿Hola, cuál es tu problema?",
+          subtitulo: "¿Cómo podemos ayudarte? Selecciona tu incidente:",
           isDark: isDark,
         ),
         const SizedBox(height: 16),
@@ -739,7 +739,7 @@ class SosConductorView extends StatelessWidget {
                 child: Text(
                   subPaso == 0
                       ? "PASO 2 DE 3: TRIAGE PENAL"
-                      : "PASO 2 DE 3: ESTADO DEL TAXI",
+                      : "PASO 2 DE 3: ESTADO DEL VEHÍCULO",
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontFamily: 'Plus Jakarta Sans',
@@ -898,8 +898,8 @@ class SosConductorView extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   esChocado
-                      ? "¿LOS DAÑOS IMPIDEN RODAR TU TAXI?"
-                      : "¿LOS DAÑOS IMPIDEN RODAR EL TAXI?",
+                      ? "¿LOS DAÑOS IMPIDEN RODAR TU VEHÍCULO?"
+                      : "¿LOS DAÑOS IMPIDEN RODAR EL VEHÍCULO?",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: isWide ? 19 : 17,
@@ -1516,86 +1516,112 @@ class SosConductorView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Botón Principal de Contacto
-                Container(
-                  height: 58,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF25D366),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF25D366).withValues(alpha: 0.35),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                // Encabezado superior previo a los botones de contacto
+                Row(
+                  children: [
+                    Icon(
+                      Icons.phone_in_talk_rounded,
+                      size: 18,
+                      color: isDark
+                          ? const Color(0xFF60A5FA)
+                          : const Color(0xFF1D4ED8),
                     ),
-                    onPressed: () {
-                      controller.contactarAbogadoPorWhatsApp();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Conectando con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
-                          ),
-                          backgroundColor: const Color(0xFF16A34A),
-                          duration: const Duration(seconds: 4),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        "Llama, él es tu abogado",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w900,
+                          color: isDark
+                            ? const Color(0xFF60A5FA)
+                            : const Color(0xFF1D4ED8),
+                          letterSpacing: 0.2,
                         ),
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.phone_in_talk_rounded,
-                            size: 20,
-                            color: Color(0xFF25D366),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                // Botones Principales de Contacto: Uno al lado del otro
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        key: const Key('btn_llamar_abogado_paso3'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1D4ED8),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Flexible(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              esEscalado
-                                  ? "Contactar con ${controller.nombreAbogado}"
-                                  : "Contactar con abogado",
-                              style: const TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontWeight: FontWeight.w800,
-                                fontSize: 15,
-                                letterSpacing: 0.2,
-                                color: Colors.white,
+                        onPressed: () {
+                          controller.llamarAbogadoPorTelefono();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Marcando a ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
                               ),
+                              backgroundColor: const Color(0xFF1D4ED8),
+                              duration: const Duration(seconds: 4),
                             ),
+                          );
+                        },
+                        icon: const Icon(Icons.phone_in_talk_rounded, size: 19),
+                        label: const Text(
+                          "Llamar",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        key: const Key('btn_whatsapp_abogado_paso3'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: () {
+                          controller.contactarAbogadoPorWhatsApp();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Conectando por WhatsApp con ${controller.nombreAbogado} (${controller.telefonoAbogado})...",
+                              ),
+                              backgroundColor: const Color(0xFF16A34A),
+                              duration: const Duration(seconds: 4),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.chat_bubble_rounded, size: 19),
+                        label: const Text(
+                          "WhatsApp",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
 
                 // Nota simple bajo el botón en estado inicial
@@ -1678,9 +1704,13 @@ class SosConductorView extends StatelessWidget {
           titulo,
           style: TextStyle(
             fontFamily: 'Montserrat',
-            fontSize: 16.5,
-            fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white : const Color(0xFF0F172A),
+            fontSize: pasoActual == 1 ? 22.0 : 16.5,
+            fontWeight: FontWeight.w900,
+            color: pasoActual == 1
+                ? const Color(0xFF2563EB)
+                : (isDark ? Colors.white : const Color(0xFF0F172A)),
+            letterSpacing: pasoActual == 1 ? -0.3 : 0,
+            height: 1.2,
           ),
         ),
         const SizedBox(height: 2),
@@ -1895,7 +1925,7 @@ class SosConductorView extends StatelessWidget {
                               ? const Color(0xFF334155)
                               : const Color(0xFFE2E8F0)),
                       _FichaDocRow(
-                          label: "Unidad / Taxi:",
+                          label: "Unidad / Vehículo:",
                           valor:
                               "${controller.unidadTaxi} · ${controller.cooperativa}"),
                       Divider(
@@ -2280,13 +2310,13 @@ class SosConductorView extends StatelessWidget {
                             Navigator.of(dialogContext).pop();
                             controller.llamarAbogadoPorTelefono();
                           },
-                          icon: const Icon(Icons.phone_rounded, size: 18),
+                          icon: const Icon(Icons.phone_in_talk_rounded, size: 18),
                           label: const Text(
-                            "Llamar",
+                            "Llama, él es tu abogado",
                             style: TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w800,
-                              fontSize: 13,
+                              fontSize: 12.5,
                             ),
                           ),
                         ),

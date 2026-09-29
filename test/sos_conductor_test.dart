@@ -70,7 +70,7 @@ void main() {
         find.text('Procedimiento de Control Vial y Garantías'), findsOneWidget);
     expect(find.text('EN GUARDIA 24/7'), findsNothing);
     expect(find.textContaining('LLAMAR A MI ABOGADO ASIGNADO'), findsNothing);
-    expect(find.textContaining('Contactar con abogado'), findsOneWidget);
+    expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
 
     // -------------------------------------------------------------
     // CASO 2: Me choqué (Evaluación de fallecido, heridos y daños)
@@ -130,7 +130,7 @@ void main() {
     expect(find.text('EXIGENCIA DE INDEMNIZACIÓN Y LUCRO CESANTE'),
         findsOneWidget);
     expect(
-        find.text('Taxi Inmovilizado por Impacto de Tercero'), findsOneWidget);
+        find.text('Vehículo Inmovilizado por Impacto de Tercero'), findsOneWidget);
 
     // -------------------------------------------------------------
     // CASO 4: Agresión / Problema personal
@@ -234,11 +234,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 1. Verificar que en reposo NO hay abogado asignado fijo debajo de documentos
+    // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado (solo wizard y saludo)
     expect(find.text('Documentos'), findsOneWidget);
     expect(find.text('Credencial'), findsNothing);
-    expect(find.text('Dr. Esteban Narváez'), findsNothing);
-    expect(find.text('Dr. Emir Vásquez'), findsNothing);
+    expect(find.text('ABOGADO DE GUARDIA 24/7 EN LÍNEA'), findsNothing);
+    expect(find.textContaining('Llama, él es tu abogado'), findsNothing);
+    expect(find.textContaining('WhatsApp de auxilio'), findsNothing);
+    expect(find.text('¿Hola, cuál es tu problema?'), findsOneWidget);
 
     // 2. Avanzar a Paso 3 (Dictamen): Asignación automática del abogado más cercano
     final opcionOperativo =
@@ -247,10 +249,12 @@ void main() {
     await tester.tap(opcionOperativo);
     await tester.pumpAndSettle();
 
-    // En Paso 3 aparece automáticamente el abogado de zona más cercano (Dr. Esteban Narváez)
-    expect(find.text('Dr. Esteban Narváez'), findsOneWidget);
+    // En Paso 3 aparece el abogado asignado y los botones de acción rápida
+    expect(find.text('Dr. Esteban Narváez'), findsWidgets);
     expect(find.textContaining('A 1.2 km de tu incidente'), findsNothing);
-    expect(find.text('Contactar con abogado'), findsOneWidget);
+    expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
+    expect(find.text('Llamar'), findsWidgets);
+    expect(find.text('WhatsApp'), findsWidgets);
 
     // Abrir credencial del abogado de zona
     final pillVerCredencial = find.text('Ver credencial ›');
@@ -270,7 +274,7 @@ void main() {
     expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsNothing);
 
     // 3. Iniciar contacto con abogado de zona: se activa temporizador de 1 minuto
-    final btnContactarZona = find.text('Contactar con abogado');
+    final btnContactarZona = find.byKey(const Key('btn_llamar_abogado_paso3')).first;
     await tester.ensureVisible(btnContactarZona);
     await tester.tap(btnContactarZona);
     await tester.pump();
@@ -286,9 +290,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verificar que el caso ahora está a cargo de Dr. Emir Vásquez (sin etiquetas redundantes)
-    expect(find.text('Dr. Emir Vásquez'), findsOneWidget);
+    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
     expect(find.text('Caso asignado a otro abogado'), findsNothing);
-    expect(find.text('Contactar con Dr. Emir Vásquez'), findsOneWidget);
+    expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
 
     // 5. Abrir credencial del Dr. Emir Vásquez
     final pillVerCredencialSuper = find.text('Ver credencial ›');
