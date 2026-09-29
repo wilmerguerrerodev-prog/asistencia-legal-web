@@ -143,6 +143,13 @@ class FirebaseService {
         await _firestore.collection('users').doc(user['id']).set(user, SetOptions(merge: true));
         usersCreated++;
 
+        // Modelo híbrido: reflejo en colecciones especializadas
+        if (user['role'] == 'clientDriver') {
+          await _firestore.collection('conductores').doc(user['id']).set(user, SetOptions(merge: true));
+        } else if (user['role'] == 'associateLawyer' || user['role'] == 'adminLawyer') {
+          await _firestore.collection('abogados').doc(user['id']).set(user, SetOptions(merge: true));
+        }
+
         // Registrar credenciales en Firebase Auth para login directo
         try {
           await _auth.createUserWithEmailAndPassword(
@@ -236,7 +243,7 @@ class FirebaseService {
     return await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  /// Crea un nuevo usuario y su perfil en Firestore
+  /// Crea un nuevo usuario y su perfil en Firestore (Modelo Híbrido: users + conductores/abogados)
   Future<UserCredential?> signUp({
     required String email,
     required String password,
@@ -256,15 +263,18 @@ class FirebaseService {
   }) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     if (cred.user != null) {
-      await _firestore.collection('users').doc(cred.user!.uid).set({
-        'id': cred.user!.uid,
+      final uid = cred.user!.uid;
+
+      // 1. Colección centralizada users para autenticación rápida
+      await _firestore.collection('users').doc(uid).set({
+        'id': uid,
         'name': name,
         'email': email,
         'role': role.name,
         'phone': phone ?? '',
         'cooperativeId': cooperativeId,
         'cooperativeName': cooperativeName,
-        'canton': canton ?? 'Ibarra',
+        'canton': canton ?? (role == UserRole.clientDriver ? 'Otavalo' : 'Ibarra'),
         'cedula': cedula,
         'matriculaForo': matriculaForo,
         'placa': placa,
@@ -276,12 +286,48 @@ class FirebaseService {
         'subscriptionStatus': 'active',
         'subscriptionPlan': role == UserRole.clientDriver ? 'conductor_pro' : 'lawyer_turn',
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
+
+      // 2. Reflejo directo en colecciones dedicadas
+      if (role == UserRole.clientDriver) {
+        await _firestore.collection('conductores').doc(uid).set({
+          'id': uid,
+          'name': name,
+          'email': email,
+          'phone': phone ?? '',
+          'cooperativeId': cooperativeId,
+          'cooperativeName': cooperativeName,
+          'canton': canton ?? 'Otavalo',
+          'cedula': cedula,
+          'placa': placa,
+          'unidadTaxi': unidadTaxi,
+          'licencia': licencia,
+          'foto': foto,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'conductor_pro',
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } else if (role == UserRole.associateLawyer || role == UserRole.adminLawyer) {
+        await _firestore.collection('abogados').doc(uid).set({
+          'id': uid,
+          'name': name,
+          'email': email,
+          'phone': phone ?? '',
+          'canton': canton ?? 'Ibarra',
+          'cedula': cedula,
+          'matriculaForo': matriculaForo,
+          'debeCambiarClave': debeCambiarClave,
+          'isAvailable': true,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'lawyer_turn',
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
     }
     return cred;
   }
 
-  /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore
+  /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore (users y abogados)
   Future<void> updatePassword(String newPassword) async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -290,7 +336,20 @@ class FirebaseService {
         'debeCambiarClave': false,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+      await _firestore.collection('abogados').doc(user.uid).set({
+        'debeCambiarClave': false,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
     }
+  }
+
+  /// Streams especializados
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamLawyers() {
+    return _firestore.collection('abogados').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamDrivers() {
+    return _firestore.collection('conductores').orderBy('createdAt', descending: true).snapshots();
   }
 
   /// Obtiene los datos del usuario desde Firestore
