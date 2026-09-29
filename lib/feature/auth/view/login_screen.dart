@@ -69,14 +69,28 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      // Si ingresó correo y contraseña, intenta Firebase Auth real
-      if (idText.contains('@') && passText.isNotEmpty) {
+      // Si ingresó cédula o correo y contraseña
+      if (passText.isNotEmpty) {
+        String emailToUse = idText;
+        Map<String, dynamic>? firestoreData;
+
         try {
-          final cred = await FirebaseService().signIn(email: idText, password: passText);
+          // Si es cédula (no contiene @): buscar correo registrado en Firestore
+          if (!idText.contains('@')) {
+            final userDoc = await FirebaseService().getUserByCedula(idText);
+            if (userDoc != null) {
+              firestoreData = userDoc;
+              emailToUse = userDoc['email'] ?? '$idText@legaltech.ec';
+            } else {
+              emailToUse = '$idText@legaltech.ec';
+            }
+          }
+
+          final cred = await FirebaseService().signIn(email: emailToUse, password: passText);
           if (cred?.user != null) {
             final doc = await FirebaseService().getUserProfile(cred!.user!.uid);
-            if (doc.exists && doc.data() != null) {
-              final data = doc.data()!;
+            final data = doc.data() ?? firestoreData;
+            if (data != null) {
               final roleStr = data['role'] ?? 'clientDriver';
               final userRole = UserRole.values.firstWhere(
                 (r) => r.name == roleStr,
@@ -86,15 +100,15 @@ class _LoginScreenState extends State<LoginScreen> {
               userToLogin = MockUser(
                 id: cred.user!.uid,
                 name: data['name'] ?? idText,
-                email: idText,
+                email: emailToUse,
                 role: userRole,
                 cooperativeId: data['cooperativeId'],
                 cooperativeName: data['cooperativeName'],
-                canton: data['canton'] ?? 'Ibarra',
+                canton: data['canton'] ?? (userRole == UserRole.clientDriver ? 'Otavalo' : 'Ibarra'),
                 phone: data['phone'],
                 debeCambiarClave: data['debeCambiarClave'] == true,
                 matriculaForo: data['matriculaForo'],
-                cedula: data['cedula'],
+                cedula: data['cedula'] ?? idText,
                 placa: data['placa'],
                 unidadTaxi: data['unidadTaxi'],
                 licencia: data['licencia'],
@@ -103,30 +117,62 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               userToLogin = AuthMockController.mockClientDriver.copyWith(
                 id: cred.user!.uid,
-                name: cred.user!.email?.split('@').first ?? 'Usuario',
-                email: idText,
+                name: cred.user!.email?.split('@').first ?? 'Conductor',
+                email: emailToUse,
+                cedula: idText,
               );
             }
           } else {
-            userToLogin = AuthMockController.mockClientDriver;
+            userToLogin = AuthMockController.mockClientDriver.copyWith(
+              cedula: idText,
+            );
           }
         } catch (e) {
           debugPrint('Firebase Auth falló o modo offline: $e');
-          // Fallback a mapeo rápido si las credenciales coinciden con los roles de prueba
-          final lower = idText.toLowerCase();
-          if (lower.contains('director') || lower.contains('emir')) {
-            userToLogin = AuthMockController.mockAdminLawyer;
-          } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
-            userToLogin = AuthMockController.mockItAdmin;
-          } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
-            userToLogin = AuthMockController.mockTempLawyer;
-          } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
-            userToLogin = AuthMockController.mockAssociateLawyer;
+          // Si encontramos los datos en Firestore, usar ese perfil
+          if (firestoreData != null) {
+            final roleStr = firestoreData['role'] ?? 'clientDriver';
+            final userRole = UserRole.values.firstWhere(
+              (r) => r.name == roleStr,
+              orElse: () => UserRole.clientDriver,
+            );
+            userToLogin = MockUser(
+              id: firestoreData['id'] ?? 'DRIVER-LOCAL',
+              name: firestoreData['name'] ?? idText,
+              email: firestoreData['email'] ?? emailToUse,
+              role: userRole,
+              cooperativeId: firestoreData['cooperativeId'],
+              cooperativeName: firestoreData['cooperativeName'],
+              canton: firestoreData['canton'] ?? 'Otavalo',
+              phone: firestoreData['phone'],
+              debeCambiarClave: firestoreData['debeCambiarClave'] == true,
+              matriculaForo: firestoreData['matriculaForo'],
+              cedula: firestoreData['cedula'] ?? idText,
+              placa: firestoreData['placa'],
+              unidadTaxi: firestoreData['unidadTaxi'],
+              licencia: firestoreData['licencia'],
+              foto: firestoreData['foto'],
+            );
           } else {
-            userToLogin = AuthMockController.mockClientDriver;
+            // Fallback a mapeo rápido si las credenciales coinciden con los roles de prueba
+            final lower = idText.toLowerCase();
+            if (lower.contains('director') || lower.contains('emir')) {
+              userToLogin = AuthMockController.mockAdminLawyer;
+            } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
+              userToLogin = AuthMockController.mockItAdmin;
+            } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
+              userToLogin = AuthMockController.mockTempLawyer;
+            } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+              userToLogin = AuthMockController.mockAssociateLawyer;
+            } else {
+              userToLogin = AuthMockController.mockClientDriver.copyWith(
+                cedula: idText,
+              );
+            }
           }
         }
       } else {
+        // Fallback cuando solo escribió texto sin contraseña (o acceso rápido)
         final lower = idText.toLowerCase();
         if (lower.contains('director') || lower.contains('emir')) {
           userToLogin = AuthMockController.mockAdminLawyer;
@@ -137,7 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
         } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
           userToLogin = AuthMockController.mockAssociateLawyer;
         } else {
-          userToLogin = AuthMockController.mockClientDriver;
+          userToLogin = AuthMockController.mockClientDriver.copyWith(
+            cedula: idText,
+          );
         }
       }
     }
@@ -146,12 +194,13 @@ class _LoginScreenState extends State<LoginScreen> {
       conductorController.cambiarRol('conductor');
       conductorController.actualizarDatosConductor(
         nombre: userToLogin.name,
-        unidad: userToLogin.cooperativeName != null ? "Unidad #42" : conductorController.unidadTaxi,
+        unidad: userToLogin.unidadTaxi ?? "Unidad #42",
         cooperativaNombre: userToLogin.cooperativeName ?? conductorController.cooperativa,
-        placa: "IBA-1234",
+        placa: userToLogin.placa ?? "IBA-1234",
         telefono: userToLogin.phone ?? conductorController.telefonoConductor,
-        cedula: "1002345678",
-        licencia: "Tipo C Profesional (30 Puntos)",
+        cedula: userToLogin.cedula ?? "1002345678",
+        licencia: userToLogin.licencia ?? "Tipo C Profesional (30 Puntos)",
+        foto: userToLogin.foto,
       );
     } else {
       conductorController.cambiarRol('abogado');

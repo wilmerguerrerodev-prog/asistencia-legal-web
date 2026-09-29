@@ -117,6 +117,7 @@ class FirebaseService {
           'cooperativeName': 'Cooperativa Los Lagos',
           'canton': 'Otavalo',
           'phone': '+593 99 482 1045',
+          'cedula': '1002345678',
           'placa': 'IBA-1234',
           'unidadTaxi': 'Unidad #42',
           'licencia': 'Tipo C Profesional',
@@ -246,6 +247,35 @@ class FirebaseService {
   /// Inicia sesión con Firebase Auth
   Future<UserCredential?> signIn({required String email, required String password}) async {
     return await _auth.signInWithEmailAndPassword(email: email, password: password);
+  }
+
+  /// Busca un usuario o conductor por su número de cédula en Firestore
+  Future<Map<String, dynamic>?> getUserByCedula(String cedula) async {
+    final cleanCedula = cedula.trim();
+    if (cleanCedula.isEmpty) return null;
+
+    try {
+      final snap = await _firestore
+          .collection('users')
+          .where('cedula', isEqualTo: cleanCedula)
+          .limit(1)
+          .get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.first.data();
+      }
+
+      final condSnap = await _firestore
+          .collection('conductores')
+          .where('cedula', isEqualTo: cleanCedula)
+          .limit(1)
+          .get();
+      if (condSnap.docs.isNotEmpty) {
+        return condSnap.docs.first.data();
+      }
+    } catch (e) {
+      debugPrint('Error buscando usuario por cédula: $e');
+    }
+    return null;
   }
 
   /// Crea un nuevo usuario y su perfil en Firestore (Modelo Híbrido: users + conductores/abogados)

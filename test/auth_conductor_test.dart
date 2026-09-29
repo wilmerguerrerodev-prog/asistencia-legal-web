@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:getdash/controller/localization_controller.dart';
 import 'package:getdash/controller/theme_controller.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
+import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/core/theme/light_theme.dart';
 import 'package:getdash/feature/auth/view/login_screen.dart';
 import 'package:getdash/feature/auth/view/registration_screen.dart';
@@ -121,6 +124,42 @@ void main() {
     expect(controller.unidadTaxi, 'Unidad #42');
     expect(controller.cooperativa, 'Cooperativa Los Lagos');
     expect(controller.fotoConductor, 'assets/images/profile_image.jpg');
+  });
+
+  testWidgets('LoginScreen: Driver can log in with Cedula and Password',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(375, 812);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+
+    Get.put(AuthMockController(), permanent: true);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        theme: light,
+        home: const LoginScreen(),
+        getPages: [
+          GetPage(name: RouteHelper.sosConductorScreen, page: () => const Scaffold(body: Text('SOS Conductor'))),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Iniciar con cédula y contraseña
+    final cedulaField = find.widgetWithText(TextField, 'Ej. 1002345678 o correo');
+    final passField = find.widgetWithText(TextField, '••••••••');
+
+    await tester.enterText(cedulaField, '1002345678');
+    await tester.enterText(passField, 'conductor123');
+    await tester.pumpAndSettle();
+
+    final btnLogin = find.widgetWithText(ElevatedButton, 'Iniciar Sesión');
+    await tester.tap(btnLogin);
+    await tester.pumpAndSettle();
+
+    final authCtrl = Get.find<AuthMockController>();
+    expect(authCtrl.user.role, UserRole.clientDriver);
+    expect(authCtrl.user.cedula, '1002345678');
   });
 
   testWidgets('UserProfile: Renders Conductor profile and switches to Lawyer profile',

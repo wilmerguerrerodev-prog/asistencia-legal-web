@@ -52,6 +52,7 @@ class AuthMockController extends GetxController {
     cooperativeName: 'Cooperativa Los Lagos',
     unidadTaxi: 'Unidad #42',
     placa: 'IBA-1234',
+    cedula: '1002345678',
     licencia: 'Tipo C Profesional',
     canton: 'Otavalo',
     phone: '+593 99 482 1045',

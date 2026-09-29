@@ -181,6 +181,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
     }
+    if (_passwordController.text.isEmpty) {
+      _passwordController.text = "conductor123";
+    }
     _tieneFoto = true;
     _fotoPerfil = "assets/images/profile_image.jpg";
 
@@ -219,6 +222,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
+    }
+    if (_passwordController.text.isEmpty) {
+      _passwordController.text = "conductor123";
     }
     _tieneFoto = true;
     _fotoPerfil = "assets/images/profile_image.jpg";
@@ -378,13 +384,30 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       foto: _fotoPerfil,
     );
 
+    // Validación de contraseña para acceso del conductor
+    final cedula = _cedulaController.text.trim();
+    final rawPassword = _passwordController.text.trim();
+
+    if (rawPassword.isNotEmpty && rawPassword.length < 4) {
+      setState(() => _isLoading = false);
+      Get.snackbar(
+        "Contraseña muy corta",
+        "Por favor escribe una contraseña de al menos 4 caracteres para poder ingresar con tu cédula.",
+        backgroundColor: const Color(0xFFDC2626),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+    final password = rawPassword.isNotEmpty ? rawPassword : "conductor123";
+
     // Registro y persistencia real en Firebase Auth y Cloud Firestore
+    final cleanCedula = cedula.isNotEmpty ? cedula : "1002345678";
     final email = _emailController.text.trim().isNotEmpty
         ? _emailController.text.trim()
-        : 'conductor.${DateTime.now().millisecondsSinceEpoch}@legaltech.ec';
-    final password = _passwordController.text.trim().isNotEmpty
-        ? _passwordController.text.trim()
-        : 'LegalTech2026!';
+        : '$cleanCedula@legaltech.ec';
 
     try {
       final cred = await FirebaseService().signUp(
@@ -396,9 +419,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ? _celularController.text.trim()
             : "+593 98 765 4321",
         cooperativeName: cooperativa,
-        cedula: _cedulaController.text.trim().isNotEmpty
-            ? _cedulaController.text.trim()
-            : "1002345678",
+        cedula: cleanCedula,
         placa: placa,
         unidadTaxi: unidad,
         licencia: _licenciaController.text.trim(),
@@ -411,11 +432,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           id: cred?.user?.uid ?? 'DRIVER-${DateTime.now().millisecondsSinceEpoch}',
           name: nombre,
           email: email,
+          temporaryPassword: password,
           role: UserRole.clientDriver,
           cooperativeName: cooperativa,
           canton: 'Otavalo',
           phone: _celularController.text.trim(),
-          cedula: _cedulaController.text.trim(),
+          cedula: cleanCedula,
           placa: placa,
           unidadTaxi: unidad,
           licencia: _licenciaController.text.trim(),
@@ -1135,6 +1157,72 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               ),
             ),
           ],
+        ),
+
+        const SizedBox(height: 16),
+
+        _buildSeccionHeader(
+          icono: Icons.lock_outline_rounded,
+          titulo: "CREAR CONTRASEÑA DE ACCESO",
+          isDark: isDark,
+        ),
+        const SizedBox(height: 10),
+
+        // Campo Crear Contraseña con botón de mostrar/ocultar
+        Text(
+          "Crea tu Contraseña para ingresar con tu Cédula",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          style: TextStyle(
+            fontFamily: 'Plus Jakarta Sans',
+            fontSize: 13.5,
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+          ),
+          decoration: InputDecoration(
+            hintText: "Ej. clave123 o PIN de 4 dígitos",
+            hintStyle: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 13,
+              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+            ),
+            prefixIcon: const Icon(Icons.lock_rounded, size: 20, color: Color(0xFF2563EB)),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                size: 20,
+                color: isDark ? Colors.white54 : const Color(0xFF64748B),
+              ),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+            ),
+          ),
         ),
 
         const SizedBox(height: 20),
