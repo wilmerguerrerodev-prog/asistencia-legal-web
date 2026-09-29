@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/dashboarddemo2/widgets/activities.dart';
 import 'package:getdash/feature/dashboarddemo2/widgets/browser_stats.dart';
@@ -10,7 +9,6 @@ import 'package:getdash/feature/dashboarddemo2/widgets/dashboard_2_messege_secti
 import 'package:getdash/feature/dashboarddemo2/widgets/member_performance.dart';
 import 'package:getdash/feature/dashboarddemo2/widgets/sales_overview.dart';
 import 'package:getdash/feature/dashboarddemo2/widgets/social_media.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/responsive.dart';
 

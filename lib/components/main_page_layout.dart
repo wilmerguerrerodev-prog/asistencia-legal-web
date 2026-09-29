@@ -76,22 +76,23 @@ class MainPageLayout extends StatelessWidget {
                                 ),
 
                               // Menú lateral que emerge EXACTAMENTE bajo la línea divisoria
-                              AnimatedPositioned(
-                                duration: const Duration(milliseconds: 240),
-                                curve: Curves.easeOutCubic,
-                                top: 0,
-                                bottom: 0,
-                                left: isOpen ? 0 : -285,
-                                width: 280,
-                                child: Material(
-                                  elevation: 8,
-                                  color: Theme.of(context).primaryColorLight,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomRight: Radius.circular(16),
+                              if (isOpen)
+                                AnimatedPositioned(
+                                  duration: const Duration(milliseconds: 240),
+                                  curve: Curves.easeOutCubic,
+                                  top: 0,
+                                  bottom: 0,
+                                  left: 0,
+                                  width: 280,
+                                  child: Material(
+                                    elevation: 8,
+                                    color: Theme.of(context).primaryColorLight,
+                                    borderRadius: const BorderRadius.only(
+                                      bottomRight: Radius.circular(16),
+                                    ),
+                                    child: const MenuDrawer(),
                                   ),
-                                  child: const MenuDrawer(),
                                 ),
-                              ),
                             ],
                           ),
                         );

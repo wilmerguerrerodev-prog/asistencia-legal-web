@@ -7,10 +7,7 @@ import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/legal_center/controller/legal_center_controller.dart';
 import 'package:getdash/feature/legal_center/model/legal_case_model.dart';
 import 'package:getdash/feature/legal_center/widgets/expediente_360_panel.dart';
-import 'package:getdash/feature/legal_center/widgets/legal_mobile_nav_header.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 
@@ -306,7 +303,6 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
   ) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final isAvailable = auth.user.isAvailable;
 
     return Container(
       padding: EdgeInsets.all(isMobile ? 14 : 18),
@@ -314,15 +310,12 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(Dimensions.radiusLarge),
         border: Border.all(
-          color: isAvailable
-              ? const Color(0xFF10B981).withValues(alpha: 0.35)
-              : const Color(0xFFEF4444).withValues(alpha: 0.35),
+          color: const Color(0xFF10B981).withValues(alpha: 0.35),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isAvailable ? const Color(0xFF10B981) : Colors.black)
-                .withValues(alpha: isDark ? 0.2 : 0.05),
+            color: const Color(0xFF10B981).withValues(alpha: isDark ? 0.15 : 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -333,7 +326,7 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
         children: [
           Row(
             children: [
-              // Avatar con indicador de guardia
+              // Avatar con indicador verde de servicio activo permanente
               Stack(
                 children: [
                   CircleAvatar(
@@ -361,9 +354,7 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                       width: 14,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: isAvailable
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFEF4444),
+                        color: const Color(0xFF10B981),
                         shape: BoxShape.circle,
                         border: Border.all(color: theme.cardColor, width: 2),
                       ),
@@ -425,7 +416,7 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                             style: ubuntuRegular.copyWith(
                               fontSize: isMobile ? 11.5 : 12.5,
                               color: theme.textTheme.bodyMedium?.color
-                                  ?.withValues(alpha: 0.75),
+                                   ?.withValues(alpha: 0.75),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -434,65 +425,6 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                       ],
                     ),
                   ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-          const SizedBox(height: 10),
-
-          // Interruptor Reactivo de Guardia
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 10,
-                      height: 10,
-                      decoration: BoxDecoration(
-                        color: isAvailable
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFEF4444),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        isAvailable
-                            ? "🟢 En Guardia / Disponible en Vía"
-                            : "🔴 Fuera de Turno / No Disponible",
-                        style: ubuntuBold.copyWith(
-                          fontSize: isMobile ? 12 : 13,
-                          color: isAvailable
-                              ? const Color(0xFF059669)
-                              : const Color(0xFFDC2626),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Transform.scale(
-                scale: isMobile ? 0.85 : 0.95,
-                child: Switch(
-                  value: isAvailable,
-                  activeThumbColor: const Color(0xFF10B981),
-                  activeTrackColor:
-                      const Color(0xFF10B981).withValues(alpha: 0.35),
-                  inactiveThumbColor: const Color(0xFF94A3B8),
-                  inactiveTrackColor:
-                      const Color(0xFF94A3B8).withValues(alpha: 0.25),
-                  onChanged: (val) {
-                    auth.toggleLawyerAvailability();
-                  },
                 ),
               ),
             ],

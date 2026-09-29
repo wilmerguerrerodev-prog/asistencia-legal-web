@@ -180,10 +180,13 @@ class SosConductorView extends StatelessWidget {
               Obx(() {
                 final bool isAuth = controller.estaAutenticado.value;
                 return InkWell(
-                  onTap: () => Get.toNamed(isAuth ? RouteHelper.loginScreen : RouteHelper.loginScreen),
+                  onTap: () => Get.toNamed(isAuth
+                      ? RouteHelper.loginScreen
+                      : RouteHelper.loginScreen),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                     decoration: BoxDecoration(
                       color: isAuth
                           ? const Color(0xFF16A34A).withValues(alpha: 0.12)
@@ -199,9 +202,13 @@ class SosConductorView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isAuth ? Icons.verified_user_rounded : Icons.login_rounded,
+                          isAuth
+                              ? Icons.verified_user_rounded
+                              : Icons.login_rounded,
                           size: 13,
-                          color: isAuth ? const Color(0xFF16A34A) : const Color(0xFF2563EB),
+                          color: isAuth
+                              ? const Color(0xFF16A34A)
+                              : const Color(0xFF2563EB),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -210,7 +217,9 @@ class SosConductorView extends StatelessWidget {
                             fontFamily: 'Montserrat',
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
-                            color: isAuth ? const Color(0xFF16A34A) : const Color(0xFF2563EB),
+                            color: isAuth
+                                ? const Color(0xFF16A34A)
+                                : const Color(0xFF2563EB),
                           ),
                         ),
                       ],
@@ -669,16 +678,15 @@ class SosConductorView extends StatelessWidget {
           children: [
             Flexible(
               child: Material(
-                color: isDark
-                    ? const Color(0xFF1E293B)
-                    : const Color(0xFFEFF6FF),
+                color:
+                    isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: controller.retrocederPaso,
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 6, horizontal: 10),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
@@ -722,7 +730,8 @@ class SosConductorView extends StatelessWidget {
             const SizedBox(width: 8),
             Flexible(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: const Color(0xFF2563EB),
                   borderRadius: BorderRadius.circular(8),
@@ -952,16 +961,15 @@ class SosConductorView extends StatelessWidget {
           children: [
             Expanded(
               child: Material(
-                color: isDark
-                    ? const Color(0xFF1E293B)
-                    : const Color(0xFFEFF6FF),
+                color:
+                    isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: controller.retrocederPaso,
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 9, horizontal: 8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
@@ -1006,16 +1014,15 @@ class SosConductorView extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Material(
-                color: isDark
-                    ? const Color(0xFF1E293B)
-                    : const Color(0xFFF1F5F9),
+                color:
+                    isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   onTap: controller.reiniciarFlujo,
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 9, horizontal: 8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 9, horizontal: 8),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
@@ -1261,12 +1268,18 @@ class SosConductorView extends StatelessWidget {
             decoration: BoxDecoration(
               color: esEscalado
                   ? (isDark ? const Color(0xFF141F36) : const Color(0xFFF0FDF4))
-                  : (isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC)),
+                  : (isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFF8FAFC)),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: esEscalado
-                    ? (isDark ? const Color(0xFF059669) : const Color(0xFF10B981))
-                    : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
+                    ? (isDark
+                        ? const Color(0xFF059669)
+                        : const Color(0xFF10B981))
+                    : (isDark
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFE2E8F0)),
                 width: esEscalado ? 1.5 : 1.0,
               ),
             ),
@@ -1782,7 +1795,6 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
-
   // Modal para mostrar el documento digital con QR oficial
   void _mostrarDocumentosModal(BuildContext context) {
     showDialog(
@@ -1868,15 +1880,15 @@ class SosConductorView extends StatelessWidget {
                   child: Column(
                     children: [
                       _FichaDocRow(
-                          label: "Conductor:", valor: controller.nombreConductor),
+                          label: "Conductor:",
+                          valor: controller.nombreConductor),
                       Divider(
                           height: 12,
                           color: isDark
                               ? const Color(0xFF334155)
                               : const Color(0xFFE2E8F0)),
                       _FichaDocRow(
-                          label: "Licencia:",
-                          valor: controller.tipoLicencia),
+                          label: "Licencia:", valor: controller.tipoLicencia),
                       Divider(
                           height: 12,
                           color: isDark
@@ -1884,7 +1896,8 @@ class SosConductorView extends StatelessWidget {
                               : const Color(0xFFE2E8F0)),
                       _FichaDocRow(
                           label: "Unidad / Taxi:",
-                          valor: "${controller.unidadTaxi} · ${controller.cooperativa}"),
+                          valor:
+                              "${controller.unidadTaxi} · ${controller.cooperativa}"),
                       Divider(
                           height: 12,
                           color: isDark
@@ -1892,7 +1905,8 @@ class SosConductorView extends StatelessWidget {
                               : const Color(0xFFE2E8F0)),
                       _FichaDocRow(
                           label: "Placa / RTV:",
-                          valor: "${controller.placaVehiculo} · RTV 2024 Aprobada"),
+                          valor:
+                              "${controller.placaVehiculo} · RTV 2024 Aprobada"),
                     ],
                   ),
                 ),
@@ -2239,8 +2253,7 @@ class SosConductorView extends StatelessWidget {
                             Navigator.of(dialogContext).pop();
                             controller.contactarAbogadoPorWhatsApp();
                           },
-                          icon:
-                              const Icon(Icons.chat_bubble_rounded, size: 18),
+                          icon: const Icon(Icons.chat_bubble_rounded, size: 18),
                           label: const Text(
                             "WhatsApp",
                             style: TextStyle(

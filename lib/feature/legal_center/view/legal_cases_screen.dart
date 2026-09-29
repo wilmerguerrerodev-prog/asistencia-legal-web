@@ -3,11 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
@@ -15,7 +13,6 @@ import '../controller/legal_center_controller.dart';
 import '../model/legal_case_model.dart';
 import '../widgets/cooperative_filter_chips.dart';
 import '../widgets/expediente_360_panel.dart';
-import '../widgets/legal_mobile_nav_header.dart';
 
 class LegalCasesScreen extends StatefulWidget {
   const LegalCasesScreen({super.key});

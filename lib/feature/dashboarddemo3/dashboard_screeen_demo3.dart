@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/dashboarddemo3/widgets/dashboar3_summary_card.dart';
 import 'package:getdash/feature/dashboarddemo3/widgets/dashboard3_ultimate_card1.dart';
@@ -9,7 +8,6 @@ import 'package:getdash/feature/dashboarddemo3/widgets/dashboard3_ultimate_card2
 import 'package:getdash/feature/dashboarddemo3/widgets/dashboard_3_messege_section.dart';
 import 'package:getdash/feature/dashboarddemo3/widgets/dashboard_demo3_ultimate.dart';
 import 'package:getdash/feature/dashboarddemo3/widgets/sales_revenue.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/responsive.dart';
 

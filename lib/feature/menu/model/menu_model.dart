@@ -62,10 +62,6 @@ List<MenuModel> menuList = [
     menuTitle: 'asistencia_juridica',
     subMenus: [
       SubMenu(
-        subMenuTitle: 'dashboard_abogado',
-        route: RouteHelper.getEdutechRoute(),
-      ),
-      SubMenu(
         subMenuTitle: 'casos_siniestros',
         route: RouteHelper.getLegalCasesRoute(),
       ),
@@ -260,10 +256,6 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           iconData: Icons.gavel_rounded,
           menuTitle: 'asistencia_juridica',
           subMenus: [
-            SubMenu(
-              subMenuTitle: 'dashboard_abogado',
-              route: RouteHelper.getEdutechRoute(),
-            ),
             SubMenu(
               subMenuTitle: 'casos_siniestros',
               route: RouteHelper.getLegalCasesRoute(),

@@ -3,17 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
 import 'package:getdash/components/main_page_layout.dart';
-import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
-import 'package:getdash/feature/menu/menu_screen.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import '../controller/legal_center_controller.dart';
-import '../widgets/legal_mobile_nav_header.dart';
 import '../widgets/legal_realtime_table.dart';
 import '../widgets/legal_territorial_header.dart';
 import '../widgets/territory_lawyers_grid.dart';
@@ -44,16 +42,15 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<MenuDrawerController>()) {
         final menuController = Get.find<MenuDrawerController>();
-        for (int i = 0; i < menuList.length; i++) {
-          final subMenus = menuList[i].subMenus;
-          if (subMenus != null) {
-            for (final sub in subMenus) {
-              if (sub.route == RouteHelper.getEdutechRoute()) {
-                menuController.updateSelectedIndex(i);
-                menuController.updateSubMenuSelectedIndex(sub.subMenuTitle ?? '');
-                break;
-              }
-            }
+        final role = Get.isRegistered<AuthMockController>()
+            ? Get.find<AuthMockController>().role
+            : UserRole.adminLawyer;
+        final currentMenu = getMenuListForRole(role);
+        for (int i = 0; i < currentMenu.length; i++) {
+          if (currentMenu[i].route == RouteHelper.getLegalCenterRoute()) {
+            menuController.updateSelectedIndex(i);
+            menuController.updateSubMenuSelectedIndex('');
+            break;
           }
         }
       }
