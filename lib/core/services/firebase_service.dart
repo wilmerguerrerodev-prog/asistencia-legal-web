@@ -105,6 +105,22 @@ class FirebaseService {
           'createdAt': FieldValue.serverTimestamp(),
         },
         {
+          'id': 'LAWYER-TEMP-002',
+          'name': 'Dr. Carlos Revelo',
+          'email': 'carlos.revelo@legaltech.ec',
+          'role': 'associateLawyer',
+          'canton': 'Ibarra',
+          'phone': '+593 99 778 9900',
+          'cedula': '1003456789',
+          'matriculaForo': '10-2022-315-CJ',
+          'temporaryPassword': 'LegalTech2026!',
+          'debeCambiarClave': true,
+          'isAvailable': true,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'lawyer_turn',
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+        {
           'id': 'DRIVER-042',
           'name': 'Carlos Mendoza • Unidad #42',
           'email': 'carlos.mendoza@loslagos.ec',
@@ -131,7 +147,7 @@ class FirebaseService {
         try {
           await _auth.createUserWithEmailAndPassword(
             email: user['email'],
-            password: 'Password123!',
+            password: user['temporaryPassword'] ?? 'Password123!',
           );
         } catch (_) {
           // Ya existe en Auth o regla restringida
@@ -230,6 +246,9 @@ class FirebaseService {
     String? cooperativeId,
     String? cooperativeName,
     String? canton,
+    String? cedula,
+    String? matriculaForo,
+    bool debeCambiarClave = false,
   }) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     if (cred.user != null) {
@@ -242,13 +261,28 @@ class FirebaseService {
         'cooperativeId': cooperativeId,
         'cooperativeName': cooperativeName,
         'canton': canton ?? 'Ibarra',
+        'cedula': cedula,
+        'matriculaForo': matriculaForo,
+        'debeCambiarClave': debeCambiarClave,
         'isAvailable': true,
         'subscriptionStatus': 'active',
-        'subscriptionPlan': 'conductor_pro',
+        'subscriptionPlan': role == UserRole.clientDriver ? 'conductor_pro' : 'lawyer_turn',
         'createdAt': FieldValue.serverTimestamp(),
       });
     }
     return cred;
+  }
+
+  /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore
+  Future<void> updatePassword(String newPassword) async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.updatePassword(newPassword);
+      await _firestore.collection('users').doc(user.uid).set({
+        'debeCambiarClave': false,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    }
   }
 
   /// Obtiene los datos del usuario desde Firestore

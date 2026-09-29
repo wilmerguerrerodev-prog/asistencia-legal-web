@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import '../model/mock_user.dart';
 
 class AuthMockController extends GetxController {
@@ -187,6 +188,24 @@ class AuthMockController extends GetxController {
     allMockUsers.add(newLawyer);
     registeredLawyers.add(newLawyer);
     update();
+
+    // Sincronizar en segundo plano con Firebase Auth y Firestore
+    try {
+      await FirebaseService().signUp(
+        email: email,
+        password: temporaryPassword,
+        name: nombre,
+        role: UserRole.associateLawyer,
+        phone: telefono,
+        canton: canton,
+        cedula: cedula,
+        matriculaForo: matriculaForo,
+        debeCambiarClave: true,
+      );
+    } catch (e) {
+      debugPrint('Firebase onSaveLawyer sync: $e');
+    }
+
     return true;
   }
 
@@ -200,6 +219,14 @@ class AuthMockController extends GetxController {
       temporaryPassword: newPassword,
     );
     update();
+
+    // Actualizar contraseña en Firebase Auth y Firestore
+    try {
+      await FirebaseService().updatePassword(newPassword);
+    } catch (e) {
+      debugPrint('Firebase onChangePassword sync: $e');
+    }
+
     return true;
   }
 
