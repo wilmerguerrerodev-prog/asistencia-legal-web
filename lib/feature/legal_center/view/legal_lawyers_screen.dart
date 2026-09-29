@@ -214,56 +214,8 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    // ==========================================
-    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
-    // ==========================================
-    if (isMobile) {
-      return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const LegalMobileNavHeader(
-          activeIndex: 2,
-          title: "Abogados en Vía",
-          subtitle: "Patrullaje legal y asignación",
-        ),
-        body: RefreshIndicator(
-          color: const Color(0xFF1D4ED8),
-          onRefresh: () async {
-            HapticFeedback.lightImpact();
-            setState(() {});
-            _legalController.update();
-            await Future.delayed(const Duration(milliseconds: 350));
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: Dimensions.paddingSizeDefault,
-              vertical: Dimensions.paddingSizeSmall,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                const SizedBox(height: 12),
-                _buildKPIs(context),
-                const SizedBox(height: 12),
-                _buildLawyersList(context),
-                const SizedBox(height: 12),
-                _buildSLAInfoCard(context),
-                const SizedBox(height: 36),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    // ==========================================
-    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
-    // ==========================================
     return Scaffold(
-      drawer: null,
+      drawer: isMobile ? const MenuDrawer() : null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -276,24 +228,36 @@ class _LegalLawyersScreenState extends State<LegalLawyersScreen> {
                 children: [
                   const WebMenuBar(),
                   Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Dimensions.paddingSizeDefault,
-                        vertical: Dimensions.paddingSizeSmall,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHeader(context),
-                          const SizedBox(height: Dimensions.paddingSizeDefault),
-                          _buildKPIs(context),
-                          const SizedBox(height: Dimensions.paddingSizeDefault),
-                          _buildLawyersList(context),
-                          const SizedBox(height: Dimensions.paddingSizeDefault),
-                          _buildSLAInfoCard(context),
-                          const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-                          const FooterSection(),
-                        ],
+                    child: RefreshIndicator(
+                      color: const Color(0xFF1D4ED8),
+                      onRefresh: () async {
+                        HapticFeedback.lightImpact();
+                        setState(() {});
+                        _legalController.update();
+                        await Future.delayed(const Duration(milliseconds: 350));
+                      },
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+                          vertical: Dimensions.paddingSizeSmall,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildHeader(context),
+                            SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                            _buildKPIs(context),
+                            SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                            _buildLawyersList(context),
+                            SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                            _buildSLAInfoCard(context),
+                            SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
+                            if (!isMobile) const FooterSection(),
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -62,60 +62,8 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    // ==========================================
-    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
-    // ==========================================
-    if (isMobile) {
-      return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const LegalMobileNavHeader(
-          activeIndex: 1,
-          title: "Siniestros & Casos",
-          subtitle: "Expedientes viales en tiempo real",
-        ),
-        body: GetBuilder<LegalCenterController>(
-          builder: (ctrl) {
-            final cases = _getFilteredCases(ctrl);
-            return RefreshIndicator(
-              color: const Color(0xFF1D4ED8),
-              onRefresh: () async {
-                HapticFeedback.lightImpact();
-                ctrl.update();
-                await Future.delayed(const Duration(milliseconds: 350));
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingSizeDefault,
-                  vertical: Dimensions.paddingSizeSmall,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(context),
-                    const SizedBox(height: 12),
-                    _buildStatusMetrics(context, ctrl),
-                    const SizedBox(height: 12),
-                    const CooperativeFilterChips(),
-                    const SizedBox(height: 12),
-                    _buildCasesTableCard(context, cases, ctrl),
-                    const SizedBox(height: 36),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    }
-
-    // ==========================================
-    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
-    // ==========================================
     return Scaffold(
-      drawer: null,
+      drawer: isMobile ? const MenuDrawer() : null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -131,24 +79,35 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
                     child: GetBuilder<LegalCenterController>(
                       builder: (ctrl) {
                         final cases = _getFilteredCases(ctrl);
-                        return SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Dimensions.paddingSizeDefault,
-                            vertical: Dimensions.paddingSizeSmall,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildHeader(context),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                              _buildStatusMetrics(context, ctrl),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                              const CooperativeFilterChips(),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                              _buildCasesTableCard(context, cases, ctrl),
-                              const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-                              const FooterSection(),
-                            ],
+                        return RefreshIndicator(
+                          color: const Color(0xFF1D4ED8),
+                          onRefresh: () async {
+                            HapticFeedback.lightImpact();
+                            ctrl.update();
+                            await Future.delayed(const Duration(milliseconds: 350));
+                          },
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: BouncingScrollPhysics(),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+                              vertical: Dimensions.paddingSizeSmall,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHeader(context),
+                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                                _buildStatusMetrics(context, ctrl),
+                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                                const CooperativeFilterChips(),
+                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                                _buildCasesTableCard(context, cases, ctrl),
+                                SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
+                                if (!isMobile) const FooterSection(),
+                              ],
+                            ),
                           ),
                         );
                       },

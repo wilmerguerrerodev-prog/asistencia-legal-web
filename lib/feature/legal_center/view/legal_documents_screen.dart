@@ -57,59 +57,8 @@ class _LegalDocumentsScreenState extends State<LegalDocumentsScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    // ==========================================
-    // MODO MÓVIL (PRIORIDAD PRINCIPAL INTERFAZ)
-    // ==========================================
-    if (isMobile) {
-      return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const LegalMobileNavHeader(
-          activeIndex: 4,
-          title: "Dictámenes & Actas",
-          subtitle: "Expedientes y generación de actas",
-        ),
-        body: GetBuilder<LegalCenterController>(
-          builder: (ctrl) {
-            final currentCase = ctrl.selectedCase ??
-                (ctrl.allCases.isNotEmpty ? ctrl.allCases.first : null);
-            return RefreshIndicator(
-              color: const Color(0xFF1D4ED8),
-              onRefresh: () async {
-                HapticFeedback.lightImpact();
-                ctrl.update();
-                await Future.delayed(const Duration(milliseconds: 350));
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingSizeDefault,
-                  vertical: Dimensions.paddingSizeSmall,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(context),
-                    const SizedBox(height: 12),
-                    _buildCaseSelector(context, ctrl, currentCase),
-                    const SizedBox(height: 12),
-                    _buildDocumentEditorArea(context, currentCase),
-                    const SizedBox(height: 36),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    }
-
-    // ==========================================
-    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
-    // ==========================================
     return Scaffold(
-      drawer: null,
+      drawer: isMobile ? const MenuDrawer() : null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -124,23 +73,35 @@ class _LegalDocumentsScreenState extends State<LegalDocumentsScreen> {
                   Expanded(
                     child: GetBuilder<LegalCenterController>(
                       builder: (ctrl) {
-                        final currentCase = ctrl.selectedCase ?? (ctrl.allCases.isNotEmpty ? ctrl.allCases.first : null);
-                        return SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: Dimensions.paddingSizeDefault,
-                            vertical: Dimensions.paddingSizeSmall,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildHeader(context),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                              _buildCaseSelector(context, ctrl, currentCase),
-                              const SizedBox(height: Dimensions.paddingSizeDefault),
-                              _buildDocumentEditorArea(context, currentCase),
-                              const SizedBox(height: Dimensions.paddingSizeExtraLarge),
-                              const FooterSection(),
-                            ],
+                        final currentCase = ctrl.selectedCase ??
+                            (ctrl.allCases.isNotEmpty ? ctrl.allCases.first : null);
+                        return RefreshIndicator(
+                          color: const Color(0xFF1D4ED8),
+                          onRefresh: () async {
+                            HapticFeedback.lightImpact();
+                            ctrl.update();
+                            await Future.delayed(const Duration(milliseconds: 350));
+                          },
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(
+                              parent: BouncingScrollPhysics(),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+                              vertical: Dimensions.paddingSizeSmall,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildHeader(context),
+                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                                _buildCaseSelector(context, ctrl, currentCase),
+                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                                _buildDocumentEditorArea(context, currentCase),
+                                SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
+                                if (!isMobile) const FooterSection(),
+                              ],
+                            ),
                           ),
                         );
                       },

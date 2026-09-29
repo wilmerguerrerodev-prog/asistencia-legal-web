@@ -19,6 +19,13 @@ class MenuDrawer extends StatefulWidget {
 }
 
 class _MenuDrawerState extends State<MenuDrawer> {
+  @override
+  void initState() {
+    super.initState();
+    if (!Get.isRegistered<MenuDrawerController>()) {
+      Get.put(MenuDrawerController());
+    }
+  }
 
   List<MenuModel> _getMenuList() {
     if (Get.isRegistered<AuthMockController>()) {
@@ -29,9 +36,13 @@ class _MenuDrawerState extends State<MenuDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    if (!Get.isRegistered<MenuDrawerController>()) {
+      Get.put(MenuDrawerController());
+    }
     return GetBuilder<AuthMockController>(
       builder: (auth) {
         return GetBuilder<MenuDrawerController>(
+          init: Get.isRegistered<MenuDrawerController>() ? null : MenuDrawerController(),
           builder: (menuDrawerController) {
             if (ResponsiveHelper.isMobile(context)) {
               return expandedMenuList(
@@ -56,10 +67,11 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget expandedMenuList(isExpanded, selectedIndex, AuthMockController auth) {
     final activeList = _getMenuList();
 
-    return Container(
-      width: 260,
+    return Material(
       color: Theme.of(context).primaryColorLight,
-      child: Column(
+      child: SizedBox(
+        width: 260,
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           controlTile(true),
@@ -152,8 +164,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget controlMenuButton() {
     return Padding(

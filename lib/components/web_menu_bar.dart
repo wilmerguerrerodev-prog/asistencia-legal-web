@@ -13,20 +13,39 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).cardColor,
-      padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Dimensions.paddingSizeDefault,
+        vertical: Dimensions.paddingSizeSmall,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              MenuButtonWebIcon(
-                icon: Images.menu,
+              InkWell(
                 onTap: () {
                   Scaffold.of(context).openDrawer();
                 },
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  height: 36,
+                  width: 36,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor.withValues(alpha: 0.25),
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.menu_rounded,
+                    size: 20,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
                 "LegalTech",
                 style: TextStyle(
@@ -42,23 +61,38 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
 
           Row(
             children: [
-              GetBuilder<ThemeController>(builder: (themeController){
-                return MenuButtonWebIcon(
-                  icon: themeController.darkTheme ? Images.lightMode : Images.darkMode,
-                  onTap: (){
-                    themeController.toggleTheme();
-                  },
+              GetBuilder<ThemeController>(builder: (themeController) {
+                final isDark = themeController.darkTheme;
+                return InkWell(
+                  onTap: () => themeController.toggleTheme(),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    height: 36,
+                    width: 36,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor.withValues(alpha: 0.25),
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                      size: 19,
+                      color: isDark ? const Color(0xFFF59E0B) : const Color(0xFF64748B),
+                    ),
+                  ),
                 );
               }),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               InkWell(
                 onTap: () {
                   Get.toNamed(RouteHelper.getUserProfileScreen());
                 },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  height: 35,
-                  width: 35,
+                  height: 36,
+                  width: 36,
                   decoration: BoxDecoration(
                     color: const Color(0xFF2563EB).withValues(alpha: 0.12),
                     shape: BoxShape.circle,

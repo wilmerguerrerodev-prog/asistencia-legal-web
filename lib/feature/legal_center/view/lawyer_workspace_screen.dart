@@ -252,72 +252,8 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    // ==========================================
-    // MODO MÓVIL (PRIORIDAD PRINCIPAL DE INTERFAZ)
-    // ==========================================
-    if (isMobile) {
-      return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const LegalMobileNavHeader(
-          activeIndex: 0,
-          title: "Mi Despacho",
-          subtitle: "Espacio de trabajo del abogado de turno",
-        ),
-        body: GetBuilder<LegalCenterController>(
-          builder: (ctrl) {
-            return GetBuilder<AuthMockController>(
-              builder: (auth) {
-                final activeCase = ctrl.myActiveAssignedCase;
-                final myCases = _getFilteredMyCases();
-
-                return RefreshIndicator(
-                  color: const Color(0xFF1D4ED8),
-                  onRefresh: () async {
-                    HapticFeedback.lightImpact();
-                    ctrl.update();
-                    await Future.delayed(const Duration(milliseconds: 350));
-                  },
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(
-                      parent: BouncingScrollPhysics(),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: Dimensions.paddingSizeDefault,
-                      vertical: Dimensions.paddingSizeSmall,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 1. HEADER DE ESTADO OPERATIVO & GUARDIA
-                        _buildLawyerProfileCard(context, auth, isMobile),
-
-                        const SizedBox(height: 14),
-
-                        // 2. TARJETA DE ASIGNACIÓN ACTIVA (CÓDIGO ROJO / EN CAMINO)
-                        _buildActiveCaseBanner(context, activeCase, isMobile),
-
-                        const SizedBox(height: 18),
-
-                        // 3. SECCIÓN: MIS CASOS ASIGNADOS
-                        _buildMyCasesSection(
-                            context, ctrl, myCases, isMobile),
-
-                        const SizedBox(height: 36),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      );
-    }
-
-    // ==========================================
-    // MODO ESCRITORIO / WEB (FALLBACK RESPONSIVO)
-    // ==========================================
     return Scaffold(
+      drawer: isMobile ? const MenuDrawer() : null,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Row(
@@ -337,21 +273,34 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                             final activeCase = ctrl.myActiveAssignedCase;
                             final myCases = _getFilteredMyCases();
 
-                            return SingleChildScrollView(
-                              padding: const EdgeInsets.all(
-                                  Dimensions.paddingSizeExtraLarge),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildLawyerProfileCard(
-                                      context, auth, false),
-                                  const SizedBox(height: 16),
-                                  _buildActiveCaseBanner(
-                                      context, activeCase, false),
-                                  const SizedBox(height: 20),
-                                  _buildMyCasesSection(
-                                      context, ctrl, myCases, false),
-                                ],
+                            return RefreshIndicator(
+                              color: const Color(0xFF1D4ED8),
+                              onRefresh: () async {
+                                HapticFeedback.lightImpact();
+                                ctrl.update();
+                                await Future.delayed(const Duration(milliseconds: 350));
+                              },
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(
+                                  parent: BouncingScrollPhysics(),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: Dimensions.paddingSizeDefault,
+                                  vertical: isMobile
+                                      ? Dimensions.paddingSizeSmall
+                                      : Dimensions.paddingSizeExtraLarge,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildLawyerProfileCard(context, auth, isMobile),
+                                    const SizedBox(height: 14),
+                                    _buildActiveCaseBanner(context, activeCase, isMobile),
+                                    const SizedBox(height: 18),
+                                    _buildMyCasesSection(context, ctrl, myCases, isMobile),
+                                    const SizedBox(height: 36),
+                                  ],
+                                ),
                               ),
                             );
                           },
