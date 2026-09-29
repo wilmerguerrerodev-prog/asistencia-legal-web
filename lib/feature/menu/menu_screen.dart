@@ -25,6 +25,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
     if (!Get.isRegistered<MenuDrawerController>()) {
       Get.put(MenuDrawerController());
     }
+    if (!Get.isRegistered<AuthMockController>()) {
+      Get.put(AuthMockController());
+    }
   }
 
   List<MenuModel> _getMenuList() {
@@ -38,6 +41,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
   Widget build(BuildContext context) {
     if (!Get.isRegistered<MenuDrawerController>()) {
       Get.put(MenuDrawerController());
+    }
+    if (!Get.isRegistered<AuthMockController>()) {
+      Get.put(AuthMockController());
     }
     return GetBuilder<AuthMockController>(
       builder: (auth) {
@@ -71,14 +77,15 @@ class _MenuDrawerState extends State<MenuDrawer> {
     final content = Material(
       color: Theme.of(context).primaryColorLight,
       child: SafeArea(
-        top: true,
+        top: !isMobile,
         bottom: true,
         child: SizedBox(
           width: 275,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              controlTile(true),
+              if (!isMobile) controlTile(true),
+              if (isMobile) const SizedBox(height: 12),
               _buildRoleSwitcherTile(context, auth),
               Expanded(
                 child: ListView.builder(
@@ -92,6 +99,9 @@ class _MenuDrawerState extends State<MenuDrawer> {
                       key: Key('${index}_$selected'),
                       onExpansionChanged: (z) {
                         if (menuModel.route != null) {
+                          if (Get.isRegistered<MenuDrawerController>()) {
+                            Get.find<MenuDrawerController>().closeMobileDrawer();
+                          }
                           Get.find<MenuDrawerController>().updateSelectedIndex(selectedIndex = z ? index : -1);
                           Get.find<MenuDrawerController>().updateSubMenuSelectedIndex('');
                           Get.offAndToNamed(menuModel.route!);
@@ -172,19 +182,6 @@ class _MenuDrawerState extends State<MenuDrawer> {
   ),
 );
 
-    if (isMobile) {
-      return Drawer(
-        backgroundColor: Theme.of(context).primaryColorLight,
-        elevation: 8,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(20),
-            bottomRight: Radius.circular(20),
-          ),
-        ),
-        child: content,
-      );
-    }
     return content;
   }
 
@@ -254,7 +251,14 @@ class _MenuDrawerState extends State<MenuDrawer> {
             ),
             if (isMobile)
               InkWell(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  if (Get.isRegistered<MenuDrawerController>()) {
+                    Get.find<MenuDrawerController>().closeMobileDrawer();
+                  }
+                  try {
+                    Navigator.of(context).maybePop();
+                  } catch (_) {}
+                },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   padding: const EdgeInsets.all(6),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
@@ -46,54 +47,34 @@ class _LegalCooperativesScreenState extends State<LegalCooperativesScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (ResponsiveHelper.isDesktop(context)) const MenuDrawer(),
-            Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-                  const WebMenuBar(),
-                  Expanded(
-                    child: RefreshIndicator(
-                      color: const Color(0xFF1D4ED8),
-                      onRefresh: () async {
-                        HapticFeedback.lightImpact();
-                        setState(() {});
-                        await Future.delayed(const Duration(milliseconds: 350));
-                      },
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(
-                          parent: BouncingScrollPhysics(),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
-                          vertical: Dimensions.paddingSizeSmall,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildHeader(context),
-                            SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
-                            _buildKPIs(context),
-                            SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
-                            _buildCooperativesGrid(context),
-                            SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
-                            if (!isMobile) const FooterSection(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return MainPageLayout(
+      child: RefreshIndicator(
+        color: const Color(0xFF1D4ED8),
+        onRefresh: () async {
+          HapticFeedback.lightImpact();
+          setState(() {});
+          await Future.delayed(const Duration(milliseconds: 350));
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+            vertical: Dimensions.paddingSizeSmall,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+              _buildKPIs(context),
+              SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+              _buildCooperativesGrid(context),
+              SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
+              if (!isMobile) const FooterSection(),
+            ],
+          ),
         ),
       ),
     );

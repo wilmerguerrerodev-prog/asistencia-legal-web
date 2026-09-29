@@ -10,6 +10,25 @@ class MenuDrawerController extends GetxController implements GetxService {
   bool _isMenuDrawerExpanded = true;
   bool get isMenuDrawerExpanded => _isMenuDrawerExpanded;
 
+  bool _isMobileDrawerOpen = false;
+  bool get isMobileDrawerOpen => _isMobileDrawerOpen;
+
+  void toggleMobileDrawer() {
+    _isMobileDrawerOpen = !_isMobileDrawerOpen;
+    update();
+  }
+
+  void openMobileDrawer() {
+    _isMobileDrawerOpen = true;
+    update();
+  }
+
+  void closeMobileDrawer() {
+    if (_isMobileDrawerOpen) {
+      _isMobileDrawerOpen = false;
+      update();
+    }
+  }
 
   void toggleMenuDrawer(){
     _isMenuDrawerExpanded = !_isMenuDrawerExpanded;

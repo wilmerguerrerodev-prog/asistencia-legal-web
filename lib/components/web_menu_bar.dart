@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/controller/theme_controller.dart';
+import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/images.dart';
 
@@ -28,7 +29,13 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               InkWell(
                 onTap: () {
-                  Scaffold.of(context).openDrawer();
+                  if (Get.isRegistered<MenuDrawerController>()) {
+                    Get.find<MenuDrawerController>().toggleMobileDrawer();
+                  } else {
+                    try {
+                      Scaffold.of(context).openDrawer();
+                    } catch (_) {}
+                  }
                 },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
@@ -41,10 +48,17 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.menu_rounded,
-                    size: 20,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  child: GetBuilder<MenuDrawerController>(
+                    builder: (menuCtrl) {
+                      final isOpen = menuCtrl.isMobileDrawerOpen;
+                      return Icon(
+                        isOpen ? Icons.close_rounded : Icons.menu_rounded,
+                        size: 20,
+                        color: isOpen
+                            ? (Theme.of(context).secondaryHeaderColor)
+                            : Theme.of(context).textTheme.bodyLarge?.color,
+                      );
+                    },
                   ),
                 ),
               ),

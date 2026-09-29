@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
@@ -62,62 +63,42 @@ class _LegalCasesScreenState extends State<LegalCasesScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (ResponsiveHelper.isDesktop(context)) const MenuDrawer(),
-            Expanded(
-              flex: 5,
+    return MainPageLayout(
+      child: GetBuilder<LegalCenterController>(
+        builder: (ctrl) {
+          final cases = _getFilteredCases(ctrl);
+          return RefreshIndicator(
+            color: const Color(0xFF1D4ED8),
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ctrl.update();
+              await Future.delayed(const Duration(milliseconds: 350));
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
+                vertical: Dimensions.paddingSizeSmall,
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const WebMenuBar(),
-                  Expanded(
-                    child: GetBuilder<LegalCenterController>(
-                      builder: (ctrl) {
-                        final cases = _getFilteredCases(ctrl);
-                        return RefreshIndicator(
-                          color: const Color(0xFF1D4ED8),
-                          onRefresh: () async {
-                            HapticFeedback.lightImpact();
-                            ctrl.update();
-                            await Future.delayed(const Duration(milliseconds: 350));
-                          },
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(
-                              parent: BouncingScrollPhysics(),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isMobile ? 12 : Dimensions.paddingSizeDefault,
-                              vertical: Dimensions.paddingSizeSmall,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildHeader(context),
-                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
-                                _buildStatusMetrics(context, ctrl),
-                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
-                                const CooperativeFilterChips(),
-                                SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
-                                _buildCasesTableCard(context, cases, ctrl),
-                                SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
-                                if (!isMobile) const FooterSection(),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  _buildHeader(context),
+                  SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                  _buildStatusMetrics(context, ctrl),
+                  SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                  const CooperativeFilterChips(),
+                  SizedBox(height: isMobile ? 12 : Dimensions.paddingSizeDefault),
+                  _buildCasesTableCard(context, cases, ctrl),
+                  SizedBox(height: isMobile ? 36 : Dimensions.paddingSizeExtraLarge),
+                  if (!isMobile) const FooterSection(),
                 ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

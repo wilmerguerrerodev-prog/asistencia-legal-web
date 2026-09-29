@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
@@ -292,75 +293,57 @@ class _UserProfileState extends State<UserProfile> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: isMobile ? const MenuDrawer() : null,
-      body: SafeArea(
-        child: Row(
-          children: [
-            if (ResponsiveHelper.isDesktop(context)) const MenuDrawer(),
-            Expanded(
-              child: Column(
-                children: [
-                  const WebMenuBar(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: EdgeInsets.symmetric(
-                        vertical: isMobile ? 12 : Dimensions.paddingSizeLarge,
-                        horizontal: isMobile ? 12 : Dimensions.paddingSizeLarge,
-                      ),
-                      child: Obx(() {
-                        final auth = Get.isRegistered<AuthMockController>()
-                            ? Get.find<AuthMockController>()
-                            : null;
-                        final esConductor = auth != null
-                            ? auth.isClientDriver
-                            : (controller.rolActivo.value == 'conductor');
-                        final showRoleSelector = auth == null || auth.isItAdmin;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // 1. Selector rápido de vista (Conductor / Abogado) - sólo visible para SuperAdmin TI o tests
-                            if (showRoleSelector) ...[
-                              _buildRoleSelector(context, controller, isDark),
-                              const SizedBox(height: 16),
-                            ],
-
-                            // 2. Cabecera principal de Perfil
-                            esConductor
-                                ? _buildConductorHeader(context, controller, isDark)
-                                : _buildAbogadoHeader(context, controller, isDark),
-                            const SizedBox(height: 18),
-
-                            // 3. Tarjetas detalladas de datos
-                            esConductor
-                                ? _buildConductorDetails(context, controller, isDark)
-                                : _buildAbogadoDetails(context, controller, isDark),
-                            const SizedBox(height: 24),
-
-                            // 4. Botones de acción rápida
-                            _buildActionButtons(context, controller, esConductor, isDark),
-                            Center(
-                              child: Text(
-                                "LegalTech Ecuador © 2026 · Asistencia Legal Vial 24/7",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    return MainPageLayout(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(
+          vertical: isMobile ? 12 : Dimensions.paddingSizeLarge,
+          horizontal: isMobile ? 12 : Dimensions.paddingSizeLarge,
         ),
+        child: Obx(() {
+          final auth = Get.isRegistered<AuthMockController>()
+              ? Get.find<AuthMockController>()
+              : null;
+          final esConductor = auth != null
+              ? auth.isClientDriver
+              : (controller.rolActivo.value == 'conductor');
+          final showRoleSelector = auth == null || auth.isItAdmin;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Selector rápido de vista (Conductor / Abogado) - sólo visible para SuperAdmin TI o tests
+              if (showRoleSelector) ...[
+                _buildRoleSelector(context, controller, isDark),
+                const SizedBox(height: 16),
+              ],
+
+              // 2. Cabecera principal de Perfil
+              esConductor
+                  ? _buildConductorHeader(context, controller, isDark)
+                  : _buildAbogadoHeader(context, controller, isDark),
+              const SizedBox(height: 18),
+
+              // 3. Tarjetas detalladas de datos
+              esConductor
+                  ? _buildConductorDetails(context, controller, isDark)
+                  : _buildAbogadoDetails(context, controller, isDark),
+              const SizedBox(height: 24),
+
+              // 4. Botones de acción rápida
+              _buildActionButtons(context, controller, esConductor, isDark),
+              Center(
+                child: Text(
+                  "LegalTech Ecuador © 2026 · Asistencia Legal Vial 24/7",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/feature/dashboarddemo3/widgets/dashboar3_summary_card.dart';
@@ -24,24 +25,11 @@ class _DashboardDemoScreen3State extends State<DashboardDemoScreen3> {
   Widget build(BuildContext context) {
     double screenWidth = Get.width - 75;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: ResponsiveHelper.isMobile(context) ? const MenuDrawer() : null,
-      body: SafeArea(
-          child: SizedBox(
-        child: Row(
-          children: [
-            if (ResponsiveHelper.isDesktop(context)) const MenuDrawer(),
-            Expanded(
-                flex: 5,
-                child: Column(
-                  children: [
-                    const WebMenuBar(),
-                    Expanded(
-                        child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: Dimensions.paddingSizeExtraLarge),
-                      child: SingleChildScrollView(
+    return MainPageLayout(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: Dimensions.paddingSizeExtraLarge),
+        child: SingleChildScrollView(
                         child: Column(
                           children: [
                             const SizedBox(
@@ -111,15 +99,10 @@ class _DashboardDemoScreen3State extends State<DashboardDemoScreen3> {
                           
                              const SizedBox(
                                 height: Dimensions.paddingSizeExtraLarge),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ))
-                  ],
-                ))
-          ],
-        ),
-      )),
-    );
+                    );
   }
 }

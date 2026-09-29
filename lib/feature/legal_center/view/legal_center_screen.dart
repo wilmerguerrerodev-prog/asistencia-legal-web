@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:getdash/components/footer_section.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
@@ -63,72 +64,48 @@ class _LegalCenterScreenState extends State<LegalCenterScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Menú lateral fijo en escritorio
-            if (ResponsiveHelper.isDesktop(context))
-              const MenuDrawer(),
-
-            // Área central ejecutiva
-            Expanded(
-              flex: 5,
+    return MainPageLayout(
+      child: GetBuilder<LegalCenterController>(
+        builder: (ctrl) {
+          return RefreshIndicator(
+            color: const Color(0xFF1D4ED8),
+            onRefresh: () async {
+              HapticFeedback.lightImpact();
+              ctrl.update();
+              await Future.delayed(const Duration(milliseconds: 350));
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: Dimensions.paddingSizeDefault,
+                vertical: isMobile
+                    ? Dimensions.paddingSizeSmall
+                    : Dimensions.paddingSizeDefault,
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const WebMenuBar(),
-                  Expanded(
-                    child: GetBuilder<LegalCenterController>(
-                      builder: (ctrl) {
-                        return RefreshIndicator(
-                          color: const Color(0xFF1D4ED8),
-                          onRefresh: () async {
-                            HapticFeedback.lightImpact();
-                            ctrl.update();
-                            await Future.delayed(const Duration(milliseconds: 350));
-                          },
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(
-                              parent: BouncingScrollPhysics(),
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Dimensions.paddingSizeDefault,
-                              vertical: isMobile
-                                  ? Dimensions.paddingSizeSmall
-                                  : Dimensions.paddingSizeDefault,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildExecutiveHeader(context, isMobile),
-                                const SizedBox(height: 12),
-                                const LegalTerritorialHeader(),
-                                const SizedBox(height: 14),
-                                _buildDashboardTabsSelector(context, ctrl),
-                                const SizedBox(height: 12),
-                                if (ctrl.dashboardTab == 0) ...[
-                                  _buildViewModeSelector(context, ctrl),
-                                  const SizedBox(height: 12),
-                                  _buildRealtimeIncidentsContent(context, ctrl),
-                                ] else
-                                  const TerritoryLawyersGrid(),
-                                const SizedBox(height: 24),
-                                if (!isMobile) const FooterSection(),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                  _buildExecutiveHeader(context, isMobile),
+                  const SizedBox(height: 12),
+                  const LegalTerritorialHeader(),
+                  const SizedBox(height: 14),
+                  _buildDashboardTabsSelector(context, ctrl),
+                  const SizedBox(height: 12),
+                  if (ctrl.dashboardTab == 0) ...[
+                    _buildViewModeSelector(context, ctrl),
+                    const SizedBox(height: 12),
+                    _buildRealtimeIncidentsContent(context, ctrl),
+                  ] else
+                    const TerritoryLawyersGrid(),
+                  const SizedBox(height: 24),
+                  if (!isMobile) const FooterSection(),
                 ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

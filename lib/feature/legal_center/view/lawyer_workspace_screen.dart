@@ -9,6 +9,7 @@ import 'package:getdash/feature/legal_center/model/legal_case_model.dart';
 import 'package:getdash/feature/legal_center/widgets/expediente_360_panel.dart';
 import 'package:getdash/feature/legal_center/widgets/legal_mobile_nav_header.dart';
 import 'package:getdash/feature/menu/menu_screen.dart';
+import 'package:getdash/components/main_page_layout.dart';
 import 'package:getdash/components/web_menu_bar.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
@@ -252,67 +253,47 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
   Widget build(BuildContext context) {
     final isMobile = ResponsiveHelper.isMobile(context);
 
-    return Scaffold(
-      drawer: isMobile ? const MenuDrawer() : null,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (ResponsiveHelper.isDesktop(context)) const MenuDrawer(),
-            Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-                  const WebMenuBar(),
-                  Expanded(
-                    child: GetBuilder<LegalCenterController>(
-                      builder: (ctrl) {
-                        return GetBuilder<AuthMockController>(
-                          builder: (auth) {
-                            final activeCase = ctrl.myActiveAssignedCase;
-                            final myCases = _getFilteredMyCases();
+    return MainPageLayout(
+      child: GetBuilder<LegalCenterController>(
+        builder: (ctrl) {
+          return GetBuilder<AuthMockController>(
+            builder: (auth) {
+              final activeCase = ctrl.myActiveAssignedCase;
+              final myCases = _getFilteredMyCases();
 
-                            return RefreshIndicator(
-                              color: const Color(0xFF1D4ED8),
-                              onRefresh: () async {
-                                HapticFeedback.lightImpact();
-                                ctrl.update();
-                                await Future.delayed(const Duration(milliseconds: 350));
-                              },
-                              child: SingleChildScrollView(
-                                physics: const AlwaysScrollableScrollPhysics(
-                                  parent: BouncingScrollPhysics(),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: Dimensions.paddingSizeDefault,
-                                  vertical: isMobile
-                                      ? Dimensions.paddingSizeSmall
-                                      : Dimensions.paddingSizeExtraLarge,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    _buildLawyerProfileCard(context, auth, isMobile),
-                                    const SizedBox(height: 14),
-                                    _buildActiveCaseBanner(context, activeCase, isMobile),
-                                    const SizedBox(height: 18),
-                                    _buildMyCasesSection(context, ctrl, myCases, isMobile),
-                                    const SizedBox(height: 36),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+              return RefreshIndicator(
+                color: const Color(0xFF1D4ED8),
+                onRefresh: () async {
+                  HapticFeedback.lightImpact();
+                  ctrl.update();
+                  await Future.delayed(const Duration(milliseconds: 350));
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(
+                    parent: BouncingScrollPhysics(),
                   ),
-                ],
-              ),
-            ),
-          ],
-        ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dimensions.paddingSizeDefault,
+                    vertical: isMobile
+                        ? Dimensions.paddingSizeSmall
+                        : Dimensions.paddingSizeExtraLarge,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLawyerProfileCard(context, auth, isMobile),
+                      const SizedBox(height: 14),
+                      _buildActiveCaseBanner(context, activeCase, isMobile),
+                      const SizedBox(height: 18),
+                      _buildMyCasesSection(context, ctrl, myCases, isMobile),
+                      const SizedBox(height: 36),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
