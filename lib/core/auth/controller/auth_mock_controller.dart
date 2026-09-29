@@ -8,11 +8,12 @@ import '../model/mock_user.dart';
 class AuthMockController extends GetxController {
   static AuthMockController get to => Get.find<AuthMockController>();
 
-  // Perfiles predeterminados para pruebas
+  // Perfiles predeterminados oficiales para producción y pruebas
   static const MockUser mockItAdmin = MockUser(
     id: 'USER-IT-01',
-    name: 'Ing. Admin Sistemas',
-    email: 'admin.sistemas@legaltech.ec',
+    name: 'Ing. Dario (Admin TI)',
+    email: 'admin@legaltech.ec',
+    temporaryPassword: 'admin123',
     role: UserRole.itAdmin,
     canton: 'Quito',
     phone: '+593 99 000 1122',
@@ -21,29 +22,37 @@ class AuthMockController extends GetxController {
   static const MockUser mockAdminLawyer = MockUser(
     id: 'USER-LAW-DIR',
     name: 'Dr. Emir Vásquez',
-    email: 'emir.vasquez@legaltech.ec',
+    email: 'emir@legaltech.ec',
+    temporaryPassword: 'emir123',
     role: UserRole.adminLawyer,
     canton: 'Ibarra',
     phone: '+593 98 776 5544',
+    matriculaForo: '10-2015-442-CJ',
   );
 
   static const MockUser mockAssociateLawyer = MockUser(
     id: 'LAWYER-001',
     name: 'Dra. Andrea Morales',
-    email: 'andrea.morales@legaltech.ec',
+    email: 'abogado@legaltech.ec',
+    temporaryPassword: 'abogado123',
     role: UserRole.associateLawyer,
     canton: 'Ibarra',
     phone: '+593 99 445 1200',
+    matriculaForo: '10-2019-118-CJ',
     isAvailable: true,
   );
 
   static const MockUser mockClientDriver = MockUser(
     id: 'DRIVER-042',
-    name: 'Carlos Mendoza • Unidad #42',
-    email: 'carlos.mendoza@loslagos.ec',
+    name: 'Carlos Mendoza',
+    email: 'conductor@legaltech.ec',
+    temporaryPassword: 'conductor123',
     role: UserRole.clientDriver,
     cooperativeId: 'COOP-01',
-    cooperativeName: 'Coo. Los Lagos',
+    cooperativeName: 'Cooperativa Los Lagos',
+    unidadTaxi: 'Unidad #42',
+    placa: 'IBA-1234',
+    licencia: 'Tipo C Profesional',
     canton: 'Otavalo',
     phone: '+593 99 482 1045',
   );

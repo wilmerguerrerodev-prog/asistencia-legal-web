@@ -502,7 +502,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
-                "ACCESOS RÁPIDOS DEMO",
+                "CREDENCIALES DEL SISTEMA",
                 style: TextStyle(
                   fontFamily: 'Montserrat',
                   fontSize: 11,
@@ -517,63 +517,61 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 10),
         Text(
-          "Toca un rol para ingresar al instante:",
+          "Cuentas oficiales registradas en Firebase:",
           textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
-            fontSize: 12,
+            fontSize: 11.5,
             color: isDark ? Colors.white60 : const Color(0xFF64748B),
           ),
         ),
         const SizedBox(height: 12),
-        _buildDemoRoleCard(
-          isDark: isDark,
-          title: "Conductor (Carlos Mendoza)",
-          subtitle: "conductor@legaltech.ec • SOS Conductor",
-          badge: "Conductor",
-          icon: Icons.local_taxi_rounded,
-          accentColor: const Color(0xFF2563EB),
-          user: AuthMockController.mockClientDriver,
-        ),
-        const SizedBox(height: 8),
-        _buildDemoRoleCard(
-          isDark: isDark,
-          title: "Abogada en Vía (Andrea Morales)",
-          subtitle: "abogado@legaltech.ec • Mi Despacho",
-          badge: "Abogado",
-          icon: Icons.gavel_rounded,
-          accentColor: const Color(0xFF0F766E),
-          user: AuthMockController.mockAssociateLawyer,
-        ),
-        const SizedBox(height: 8),
-        _buildDemoRoleCard(
-          isDark: isDark,
-          title: "Nuevo Abogado (Dr. Carlos Revelo)",
-          subtitle: "carlos.revelo@legaltech.ec • Clave Temporal",
-          badge: "1er Login",
-          icon: Icons.lock_clock_rounded,
-          accentColor: const Color(0xFF0284C7),
-          user: AuthMockController.mockTempLawyer,
-        ),
-        const SizedBox(height: 8),
-        _buildDemoRoleCard(
-          isDark: isDark,
-          title: "Director Legal (Dr. Emir Vásquez)",
-          subtitle: "director@legaltech.ec • Centro de Mando",
-          badge: "Director",
-          icon: Icons.shield_rounded,
-          accentColor: const Color(0xFF7C3AED),
-          user: AuthMockController.mockAdminLawyer,
-        ),
-        const SizedBox(height: 8),
-        _buildDemoRoleCard(
-          isDark: isDark,
-          title: "Administrador de TI",
-          subtitle: "admin@legaltech.ec • Superadmin",
-          badge: "TI Admin",
-          icon: Icons.admin_panel_settings_rounded,
-          accentColor: const Color(0xFFD97706),
-          user: AuthMockController.mockItAdmin,
+        // Grilla 2x2 compacta de credenciales oficiales
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildCredentialChip(
+              context: context,
+              isDark: isDark,
+              emoji: "💻",
+              rol: "Admin TI",
+              email: "admin@legaltech.ec",
+              pass: "admin123",
+              accentColor: const Color(0xFFD97706),
+              user: AuthMockController.mockItAdmin,
+            ),
+            _buildCredentialChip(
+              context: context,
+              isDark: isDark,
+              emoji: "⚖️",
+              rol: "Director",
+              email: "emir@legaltech.ec",
+              pass: "emir123",
+              accentColor: const Color(0xFF7C3AED),
+              user: AuthMockController.mockAdminLawyer,
+            ),
+            _buildCredentialChip(
+              context: context,
+              isDark: isDark,
+              emoji: "🛡️",
+              rol: "Abogada",
+              email: "abogado@legaltech.ec",
+              pass: "abogado123",
+              accentColor: const Color(0xFF0F766E),
+              user: AuthMockController.mockAssociateLawyer,
+            ),
+            _buildCredentialChip(
+              context: context,
+              isDark: isDark,
+              emoji: "🚖",
+              rol: "Conductor",
+              email: "conductor@legaltech.ec",
+              pass: "conductor123",
+              accentColor: const Color(0xFF2563EB),
+              user: AuthMockController.mockClientDriver,
+            ),
+          ],
         ),
         const SizedBox(height: 14),
         Container(
@@ -590,11 +588,11 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.cloud_sync_rounded, color: Color(0xFF2563EB), size: 20),
+                  const Icon(Icons.cloud_sync_rounded, color: Color(0xFF0D9488), size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      "Base de Datos en la Nube (Firebase)",
+                      "Sincronizar las 4 Cuentas en Firebase",
                       style: TextStyle(
                         fontFamily: 'Montserrat',
                         fontSize: 12,
@@ -608,7 +606,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                "Crea y sincroniza las colecciones iniciales (users, cooperativas, casos_legales, emergencias_sos) en tu consola de Firebase.",
+                "Siembra y actualiza estas 4 cuentas en Firebase Authentication y Cloud Firestore.",
                 style: TextStyle(
                   fontFamily: 'Plus Jakarta Sans',
                   fontSize: 11,
@@ -633,7 +631,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       )
                     : const Icon(Icons.bolt_rounded, size: 18),
                 label: Text(
-                  _isSeedingFirebase ? "Sincronizando con Firebase..." : "Inicializar Datos en Firebase",
+                  _isSeedingFirebase ? "Sincronizando con Firebase..." : "Poblar 4 Cuentas en Firebase",
                   style: const TextStyle(
                     fontFamily: 'Montserrat',
                     fontSize: 12,
@@ -645,6 +643,86 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCredentialChip({
+    required BuildContext context,
+    required bool isDark,
+    required String emoji,
+    required String rol,
+    required String email,
+    required String pass,
+    required Color accentColor,
+    required MockUser user,
+  }) {
+    final screenWidth = MediaQuery.maybeOf(context)?.size.width ?? 400;
+    final cardWidth = (screenWidth > 500 ? 500 : screenWidth) / 2 - 32;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _identificacionController.text = email;
+            _passwordController.text = pass;
+          });
+          HapticFeedback.selectionClick();
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: cardWidth,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: accentColor.withValues(alpha: 0.35),
+              width: 1.2,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(emoji, style: const TextStyle(fontSize: 14)),
+                  const SizedBox(width: 4),
+                  Text(
+                    rol,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: accentColor,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 3),
+              Text(
+                email,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : const Color(0xFF334155),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                "Clave: $pass",
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -682,104 +760,5 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Widget _buildDemoRoleCard({
-    required bool isDark,
-    required String title,
-    required String subtitle,
-    required String badge,
-    required IconData icon,
-    required Color accentColor,
-    required MockUser user,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: _isLoading ? null : () => _iniciarSesion(usuarioPreconfigurado: user),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: accentColor, size: 20),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            title,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.white : const Color(0xFF0F172A),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            badge,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.w800,
-                              color: accentColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 11,
-                        color: isDark ? Colors.white54 : const Color(0xFF64748B),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 6),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 13,
-                color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 }

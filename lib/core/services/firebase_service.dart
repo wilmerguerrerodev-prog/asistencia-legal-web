@@ -64,12 +64,13 @@ class FirebaseService {
         coopsCreated++;
       }
 
-      // 2. Semillero de Usuarios (Users)
+      // 2. Semillero de Usuarios Oficiales (Users)
       final List<Map<String, dynamic>> initialUsers = [
         {
           'id': 'USER-IT-01',
-          'name': 'Ing. Admin Sistemas',
-          'email': 'admin.sistemas@legaltech.ec',
+          'name': 'Ing. Dario (Admin TI)',
+          'email': 'admin@legaltech.ec',
+          'password': 'admin123',
           'role': 'itAdmin',
           'canton': 'Quito',
           'phone': '+593 99 000 1122',
@@ -81,7 +82,8 @@ class FirebaseService {
         {
           'id': 'USER-LAW-DIR',
           'name': 'Dr. Emir Vásquez',
-          'email': 'emir.vasquez@legaltech.ec',
+          'email': 'emir@legaltech.ec',
+          'password': 'emir123',
           'role': 'adminLawyer',
           'canton': 'Ibarra',
           'phone': '+593 98 776 5544',
@@ -94,7 +96,8 @@ class FirebaseService {
         {
           'id': 'LAWYER-001',
           'name': 'Dra. Andrea Morales',
-          'email': 'andrea.morales@legaltech.ec',
+          'email': 'abogado@legaltech.ec',
+          'password': 'abogado123',
           'role': 'associateLawyer',
           'canton': 'Ibarra',
           'phone': '+593 99 445 1200',
@@ -105,36 +108,38 @@ class FirebaseService {
           'createdAt': FieldValue.serverTimestamp(),
         },
         {
+          'id': 'DRIVER-042',
+          'name': 'Carlos Mendoza',
+          'email': 'conductor@legaltech.ec',
+          'password': 'conductor123',
+          'role': 'clientDriver',
+          'cooperativeId': 'COOP-01',
+          'cooperativeName': 'Cooperativa Los Lagos',
+          'canton': 'Otavalo',
+          'phone': '+593 99 482 1045',
+          'placa': 'IBA-1234',
+          'unidadTaxi': 'Unidad #42',
+          'licencia': 'Tipo C Profesional',
+          'isAvailable': true,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'conductor_pro',
+          'subscriptionExpiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+        {
           'id': 'LAWYER-TEMP-002',
           'name': 'Dr. Carlos Revelo',
           'email': 'carlos.revelo@legaltech.ec',
+          'password': 'LegalTech2026!',
           'role': 'associateLawyer',
           'canton': 'Ibarra',
           'phone': '+593 99 778 9900',
           'cedula': '1003456789',
           'matriculaForo': '10-2022-315-CJ',
-          'temporaryPassword': 'LegalTech2026!',
           'debeCambiarClave': true,
           'isAvailable': true,
           'subscriptionStatus': 'active',
           'subscriptionPlan': 'lawyer_turn',
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-        {
-          'id': 'DRIVER-042',
-          'name': 'Carlos Mendoza • Unidad #42',
-          'email': 'carlos.mendoza@loslagos.ec',
-          'role': 'clientDriver',
-          'cooperativeId': 'COOP-01',
-          'cooperativeName': 'Coo. Los Lagos',
-          'canton': 'Otavalo',
-          'phone': '+593 99 482 1045',
-          'placa': 'IBA-1234',
-          'unidadTaxi': 'Unidad #42',
-          'isAvailable': true,
-          'subscriptionStatus': 'active',
-          'subscriptionPlan': 'conductor_pro',
-          'subscriptionExpiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
           'createdAt': FieldValue.serverTimestamp(),
         },
       ];
@@ -154,7 +159,7 @@ class FirebaseService {
         try {
           await _auth.createUserWithEmailAndPassword(
             email: user['email'],
-            password: user['temporaryPassword'] ?? 'Password123!',
+            password: user['password'] ?? user['temporaryPassword'] ?? 'Password123!',
           );
         } catch (_) {
           // Ya existe en Auth o regla restringida
