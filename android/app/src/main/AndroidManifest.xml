@@ -15,7 +15,7 @@
     </queries>
 
    <application
-        android:label="getdash"
+        android:label="LegalTech"
         android:name="${applicationName}"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">

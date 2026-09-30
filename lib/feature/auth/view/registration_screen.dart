@@ -511,21 +511,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB),
+                          color: const Color(0xFFE8E4D9),
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                            width: 1.2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                              color: Colors.black.withValues(alpha: 0.12),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Icon(Icons.local_taxi_rounded, color: Colors.white, size: 22),
+                        clipBehavior: Clip.antiAlias,
+                        child: Image.asset(
+                          'assets/images/legaltech_logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
                       const SizedBox(width: 10),
