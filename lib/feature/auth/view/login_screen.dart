@@ -273,27 +273,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 46,
-                        height: 46,
+                        width: 52,
+                        height: 52,
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE8E4D9),
-                          borderRadius: BorderRadius.circular(12),
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
-                            width: 1.2,
+                            color: isDark ? const Color(0xFF475569) : const Color(0xFFE2E8F0),
+                            width: 1.5,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
+                              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
                           ],
                         ),
-                        clipBehavior: Clip.antiAlias,
                         child: Image.asset(
                           'assets/images/legaltech_logo.png',
                           fit: BoxFit.contain,
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
                         ),
                       ),
                       const SizedBox(width: 12),
