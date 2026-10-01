@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _recordarSesion = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
-  bool _isSeedingFirebase = false;
+  MockUser? _selectedDemoUser;
 
   @override
   void dispose() {
@@ -84,6 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
             } else {
               emailToUse = '$idText@legaltech.ec';
             }
+          } else {
+            // Si es correo electrónico: buscar en Firestore por email
+            final userDoc = await FirebaseService().getUserByEmail(idText);
+            if (userDoc != null) {
+              firestoreData = userDoc;
+            }
           }
 
           final cred = await FirebaseService().signIn(email: emailToUse, password: passText);
@@ -108,28 +114,63 @@ class _LoginScreenState extends State<LoginScreen> {
                 phone: data['phone'],
                 debeCambiarClave: data['debeCambiarClave'] == true,
                 matriculaForo: data['matriculaForo'],
-                cedula: data['cedula'] ?? idText,
+                cedula: data['cedula'] ?? (idText.contains('@') ? null : idText),
                 placa: data['placa'],
                 unidadTaxi: data['unidadTaxi'],
                 licencia: data['licencia'],
                 foto: data['foto'],
               );
-            } else {
-              userToLogin = AuthMockController.mockClientDriver.copyWith(
+            } else if (_selectedDemoUser != null &&
+                _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
+              userToLogin = _selectedDemoUser!.copyWith(
                 id: cred.user!.uid,
-                name: cred.user!.email?.split('@').first ?? 'Conductor',
                 email: emailToUse,
-                cedula: idText,
               );
+            } else {
+              // Deducir rol exacto según el correo ingresado si no hay doc en Firestore
+              final lower = emailToUse.toLowerCase();
+              if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
+                userToLogin = AuthMockController.mockItAdmin.copyWith(id: cred.user!.uid, email: emailToUse);
+              } else if (lower.contains('director') || lower.contains('emir')) {
+                userToLogin = AuthMockController.mockAdminLawyer.copyWith(id: cred.user!.uid, email: emailToUse);
+              } else if (lower.contains('revelo') || lower.contains('temporal')) {
+                userToLogin = AuthMockController.mockTempLawyer.copyWith(id: cred.user!.uid, email: emailToUse);
+              } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+                userToLogin = AuthMockController.mockAssociateLawyer.copyWith(id: cred.user!.uid, email: emailToUse);
+              } else {
+                userToLogin = AuthMockController.mockClientDriver.copyWith(
+                  id: cred.user!.uid,
+                  name: cred.user!.email?.split('@').first ?? 'Conductor',
+                  email: emailToUse,
+                  cedula: idText.contains('@') ? null : idText,
+                );
+              }
             }
           } else {
-            userToLogin = AuthMockController.mockClientDriver.copyWith(
-              cedula: idText,
-            );
+            // cred?.user == null (fallback)
+            if (_selectedDemoUser != null &&
+                _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
+              userToLogin = _selectedDemoUser!;
+            } else {
+              final lower = emailToUse.toLowerCase();
+              if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
+                userToLogin = AuthMockController.mockItAdmin;
+              } else if (lower.contains('director') || lower.contains('emir')) {
+                userToLogin = AuthMockController.mockAdminLawyer;
+              } else if (lower.contains('revelo') || lower.contains('temporal')) {
+                userToLogin = AuthMockController.mockTempLawyer;
+              } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+                userToLogin = AuthMockController.mockAssociateLawyer;
+              } else {
+                userToLogin = AuthMockController.mockClientDriver.copyWith(
+                  cedula: idText.contains('@') ? null : idText,
+                  email: emailToUse,
+                );
+              }
+            }
           }
         } catch (e) {
           debugPrint('Firebase Auth falló o modo offline: $e');
-          // Si encontramos los datos en Firestore, usar ese perfil
           if (firestoreData != null) {
             final roleStr = firestoreData['role'] ?? 'clientDriver';
             final userRole = UserRole.values.firstWhere(
@@ -147,18 +188,20 @@ class _LoginScreenState extends State<LoginScreen> {
               phone: firestoreData['phone'],
               debeCambiarClave: firestoreData['debeCambiarClave'] == true,
               matriculaForo: firestoreData['matriculaForo'],
-              cedula: firestoreData['cedula'] ?? idText,
+              cedula: firestoreData['cedula'] ?? (idText.contains('@') ? null : idText),
               placa: firestoreData['placa'],
               unidadTaxi: firestoreData['unidadTaxi'],
               licencia: firestoreData['licencia'],
               foto: firestoreData['foto'],
             );
+          } else if (_selectedDemoUser != null &&
+              _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
+            userToLogin = _selectedDemoUser!;
           } else {
-            // Fallback a mapeo rápido si las credenciales coinciden con los roles de prueba
-            final lower = idText.toLowerCase();
+            final lower = emailToUse.toLowerCase();
             if (lower.contains('director') || lower.contains('emir')) {
               userToLogin = AuthMockController.mockAdminLawyer;
-            } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
+            } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
               userToLogin = AuthMockController.mockItAdmin;
             } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
               userToLogin = AuthMockController.mockTempLawyer;
@@ -166,26 +209,33 @@ class _LoginScreenState extends State<LoginScreen> {
               userToLogin = AuthMockController.mockAssociateLawyer;
             } else {
               userToLogin = AuthMockController.mockClientDriver.copyWith(
-                cedula: idText,
+                cedula: idText.contains('@') ? null : idText,
+                email: emailToUse,
               );
             }
           }
         }
       } else {
         // Fallback cuando solo escribió texto sin contraseña (o acceso rápido)
-        final lower = idText.toLowerCase();
-        if (lower.contains('director') || lower.contains('emir')) {
-          userToLogin = AuthMockController.mockAdminLawyer;
-        } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it')) {
-          userToLogin = AuthMockController.mockItAdmin;
-        } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
-          userToLogin = AuthMockController.mockTempLawyer;
-        } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
-          userToLogin = AuthMockController.mockAssociateLawyer;
+        if (_selectedDemoUser != null &&
+            _selectedDemoUser!.email.toLowerCase() == idText.toLowerCase()) {
+          userToLogin = _selectedDemoUser!;
         } else {
-          userToLogin = AuthMockController.mockClientDriver.copyWith(
-            cedula: idText,
-          );
+          final lower = idText.toLowerCase();
+          if (lower.contains('director') || lower.contains('emir')) {
+            userToLogin = AuthMockController.mockAdminLawyer;
+          } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
+            userToLogin = AuthMockController.mockItAdmin;
+          } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
+            userToLogin = AuthMockController.mockTempLawyer;
+          } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
+            userToLogin = AuthMockController.mockAssociateLawyer;
+          } else {
+            userToLogin = AuthMockController.mockClientDriver.copyWith(
+              cedula: idText.contains('@') ? null : idText,
+              email: idText.contains('@') ? idText : '$idText@legaltech.ec',
+            );
+          }
         }
       }
     }
@@ -202,6 +252,8 @@ class _LoginScreenState extends State<LoginScreen> {
         licencia: userToLogin.licencia ?? "Tipo C Profesional (30 Puntos)",
         foto: userToLogin.foto,
       );
+    } else if (userToLogin.role == UserRole.itAdmin) {
+      conductorController.cambiarRol('admin');
     } else {
       conductorController.cambiarRol('abogado');
     }
@@ -230,6 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     authController.switchUser(userToLogin, navigate: true);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -359,6 +412,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           autofillHints: const [AutofillHints.username, AutofillHints.email],
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.text,
+                          onChanged: (val) {
+                            if (_selectedDemoUser != null &&
+                                val.trim().toLowerCase() != _selectedDemoUser!.email.toLowerCase()) {
+                              setState(() => _selectedDemoUser = null);
+                            }
+                          },
                           style: TextStyle(
                             fontFamily: 'Plus Jakarta Sans',
                             fontSize: 13.5,
@@ -645,75 +704,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 14),
-        Container(
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? const Color(0xFF334155) : const Color(0xFFCBD5E1),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.cloud_sync_rounded, color: Color(0xFF0D9488), size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      "Sincronizar las 4 Cuentas en Firebase",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                "Siembra y actualiza estas 4 cuentas en Firebase Authentication y Cloud Firestore.",
-                style: TextStyle(
-                  fontFamily: 'Plus Jakarta Sans',
-                  fontSize: 11,
-                  color: isDark ? Colors.white60 : const Color(0xFF64748B),
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0D9488),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  elevation: 0,
-                ),
-                onPressed: _isSeedingFirebase ? null : _poblarBaseDeDatosFirebase,
-                icon: _isSeedingFirebase
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.bolt_rounded, size: 18),
-                label: Text(
-                  _isSeedingFirebase ? "Sincronizando con Firebase..." : "Poblar 4 Cuentas en Firebase",
-                  style: const TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -730,6 +720,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }) {
     final screenWidth = MediaQuery.maybeOf(context)?.size.width ?? 400;
     final cardWidth = (screenWidth > 500 ? 500 : screenWidth) / 2 - 32;
+    final isSelected = _selectedDemoUser?.role == user.role ||
+        _identificacionController.text.trim().toLowerCase() == email.toLowerCase();
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -737,6 +730,7 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             _identificacionController.text = email;
             _passwordController.text = pass;
+            _selectedDemoUser = user;
           });
           HapticFeedback.selectionClick();
         },
@@ -745,11 +739,13 @@ class _LoginScreenState extends State<LoginScreen> {
           width: cardWidth,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F172A) : Colors.white,
+            color: isSelected
+                ? accentColor.withValues(alpha: isDark ? 0.22 : 0.12)
+                : (isDark ? const Color(0xFF0F172A) : Colors.white),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: accentColor.withValues(alpha: 0.35),
-              width: 1.2,
+              color: isSelected ? accentColor : accentColor.withValues(alpha: 0.35),
+              width: isSelected ? 1.8 : 1.2,
             ),
           ),
           child: Column(
@@ -768,6 +764,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: accentColor,
                     ),
                   ),
+                  if (isSelected) ...[
+                    const Spacer(),
+                    Icon(Icons.check_circle_rounded, size: 14, color: accentColor),
+                  ],
                 ],
               ),
               const SizedBox(height: 3),
@@ -797,40 +797,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  void _poblarBaseDeDatosFirebase() async {
-    setState(() => _isSeedingFirebase = true);
-    HapticFeedback.mediumImpact();
-
-    final result = await FirebaseService().seedDatabase();
-
-    setState(() => _isSeedingFirebase = false);
-
-    if (result['success'] == true) {
-      Get.snackbar(
-        "🔥 ¡Base de Datos Inicializada!",
-        "Se crearon exitosamente en tu Firebase Console: "
-        "${result['usersCreated']} usuarios, ${result['coopsCreated']} cooperativas, "
-        "${result['casesCreated']} casos y ${result['emergenciesCreated']} alertas SOS.",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF0D9488),
-        colorText: Colors.white,
-        duration: const Duration(seconds: 5),
-        margin: const EdgeInsets.all(16),
-        icon: const Icon(Icons.check_circle_rounded, color: Colors.white, size: 28),
-      );
-    } else {
-      Get.snackbar(
-        "Aviso de Inicialización",
-        "Detalle: ${result['error'] ?? 'Verifica conexión a internet'}",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFFE11D48),
-        colorText: Colors.white,
-        duration: const Duration(seconds: 4),
-        margin: const EdgeInsets.all(16),
-      );
-    }
-  }
-
-
 }

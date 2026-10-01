@@ -278,6 +278,44 @@ class FirebaseService {
     return null;
   }
 
+  /// Busca un usuario, abogado o conductor por su correo electrónico en Firestore
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    final cleanEmail = email.trim().toLowerCase();
+    if (cleanEmail.isEmpty) return null;
+
+    try {
+      final snap = await _firestore
+          .collection('users')
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.first.data();
+      }
+
+      final abogSnap = await _firestore
+          .collection('abogados')
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get();
+      if (abogSnap.docs.isNotEmpty) {
+        return abogSnap.docs.first.data();
+      }
+
+      final condSnap = await _firestore
+          .collection('conductores')
+          .where('email', isEqualTo: cleanEmail)
+          .limit(1)
+          .get();
+      if (condSnap.docs.isNotEmpty) {
+        return condSnap.docs.first.data();
+      }
+    } catch (e) {
+      debugPrint('Error buscando usuario por email: $e');
+    }
+    return null;
+  }
+
   /// Crea un nuevo usuario y su perfil en Firestore (Modelo Híbrido: users + conductores/abogados)
   Future<UserCredential?> signUp({
     required String email,
