@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ? Get.find<AuthMockController>()
         : Get.put(AuthMockController(), permanent: true);
 
-    MockUser userToLogin;
+    MockUser? userToLogin;
 
     if (usuarioPreconfigurado != null) {
       userToLogin = usuarioPreconfigurado;
@@ -73,15 +73,22 @@ class _LoginScreenState extends State<LoginScreen> {
       if (passText.isNotEmpty) {
         String emailToUse = idText;
         Map<String, dynamic>? firestoreData;
+        final authController = Get.isRegistered<AuthMockController>()
+            ? Get.find<AuthMockController>()
+            : Get.put(AuthMockController(), permanent: true);
+        final localUser = authController.findUserByIdentifier(idText);
 
         try {
-          // Si es cédula (no contiene @): buscar correo registrado en Firestore
+          // Si es cédula (no contiene @): buscar correo registrado en Firestore o local
           if (!idText.contains('@')) {
+            if (localUser != null) {
+              emailToUse = localUser.email;
+            }
             final userDoc = await FirebaseService().getUserByCedula(idText);
             if (userDoc != null) {
               firestoreData = userDoc;
-              emailToUse = userDoc['email'] ?? '$idText@legaltech.ec';
-            } else {
+              emailToUse = userDoc['email'] ?? emailToUse;
+            } else if (localUser == null) {
               emailToUse = '$idText@legaltech.ec';
             }
           } else {
@@ -126,6 +133,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 id: cred.user!.uid,
                 email: emailToUse,
               );
+            } else if (localUser != null) {
+              userToLogin = localUser.copyWith(
+                id: cred.user!.uid,
+                email: emailToUse,
+              );
             } else {
               // Deducir rol exacto según el correo ingresado si no hay doc en Firestore
               final lower = emailToUse.toLowerCase();
@@ -146,45 +158,88 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               }
             }
-          } else {
-            // cred?.user == null (fallback)
-            if (_selectedDemoUser != null &&
-                _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
-              userToLogin = _selectedDemoUser!;
-            } else {
-              final lower = emailToUse.toLowerCase();
-              if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
-                userToLogin = AuthMockController.mockItAdmin;
-              } else if (lower.contains('director') || lower.contains('emir')) {
-                userToLogin = AuthMockController.mockAdminLawyer;
-              } else if (lower.contains('revelo') || lower.contains('temporal')) {
-                userToLogin = AuthMockController.mockTempLawyer;
-              } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
-                userToLogin = AuthMockController.mockAssociateLawyer;
-              } else {
-                userToLogin = AuthMockController.mockClientDriver.copyWith(
-                  cedula: idText.contains('@') ? null : idText,
-                  email: emailToUse,
-                );
-              }
-            }
           }
         } catch (e) {
-          debugPrint('Firebase Auth falló o modo offline: $e');
-          if (firestoreData != null) {
+          final errStr = e.toString().toLowerCase();
+          final isWrongPassword = errStr.contains('wrong-password') ||
+              errStr.contains('invalid-credential') ||
+              errStr.contains('invalid_login_credentials') ||
+              errStr.contains('wrongpassword');
+
+          if (isWrongPassword) {
+            setState(() => _isLoading = false);
+            final yaCambioClave = (firestoreData != null && firestoreData['debeCambiarClave'] == false) ||
+                (localUser != null && localUser.debeCambiarClave == false);
+
+            Get.snackbar(
+              "Contraseña incorrecta",
+              yaCambioClave
+                  ? "La clave temporal anterior ya expiró. Por favor ingresa con tu nueva contraseña."
+                  : "La contraseña ingresada no es válida para esta cuenta.",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: const Color(0xFFEF4444),
+              colorText: Colors.white,
+              margin: const EdgeInsets.all(16),
+              borderRadius: 12,
+              duration: const Duration(seconds: 4),
+              icon: const Icon(Icons.lock_outline_rounded, color: Colors.white),
+            );
+            return;
+          }
+
+          debugPrint('Firebase Auth no disponible o modo offline: $e');
+        }
+
+        if (userToLogin == null) {
+          // Fallback seguro en modo local / offline con validación estricta de clave
+          if (localUser != null) {
+            final bool isValidPass;
+            if (localUser.temporaryPassword != null && localUser.temporaryPassword!.isNotEmpty) {
+              isValidPass = (passText == localUser.temporaryPassword);
+            } else {
+              isValidPass = (passText == '123456' ||
+                  passText == 'conductor123' ||
+                  passText == 'abogado123' ||
+                  passText == 'director123' ||
+                  passText == 'admin123');
+            }
+
+            if (!isValidPass) {
+              setState(() => _isLoading = false);
+              Get.snackbar(
+                "Contraseña incorrecta",
+                localUser.debeCambiarClave == false
+                    ? "La clave temporal anterior ya expiró. Por favor ingresa con tu nueva contraseña."
+                    : "La contraseña ingresada no es válida para este usuario.",
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: const Color(0xFFEF4444),
+                colorText: Colors.white,
+                margin: const EdgeInsets.all(16),
+                borderRadius: 12,
+                duration: const Duration(seconds: 4),
+                icon: const Icon(Icons.lock_outline_rounded, color: Colors.white),
+              );
+              return;
+            }
+
+            userToLogin = localUser;
+          } else if (_selectedDemoUser != null &&
+              _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
+            userToLogin = _selectedDemoUser!;
+          } else if (firestoreData != null) {
             final roleStr = firestoreData['role'] ?? 'clientDriver';
             final userRole = UserRole.values.firstWhere(
               (r) => r.name == roleStr,
               orElse: () => UserRole.clientDriver,
             );
             userToLogin = MockUser(
-              id: firestoreData['id'] ?? 'DRIVER-LOCAL',
+              id: firestoreData['id'] ?? 'USER-OFFLINE',
               name: firestoreData['name'] ?? idText,
               email: firestoreData['email'] ?? emailToUse,
               role: userRole,
               cooperativeId: firestoreData['cooperativeId'],
               cooperativeName: firestoreData['cooperativeName'],
-              canton: firestoreData['canton'] ?? 'Otavalo',
+              canton: firestoreData['canton'] ?? (userRole == UserRole.clientDriver ? 'Otavalo' : 'Ibarra'),
               phone: firestoreData['phone'],
               debeCambiarClave: firestoreData['debeCambiarClave'] == true,
               matriculaForo: firestoreData['matriculaForo'],
@@ -194,16 +249,13 @@ class _LoginScreenState extends State<LoginScreen> {
               licencia: firestoreData['licencia'],
               foto: firestoreData['foto'],
             );
-          } else if (_selectedDemoUser != null &&
-              _selectedDemoUser!.email.toLowerCase() == emailToUse.toLowerCase()) {
-            userToLogin = _selectedDemoUser!;
           } else {
             final lower = emailToUse.toLowerCase();
-            if (lower.contains('director') || lower.contains('emir')) {
-              userToLogin = AuthMockController.mockAdminLawyer;
-            } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
+            if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
               userToLogin = AuthMockController.mockItAdmin;
-            } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
+            } else if (lower.contains('director') || lower.contains('emir')) {
+              userToLogin = AuthMockController.mockAdminLawyer;
+            } else if (lower.contains('revelo') || lower.contains('temporal')) {
               userToLogin = AuthMockController.mockTempLawyer;
             } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
               userToLogin = AuthMockController.mockAssociateLawyer;
@@ -217,16 +269,23 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         // Fallback cuando solo escribió texto sin contraseña (o acceso rápido)
+        final authController = Get.isRegistered<AuthMockController>()
+            ? Get.find<AuthMockController>()
+            : Get.put(AuthMockController(), permanent: true);
+        final localUser = authController.findUserByIdentifier(idText);
+
         if (_selectedDemoUser != null &&
             _selectedDemoUser!.email.toLowerCase() == idText.toLowerCase()) {
           userToLogin = _selectedDemoUser!;
+        } else if (localUser != null) {
+          userToLogin = localUser;
         } else {
           final lower = idText.toLowerCase();
           if (lower.contains('director') || lower.contains('emir')) {
             userToLogin = AuthMockController.mockAdminLawyer;
           } else if (lower.contains('admin') || lower.contains('sistemas') || lower.contains('it@') || lower.contains('it.')) {
             userToLogin = AuthMockController.mockItAdmin;
-          } else if (lower.contains('revelo') || lower.contains('temporal') || lower.contains('nuevo')) {
+          } else if (lower.contains('revelo') || lower.contains('temporal')) {
             userToLogin = AuthMockController.mockTempLawyer;
           } else if (lower.contains('abogado') || lower.contains('andrea') || lower.contains('morales')) {
             userToLogin = AuthMockController.mockAssociateLawyer;

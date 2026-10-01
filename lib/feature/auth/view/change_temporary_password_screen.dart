@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 
 class ChangeTemporaryPasswordScreen extends StatefulWidget {
   const ChangeTemporaryPasswordScreen({super.key});
@@ -572,6 +573,7 @@ class _ChangeTemporaryPasswordScreenState
                           ),
                         ),
                         onPressed: () {
+                          FirebaseService().signOut();
                           Get.offAllNamed(RouteHelper.loginScreen);
                         },
                       ),

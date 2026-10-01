@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/controller/theme_controller.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
@@ -91,6 +92,7 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
                           if (Get.isRegistered<MenuDrawerController>()) {
                             Get.find<MenuDrawerController>().closeMobileDrawer();
                           }
+                          FirebaseService().signOut();
                           Get.offAllNamed(RouteHelper.loginScreen);
                         },
                         style: ElevatedButton.styleFrom(

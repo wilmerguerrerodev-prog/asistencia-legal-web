@@ -401,10 +401,14 @@ class FirebaseService {
   }
 
   /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore (users y abogados)
-  Future<void> updatePassword(String newPassword) async {
+  Future<void> updatePassword(String newPassword, {String? cedula, String? email}) async {
     final user = _auth.currentUser;
     if (user != null) {
-      await user.updatePassword(newPassword);
+      try {
+        await user.updatePassword(newPassword);
+      } catch (e) {
+        debugPrint('Firebase Auth updatePassword error: $e');
+      }
       await _firestore.collection('users').doc(user.uid).set({
         'debeCambiarClave': false,
         'updatedAt': FieldValue.serverTimestamp(),
@@ -413,6 +417,58 @@ class FirebaseService {
         'debeCambiarClave': false,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+    }
+
+    if (cedula != null && cedula.isNotEmpty) {
+      try {
+        final uDocs = await _firestore.collection('users').where('cedula', isEqualTo: cedula).get();
+        for (var doc in uDocs.docs) {
+          await doc.reference.set({
+            'debeCambiarClave': false,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        }
+        final aDocs = await _firestore.collection('abogados').where('cedula', isEqualTo: cedula).get();
+        for (var doc in aDocs.docs) {
+          await doc.reference.set({
+            'debeCambiarClave': false,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        }
+      } catch (e) {
+        debugPrint('Error actualizando debeCambiarClave en Firestore por cédula: $e');
+      }
+    }
+
+    if (email != null && email.isNotEmpty) {
+      try {
+        final cleanEmail = email.trim().toLowerCase();
+        final uDocs = await _firestore.collection('users').where('email', isEqualTo: cleanEmail).get();
+        for (var doc in uDocs.docs) {
+          await doc.reference.set({
+            'debeCambiarClave': false,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        }
+        final aDocs = await _firestore.collection('abogados').where('email', isEqualTo: cleanEmail).get();
+        for (var doc in aDocs.docs) {
+          await doc.reference.set({
+            'debeCambiarClave': false,
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        }
+      } catch (e) {
+        debugPrint('Error actualizando debeCambiarClave en Firestore por email: $e');
+      }
+    }
+  }
+
+  /// Cierra sesión en Firebase Auth
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      debugPrint('Error en Firebase signOut: $e');
     }
   }
 
