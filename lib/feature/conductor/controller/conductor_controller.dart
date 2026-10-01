@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum TipoIncidente {
@@ -495,9 +496,30 @@ class ConductorController extends GetxController {
     return "https://wa.me/$telefonoLimpio?text=$textoCodificado";
   }
 
+  void _registrarEmergenciaEnFirebase() {
+    try {
+      FirebaseService().createSosEmergency({
+        'conductor': nombreConductor,
+        'cooperativa': cooperativa,
+        'unidad': unidadTaxi,
+        'placa': placaVehiculo,
+        'tipoIncidente': tipoSeleccionado.value?.name ?? 'Incidente Vial',
+        'latitud': posicionActual.value?.latitude ?? -0.22985,
+        'longitud': posicionActual.value?.longitude ?? -78.52495,
+        'ubicacionEnlace': obtenerEnlaceUbicacion(),
+        'estado': 'En Proceso • Abogado Notificado',
+        'abogadoAsignado': nombreAbogado,
+        'telefonoAbogado': telefonoAbogado,
+      });
+    } catch (e) {
+      debugPrint('Error registrando SOS en Firebase: $e');
+    }
+  }
+
   /// Inicia el contacto directo por WhatsApp abriendo la app externa y activando el temporizador SLA
   Future<bool> contactarAbogadoPorWhatsApp() async {
     iniciarLlamada();
+    _registrarEmergenciaEnFirebase();
     final enlace = obtenerEnlaceWhatsApp();
     final uri = Uri.parse(enlace);
     try {
@@ -510,6 +532,7 @@ class ConductorController extends GetxController {
   /// Inicia llamada telefónica directa al número del abogado
   Future<bool> llamarAbogadoPorTelefono() async {
     iniciarLlamada();
+    _registrarEmergenciaEnFirebase();
     final telefonoLimpio = telefonoAbogado.replaceAll(RegExp(r'[^0-9+]'), '');
     final uri = Uri.parse("tel:$telefonoLimpio");
     try {

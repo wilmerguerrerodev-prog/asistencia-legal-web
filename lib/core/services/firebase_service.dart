@@ -64,12 +64,13 @@ class FirebaseService {
         coopsCreated++;
       }
 
-      // 2. Semillero de Usuarios (Users)
+      // 2. Semillero de Usuarios Oficiales (Users)
       final List<Map<String, dynamic>> initialUsers = [
         {
           'id': 'USER-IT-01',
-          'name': 'Ing. Admin Sistemas',
-          'email': 'admin.sistemas@legaltech.ec',
+          'name': 'Ing. Dario (Admin TI)',
+          'email': 'admin@legaltech.ec',
+          'password': 'admin123',
           'role': 'itAdmin',
           'canton': 'Quito',
           'phone': '+593 99 000 1122',
@@ -81,7 +82,8 @@ class FirebaseService {
         {
           'id': 'USER-LAW-DIR',
           'name': 'Dr. Emir Vásquez',
-          'email': 'emir.vasquez@legaltech.ec',
+          'email': 'emir@legaltech.ec',
+          'password': 'emir123',
           'role': 'adminLawyer',
           'canton': 'Ibarra',
           'phone': '+593 98 776 5544',
@@ -94,7 +96,8 @@ class FirebaseService {
         {
           'id': 'LAWYER-001',
           'name': 'Dra. Andrea Morales',
-          'email': 'andrea.morales@legaltech.ec',
+          'email': 'abogado@legaltech.ec',
+          'password': 'abogado123',
           'role': 'associateLawyer',
           'canton': 'Ibarra',
           'phone': '+593 99 445 1200',
@@ -105,36 +108,39 @@ class FirebaseService {
           'createdAt': FieldValue.serverTimestamp(),
         },
         {
+          'id': 'DRIVER-042',
+          'name': 'Carlos Mendoza',
+          'email': 'conductor@legaltech.ec',
+          'password': 'conductor123',
+          'role': 'clientDriver',
+          'cooperativeId': 'COOP-01',
+          'cooperativeName': 'Cooperativa Los Lagos',
+          'canton': 'Otavalo',
+          'phone': '+593 99 482 1045',
+          'cedula': '1002345678',
+          'placa': 'IBA-1234',
+          'unidadTaxi': 'Unidad #42',
+          'licencia': 'Tipo C Profesional',
+          'isAvailable': true,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'conductor_pro',
+          'subscriptionExpiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
+          'createdAt': FieldValue.serverTimestamp(),
+        },
+        {
           'id': 'LAWYER-TEMP-002',
           'name': 'Dr. Carlos Revelo',
           'email': 'carlos.revelo@legaltech.ec',
+          'password': 'LegalTech2026!',
           'role': 'associateLawyer',
           'canton': 'Ibarra',
           'phone': '+593 99 778 9900',
           'cedula': '1003456789',
           'matriculaForo': '10-2022-315-CJ',
-          'temporaryPassword': 'LegalTech2026!',
           'debeCambiarClave': true,
           'isAvailable': true,
           'subscriptionStatus': 'active',
           'subscriptionPlan': 'lawyer_turn',
-          'createdAt': FieldValue.serverTimestamp(),
-        },
-        {
-          'id': 'DRIVER-042',
-          'name': 'Carlos Mendoza • Unidad #42',
-          'email': 'carlos.mendoza@loslagos.ec',
-          'role': 'clientDriver',
-          'cooperativeId': 'COOP-01',
-          'cooperativeName': 'Coo. Los Lagos',
-          'canton': 'Otavalo',
-          'phone': '+593 99 482 1045',
-          'placa': 'IBA-1234',
-          'unidadTaxi': 'Unidad #42',
-          'isAvailable': true,
-          'subscriptionStatus': 'active',
-          'subscriptionPlan': 'conductor_pro',
-          'subscriptionExpiresAt': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
           'createdAt': FieldValue.serverTimestamp(),
         },
       ];
@@ -143,11 +149,18 @@ class FirebaseService {
         await _firestore.collection('users').doc(user['id']).set(user, SetOptions(merge: true));
         usersCreated++;
 
+        // Modelo híbrido: reflejo en colecciones especializadas
+        if (user['role'] == 'clientDriver') {
+          await _firestore.collection('conductores').doc(user['id']).set(user, SetOptions(merge: true));
+        } else if (user['role'] == 'associateLawyer' || user['role'] == 'adminLawyer') {
+          await _firestore.collection('abogados').doc(user['id']).set(user, SetOptions(merge: true));
+        }
+
         // Registrar credenciales en Firebase Auth para login directo
         try {
           await _auth.createUserWithEmailAndPassword(
             email: user['email'],
-            password: user['temporaryPassword'] ?? 'Password123!',
+            password: user['password'] ?? user['temporaryPassword'] ?? 'Password123!',
           );
         } catch (_) {
           // Ya existe en Auth o regla restringida
@@ -236,7 +249,36 @@ class FirebaseService {
     return await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  /// Crea un nuevo usuario y su perfil en Firestore
+  /// Busca un usuario o conductor por su número de cédula en Firestore
+  Future<Map<String, dynamic>?> getUserByCedula(String cedula) async {
+    final cleanCedula = cedula.trim();
+    if (cleanCedula.isEmpty) return null;
+
+    try {
+      final snap = await _firestore
+          .collection('users')
+          .where('cedula', isEqualTo: cleanCedula)
+          .limit(1)
+          .get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.first.data();
+      }
+
+      final condSnap = await _firestore
+          .collection('conductores')
+          .where('cedula', isEqualTo: cleanCedula)
+          .limit(1)
+          .get();
+      if (condSnap.docs.isNotEmpty) {
+        return condSnap.docs.first.data();
+      }
+    } catch (e) {
+      debugPrint('Error buscando usuario por cédula: $e');
+    }
+    return null;
+  }
+
+  /// Crea un nuevo usuario y su perfil en Firestore (Modelo Híbrido: users + conductores/abogados)
   Future<UserCredential?> signUp({
     required String email,
     required String password,
@@ -248,32 +290,79 @@ class FirebaseService {
     String? canton,
     String? cedula,
     String? matriculaForo,
+    String? placa,
+    String? unidadTaxi,
+    String? licencia,
+    String? foto,
     bool debeCambiarClave = false,
   }) async {
     final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
     if (cred.user != null) {
-      await _firestore.collection('users').doc(cred.user!.uid).set({
-        'id': cred.user!.uid,
+      final uid = cred.user!.uid;
+
+      // 1. Colección centralizada users para autenticación rápida
+      await _firestore.collection('users').doc(uid).set({
+        'id': uid,
         'name': name,
         'email': email,
         'role': role.name,
         'phone': phone ?? '',
         'cooperativeId': cooperativeId,
         'cooperativeName': cooperativeName,
-        'canton': canton ?? 'Ibarra',
+        'canton': canton ?? (role == UserRole.clientDriver ? 'Otavalo' : 'Ibarra'),
         'cedula': cedula,
         'matriculaForo': matriculaForo,
+        'placa': placa,
+        'unidadTaxi': unidadTaxi,
+        'licencia': licencia,
+        'foto': foto,
         'debeCambiarClave': debeCambiarClave,
         'isAvailable': true,
         'subscriptionStatus': 'active',
         'subscriptionPlan': role == UserRole.clientDriver ? 'conductor_pro' : 'lawyer_turn',
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
+
+      // 2. Reflejo directo en colecciones dedicadas
+      if (role == UserRole.clientDriver) {
+        await _firestore.collection('conductores').doc(uid).set({
+          'id': uid,
+          'name': name,
+          'email': email,
+          'phone': phone ?? '',
+          'cooperativeId': cooperativeId,
+          'cooperativeName': cooperativeName,
+          'canton': canton ?? 'Otavalo',
+          'cedula': cedula,
+          'placa': placa,
+          'unidadTaxi': unidadTaxi,
+          'licencia': licencia,
+          'foto': foto,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'conductor_pro',
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } else if (role == UserRole.associateLawyer || role == UserRole.adminLawyer) {
+        await _firestore.collection('abogados').doc(uid).set({
+          'id': uid,
+          'name': name,
+          'email': email,
+          'phone': phone ?? '',
+          'canton': canton ?? 'Ibarra',
+          'cedula': cedula,
+          'matriculaForo': matriculaForo,
+          'debeCambiarClave': debeCambiarClave,
+          'isAvailable': true,
+          'subscriptionStatus': 'active',
+          'subscriptionPlan': 'lawyer_turn',
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
     }
     return cred;
   }
 
-  /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore
+  /// Actualiza la contraseña del usuario en Firebase Auth y la bandera en Firestore (users y abogados)
   Future<void> updatePassword(String newPassword) async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -282,7 +371,20 @@ class FirebaseService {
         'debeCambiarClave': false,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+      await _firestore.collection('abogados').doc(user.uid).set({
+        'debeCambiarClave': false,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
     }
+  }
+
+  /// Streams especializados
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamLawyers() {
+    return _firestore.collection('abogados').orderBy('createdAt', descending: true).snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> streamDrivers() {
+    return _firestore.collection('conductores').orderBy('createdAt', descending: true).snapshots();
   }
 
   /// Obtiene los datos del usuario desde Firestore

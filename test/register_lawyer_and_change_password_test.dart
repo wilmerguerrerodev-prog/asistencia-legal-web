@@ -221,7 +221,7 @@ void main() {
   });
 
   group('Login Flow Interception & Role Permissions Tests', () {
-    testWidgets('LoginScreen shows demo card for Dr. Carlos Revelo with temporary password', (tester) async {
+    testWidgets('LoginScreen shows 4 official credential chips and autofills fields on tap', (tester) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -234,9 +234,17 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      final quickCard = find.text('Nuevo Abogado (Dr. Carlos Revelo)');
-      expect(quickCard, findsOneWidget);
-      expect(find.text('1er Login'), findsOneWidget);
+      expect(find.text('Admin TI'), findsOneWidget);
+      expect(find.text('Director'), findsOneWidget);
+      expect(find.text('Abogada'), findsOneWidget);
+      expect(find.text('Conductor'), findsOneWidget);
+
+      // Tap on Conductor chip to autofill credentials
+      await tester.tap(find.text('Conductor'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('conductor@legaltech.ec'), findsWidgets);
+      expect(find.text('conductor123'), findsWidgets);
     });
 
     testWidgets('Director Legal can see + Registrar Nuevo Abogado button', (tester) async {

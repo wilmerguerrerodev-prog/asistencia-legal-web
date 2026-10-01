@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/utils/images.dart';
 
@@ -178,6 +181,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
     }
+    if (_passwordController.text.isEmpty) {
+      _passwordController.text = "conductor123";
+    }
     _tieneFoto = true;
     _fotoPerfil = "assets/images/profile_image.jpg";
 
@@ -216,6 +222,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
     if (_nombreController.text.isEmpty) {
       _nombreController.text = "Carlos Alberto Mendoza";
+    }
+    if (_passwordController.text.isEmpty) {
+      _passwordController.text = "conductor123";
     }
     _tieneFoto = true;
     _fotoPerfil = "assets/images/profile_image.jpg";
@@ -375,6 +384,71 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       foto: _fotoPerfil,
     );
 
+    // Validación de contraseña para acceso del conductor
+    final cedula = _cedulaController.text.trim();
+    final rawPassword = _passwordController.text.trim();
+
+    if (rawPassword.isNotEmpty && rawPassword.length < 4) {
+      setState(() => _isLoading = false);
+      Get.snackbar(
+        "Contraseña muy corta",
+        "Por favor escribe una contraseña de al menos 4 caracteres para poder ingresar con tu cédula.",
+        backgroundColor: const Color(0xFFDC2626),
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+      return;
+    }
+    final password = rawPassword.isNotEmpty ? rawPassword : "conductor123";
+
+    // Registro y persistencia real en Firebase Auth y Cloud Firestore
+    final cleanCedula = cedula.isNotEmpty ? cedula : "1002345678";
+    final email = _emailController.text.trim().isNotEmpty
+        ? _emailController.text.trim()
+        : '$cleanCedula@legaltech.ec';
+
+    try {
+      final cred = await FirebaseService().signUp(
+        email: email,
+        password: password,
+        name: nombre,
+        role: UserRole.clientDriver,
+        phone: _celularController.text.trim().isNotEmpty
+            ? _celularController.text.trim()
+            : "+593 98 765 4321",
+        cooperativeName: cooperativa,
+        cedula: cleanCedula,
+        placa: placa,
+        unidadTaxi: unidad,
+        licencia: _licenciaController.text.trim(),
+        foto: _fotoPerfil,
+      );
+
+      if (Get.isRegistered<AuthMockController>()) {
+        final authController = Get.find<AuthMockController>();
+        final newDriver = MockUser(
+          id: cred?.user?.uid ?? 'DRIVER-${DateTime.now().millisecondsSinceEpoch}',
+          name: nombre,
+          email: email,
+          temporaryPassword: password,
+          role: UserRole.clientDriver,
+          cooperativeName: cooperativa,
+          canton: 'Otavalo',
+          phone: _celularController.text.trim(),
+          cedula: cleanCedula,
+          placa: placa,
+          unidadTaxi: unidad,
+          licencia: _licenciaController.text.trim(),
+          foto: _fotoPerfil,
+        );
+        authController.switchUser(newDriver, navigate: false);
+      }
+    } catch (e) {
+      debugPrint('Error registrando conductor en Firebase: $e');
+    }
+
     setState(() => _isLoading = false);
 
     Get.snackbar(
@@ -388,6 +462,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       duration: const Duration(seconds: 4),
       icon: const Icon(Icons.shield_rounded, color: Colors.white),
     );
+
+    // Notificar al gestor de contraseñas de iOS / Android para sugerir guardar la nueva contraseña
+    TextInput.finishAutofillContext();
 
     Get.offAllNamed(RouteHelper.initial);
   }
@@ -434,21 +511,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 48,
+                        height: 48,
+                        padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2563EB),
-                          borderRadius: BorderRadius.circular(12),
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark ? const Color(0xFF475569) : const Color(0xFFE2E8F0),
+                            width: 1.5,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                               blurRadius: 10,
                               offset: const Offset(0, 3),
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Icon(Icons.local_taxi_rounded, color: Colors.white, size: 22),
+                        child: Image.asset(
+                          'assets/images/legaltech_logo.png',
+                          fit: BoxFit.contain,
+                          color: isDark ? Colors.white : const Color(0xFF0F172A),
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -541,10 +625,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   // --- PASO 1: PANTALLA DE AUTENTICACIÓN RÁPIDA ---
   Widget _buildPaso1Autenticacion(bool isDark) {
-    return Column(
-      key: const ValueKey("Paso1_AutenticacionRapida"),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return AutofillGroup(
+      child: Column(
+        key: const ValueKey("Paso1_AutenticacionRapida"),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         Text(
           "Elige tu método de entrada rápido:",
           style: TextStyle(
@@ -681,6 +766,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           icon: Icons.alternate_email_rounded,
           keyboardType: TextInputType.emailAddress,
           isDark: isDark,
+          autofillHints: const [AutofillHints.email, AutofillHints.username],
         ),
 
         const SizedBox(height: 12),
@@ -699,6 +785,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           controller: _passwordController,
           obscureText: _obscurePassword,
+          autofillHints: const [AutofillHints.newPassword],
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _avanzarConCorreo(),
           style: TextStyle(
             fontFamily: 'Plus Jakarta Sans',
             fontSize: 13.5,
@@ -807,15 +896,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
         ),
       ],
+      ),
     );
   }
 
   // --- PASO 2: FORMULARIO DE DATOS ESPECÍFICOS DEL PERFIL ---
   Widget _buildPaso2Perfil(bool isDark) {
-    return Column(
-      key: const ValueKey("Paso2_DatosPerfil"),
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return AutofillGroup(
+      child: Column(
+        key: const ValueKey("Paso2_DatosPerfil"),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         // 1. Fotografía Oficial del Conductor (Vital para confianza y seguridad)
         _buildFotoConductorSelector(isDark),
 
@@ -842,6 +933,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         TextField(
           controller: _cedulaController,
           keyboardType: TextInputType.number,
+          autofillHints: const [AutofillHints.newUsername, AutofillHints.username],
+          textInputAction: TextInputAction.next,
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
@@ -980,6 +1073,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           hint: "Ej. Carlos Alberto Mendoza",
           icon: Icons.person_outline_rounded,
           isDark: isDark,
+          autofillHints: const [AutofillHints.name],
         ),
 
         const SizedBox(height: 12),
@@ -1001,6 +1095,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           icon: Icons.phone_rounded,
           keyboardType: TextInputType.phone,
           isDark: isDark,
+          autofillHints: const [AutofillHints.telephoneNumber],
         ),
 
         const SizedBox(height: 16),
@@ -1085,6 +1180,75 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
 
+        const SizedBox(height: 16),
+
+        _buildSeccionHeader(
+          icono: Icons.lock_outline_rounded,
+          titulo: "CREAR CONTRASEÑA DE ACCESO",
+          isDark: isDark,
+        ),
+        const SizedBox(height: 10),
+
+        // Campo Crear Contraseña con botón de mostrar/ocultar
+        Text(
+          "Crea tu Contraseña para ingresar con tu Cédula",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            color: isDark ? Colors.white70 : const Color(0xFF334155),
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _passwordController,
+          obscureText: _obscurePassword,
+          autofillHints: const [AutofillHints.newPassword],
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _registrarConductor(),
+          style: TextStyle(
+            fontFamily: 'Plus Jakarta Sans',
+            fontSize: 13.5,
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+          ),
+          decoration: InputDecoration(
+            hintText: "Ej. clave123 o PIN de 4 dígitos",
+            hintStyle: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 13,
+              color: isDark ? Colors.white30 : const Color(0xFF94A3B8),
+            ),
+            prefixIcon: const Icon(Icons.lock_rounded, size: 20, color: Color(0xFF2563EB)),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                size: 20,
+                color: isDark ? Colors.white54 : const Color(0xFF64748B),
+              ),
+              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+            ),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF2563EB), width: 1.5),
+            ),
+          ),
+        ),
+
         const SizedBox(height: 20),
 
         // Botones Volver a Paso 1 y Completar Registro
@@ -1138,6 +1302,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ],
         ),
       ],
+      ),
     );
   }
 
@@ -1302,10 +1467,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     required IconData icon,
     required bool isDark,
     TextInputType keyboardType = TextInputType.text,
+    Iterable<String>? autofillHints,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
+      autofillHints: autofillHints,
       style: TextStyle(
         fontFamily: 'Plus Jakarta Sans',
         fontSize: 13.5,
