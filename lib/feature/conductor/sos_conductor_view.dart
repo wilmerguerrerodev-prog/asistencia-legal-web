@@ -1260,7 +1260,6 @@ class SosConductorView extends StatelessWidget {
         Obx(() {
           final esEscalado = controller.casoEscaladoASuperAbogado.value;
           final llamadaEnCurso = controller.llamadaIniciada.value;
-          final seg = controller.segundosRestantes.value;
           final abogado = controller.abogadoActivo;
 
           return Container(
@@ -1428,85 +1427,57 @@ class SosConductorView extends StatelessWidget {
                   ),
                 ),
 
-                // Temporizador mientras se espera respuesta (1 minuto)
-                if (llamadaEnCurso && !esEscalado) ...[
+                // Enlace directo con el Dr. Emir Vásquez al iniciar contacto
+                if (llamadaEnCurso) ...[
                   Container(
                     margin: const EdgeInsets.only(top: 14),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.4),
                         width: 1.2,
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                    child: Row(
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFF59E0B),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.timer_rounded,
-                                  size: 16, color: Colors.white),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Esperando respuesta · 0:${seg.toString().padLeft(2, '0')}",
-                                    style: const TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 12.5,
-                                      color: Color(0xFFD97706),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  const Text(
-                                    "Si no contesta en 1 minuto, te conectaremos con otro abogado.",
-                                    style: TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF10B981),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.phone_in_talk_rounded,
+                              size: 16, color: Colors.white),
                         ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          height: 38,
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFFB45309),
-                              side: const BorderSide(
-                                  color: Color(0xFFF59E0B), width: 1.2),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                            ),
-                            onPressed: () => controller.escalarASuperAbogado(),
-                            icon:
-                                const Icon(Icons.swap_horiz_rounded, size: 16),
-                            label: const Text(
-                              "¿No contesta? Conectar con otro abogado ahora",
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w800,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Enlace directo con ${abogado.nombre}",
+                                style: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12.5,
+                                  color: Color(0xFF047857),
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 2),
+                              Text(
+                                "Llamada o WhatsApp directo a su línea personal ${abogado.telefono}.",
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF334155),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -1625,10 +1596,10 @@ class SosConductorView extends StatelessWidget {
                 ),
 
                 // Nota simple bajo el botón en estado inicial
-                if (!esEscalado && !llamadaEnCurso) ...[
+                if (!llamadaEnCurso) ...[
                   const SizedBox(height: 8),
                   Text(
-                    "⏱️ Si no responde en 1 minuto, te conectaremos con otro abogado disponible.",
+                    "🛡️ Conexión directa y prioritaria con el Director Legal Dr. Emir Vásquez.",
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
                       fontSize: 11,
