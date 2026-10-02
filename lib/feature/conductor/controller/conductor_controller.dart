@@ -137,12 +137,36 @@ class ConductorController extends GetxController {
   final RxString rolActivo = 'conductor'.obs;
   final RxBool abogadoDisponibleGuardia = true.obs;
 
+  // Datos reactivos de Suscripción / Membresía Legal
+  final RxString estadoSuscripcion = "Activo y Protegido".obs;
+  final RxBool estaSuscripcionActiva = true.obs;
+  final RxString planSuscripcion = "Cobertura Total 24/7 (\$1.00 / mes)".obs;
+  final RxString fechaUltimoPago = "15 de Septiembre, 2026".obs;
+  final RxString fechaVencimiento = "15 de Octubre, 2026".obs;
+  final RxInt diasRestantesSuscripcion = 14.obs;
+
   void toggleGuardiaAbogado() {
     abogadoDisponibleGuardia.value = !abogadoDisponibleGuardia.value;
   }
 
   void cambiarRol(String nuevoRol) {
     rolActivo.value = nuevoRol;
+  }
+
+  void actualizarSuscripcion({
+    String? estado,
+    bool? activa,
+    String? plan,
+    String? ultimoPago,
+    String? vencimiento,
+    int? diasRestantes,
+  }) {
+    if (estado != null) estadoSuscripcion.value = estado;
+    if (activa != null) estaSuscripcionActiva.value = activa;
+    if (plan != null) planSuscripcion.value = plan;
+    if (ultimoPago != null) fechaUltimoPago.value = ultimoPago;
+    if (vencimiento != null) fechaVencimiento.value = vencimiento;
+    if (diasRestantes != null) diasRestantesSuscripcion.value = diasRestantes;
   }
 
   String get nombreConductor => _nombreConductor.value;

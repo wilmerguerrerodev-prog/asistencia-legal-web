@@ -55,10 +55,12 @@ import 'package:getdash/feature/support/support_screen.dart';
 import 'package:getdash/feature/users/add_user_screen.dart';
 import 'package:getdash/feature/users/all_users.dart';
 import 'package:getdash/feature/users/user_profile_screen.dart';
+import 'package:getdash/feature/conductor/suscripcion_conductor_screen.dart';
 
 class RouteHelper {
   static const String initial = '/';
   static const String sosConductorScreen = '/sos';
+  static const String conductorSuscripcionScreen = '/conductorSuscripcion';
   static const String lawyerWorkspaceScreen = '/lawyerWorkspace';
   static const String changeTemporaryPasswordScreen = '/changeTemporaryPassword';
   static const String forgotPassword = '/forgot-password';
@@ -172,6 +174,7 @@ class RouteHelper {
   static String getLawyerWorkspaceRoute() => lawyerWorkspaceScreen;
   static String getChangeTemporaryPasswordRoute() => changeTemporaryPasswordScreen;
   static String getSosConductorRoute() => sosConductorScreen;
+  static String getConductorSuscripcionRoute() => conductorSuscripcionScreen;
   static String getDashboardScreen1() => dashboardScreen1;
   static String getDashboardScreen2() => dashboardScreen2;
   static String getDashboardScreen3() => dashboardScreen3;
@@ -292,5 +295,8 @@ class RouteHelper {
     GetPage(
         name: changeTemporaryPasswordScreen,
         page: () => const ChangeTemporaryPasswordScreen()),
+    GetPage(
+        name: conductorSuscripcionScreen,
+        page: () => const SuscripcionConductorScreen()),
   ];
 }

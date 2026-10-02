@@ -307,6 +307,11 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           menuTitle: 'Mi Perfil',
           route: RouteHelper.getUserProfileScreen(),
         ),
+        MenuModel(
+          iconData: Icons.card_membership_rounded,
+          menuTitle: 'Mi Suscripción',
+          route: RouteHelper.getConductorSuscripcionRoute(),
+        ),
       ];
   }
 }
