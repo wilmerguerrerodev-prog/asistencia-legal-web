@@ -179,47 +179,36 @@ class SosConductorView extends StatelessWidget {
               ),
               Obx(() {
                 final bool isAuth = controller.estaAutenticado.value;
+                if (isAuth) return const SizedBox.shrink();
                 return InkWell(
-                  onTap: () => Get.toNamed(isAuth
-                      ? RouteHelper.loginScreen
-                      : RouteHelper.loginScreen),
+                  onTap: () => Get.toNamed(RouteHelper.loginScreen),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                     decoration: BoxDecoration(
-                      color: isAuth
-                          ? const Color(0xFF16A34A).withValues(alpha: 0.12)
-                          : const Color(0xFF2563EB).withValues(alpha: 0.12),
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isAuth
-                            ? const Color(0xFF16A34A).withValues(alpha: 0.4)
-                            : const Color(0xFF2563EB).withValues(alpha: 0.4),
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.4),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isAuth
-                              ? Icons.verified_user_rounded
-                              : Icons.login_rounded,
+                          Icons.login_rounded,
                           size: 13,
-                          color: isAuth
-                              ? const Color(0xFF16A34A)
-                              : const Color(0xFF2563EB),
+                          color: Color(0xFF2563EB),
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
-                          isAuth ? "Sesión Activa" : "Ingresar",
+                          "Ingresar",
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
-                            color: isAuth
-                                ? const Color(0xFF16A34A)
-                                : const Color(0xFF2563EB),
+                            color: Color(0xFF2563EB),
                           ),
                         ),
                       ],

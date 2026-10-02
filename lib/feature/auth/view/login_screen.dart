@@ -319,23 +319,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = false);
 
-    final esAbogado = userToLogin.role != UserRole.clientDriver;
-
-    Get.snackbar(
-      '${userToLogin.role.iconEmoji} ${userToLogin.role.displayName}',
-      'Sesión iniciada correctamente como ${userToLogin.name}',
-      backgroundColor: esAbogado ? const Color(0xFF0F766E) : const Color(0xFF16A34A),
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      duration: const Duration(seconds: 3),
-      icon: Icon(
-        esAbogado ? Icons.gavel_rounded : Icons.verified_user_rounded,
-        color: Colors.white,
-      ),
-    );
-
     // Notificar al sistema operativo (iOS Llavero de iCloud / Android Google Autofill) para guardar credenciales
     TextInput.finishAutofillContext();
 
