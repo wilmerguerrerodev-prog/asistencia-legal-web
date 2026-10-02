@@ -279,7 +279,7 @@ void main() {
     await tester.tap(btnContactarZona);
     await tester.pump();
 
-    expect(find.textContaining('Enlace directo con Dr. Emir Vásquez'), findsOneWidget);
+    expect(Get.find<ConductorController>().llamadaIniciada.value, true);
     expect(find.textContaining('+593 98 845 6189'), findsWidgets);
 
     Get.find<ConductorController>().reiniciarFlujo();

@@ -1259,7 +1259,6 @@ class SosConductorView extends StatelessWidget {
         // --- PASO 4: CONTACTO DE ASISTENCIA INMEDIATA ---
         Obx(() {
           final esEscalado = controller.casoEscaladoASuperAbogado.value;
-          final llamadaEnCurso = controller.llamadaIniciada.value;
           final abogado = controller.abogadoActivo;
 
           return Container(
@@ -1427,63 +1426,7 @@ class SosConductorView extends StatelessWidget {
                   ),
                 ),
 
-                // Enlace directo con el Dr. Emir Vásquez al iniciar contacto
-                if (llamadaEnCurso) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 14),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.4),
-                        width: 1.2,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF10B981),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.phone_in_talk_rounded,
-                              size: 16, color: Colors.white),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Enlace directo con ${abogado.nombre}",
-                                style: const TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 12.5,
-                                  color: Color(0xFF047857),
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "Llamada o WhatsApp directo a su línea personal ${abogado.telefono}.",
-                                style: TextStyle(
-                                  fontFamily: 'Plus Jakarta Sans',
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w500,
-                                  color: isDark
-                                      ? Colors.white70
-                                      : const Color(0xFF334155),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+
 
                 const SizedBox(height: 16),
 
