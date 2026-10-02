@@ -2165,69 +2165,9 @@ class SosConductorView extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // 5. Botones de Acción Rápida (Llamar / WhatsApp)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF25D366),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            controller.contactarAbogadoPorWhatsApp();
-                          },
-                          icon: const Icon(Icons.chat_bubble_rounded, size: 18),
-                          label: const Text(
-                            "WhatsApp",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2563EB),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            controller.llamarAbogadoPorTelefono();
-                          },
-                          icon: const Icon(Icons.phone_in_talk_rounded, size: 18),
-                          label: const Text(
-                            "Llama, él es tu abogado",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
                   // Botón Cerrar
                   OutlinedButton(
+                    key: const Key('btn_cerrar_credencial_inferior'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor:
                           isDark ? Colors.white70 : const Color(0xFF475569),
