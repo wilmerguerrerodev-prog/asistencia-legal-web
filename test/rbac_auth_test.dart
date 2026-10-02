@@ -114,12 +114,13 @@ void main() {
       expect(associateTitles, isNot(contains('Abogados')));
       expect(associateTitles, isNot(contains('Cooperativas')));
 
-      // 2. clientDriver: sees Portal Conductor SOS and Mi Perfil
+      // 2. clientDriver: sees Portal Conductor SOS, Mi Perfil, and Mi Suscripción
       final driverMenu = getMenuListForRole(UserRole.clientDriver);
       final driverTitles = driverMenu.map((m) => m.menuTitle).toList();
       expect(driverTitles, contains('Portal Conductor SOS'));
       expect(driverTitles, contains('Mi Perfil'));
-      expect(driverTitles.length, 2);
+      expect(driverTitles, contains('Mi Suscripción'));
+      expect(driverTitles.length, 3);
       expect(driverTitles, isNot(contains('Siniestros')));
       expect(driverTitles, isNot(contains('Abogados')));
 

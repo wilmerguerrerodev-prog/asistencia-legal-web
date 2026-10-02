@@ -179,7 +179,7 @@ void main() {
     controller.seleccionarIncidente(TipoIncidente.operativoTransito);
     final link = controller.obtenerEnlaceWhatsApp();
 
-    expect(link, startsWith('https://wa.me/593979376024?text='));
+    expect(link, startsWith('https://wa.me/593988456189?text='));
     final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
     expect(decodedText, contains('ALERTA SOS - ASISTENCIA LEGAL'));
     expect(decodedText, contains('Carlos Mendoza'));
@@ -249,21 +249,21 @@ void main() {
     await tester.tap(opcionOperativo);
     await tester.pumpAndSettle();
 
-    // En Paso 3 aparece el abogado asignado y los botones de acción rápida
-    expect(find.text('Dr. Esteban Narváez'), findsWidgets);
+    // En Paso 3 aparece el abogado asignado (Dr. Emir Vásquez) y los botones de acción rápida
+    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
     expect(find.textContaining('A 1.2 km de tu incidente'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
     expect(find.text('Llamar'), findsWidgets);
     expect(find.text('WhatsApp'), findsWidgets);
 
-    // Abrir credencial del abogado de zona
+    // Abrir credencial del abogado
     final pillVerCredencial = find.text('Ver credencial ›');
     await tester.ensureVisible(pillVerCredencial);
     await tester.tap(pillVerCredencial);
     await tester.pumpAndSettle();
 
     expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
-    expect(find.text('Dr. Esteban Narváez'), findsWidgets);
+    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
     expect(find.text('FORMACIÓN ACADÉMICA (SENESCYT)'), findsOneWidget);
     expect(find.text('TRAYECTORIA Y RESPALDO'), findsOneWidget);
     expect(find.text('Cerrar credencial'), findsOneWidget);
@@ -273,76 +273,39 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsNothing);
 
-    // 3. Iniciar contacto con abogado de zona: se activa temporizador de 1 minuto
+    // 3. Iniciar contacto directo con Dr. Emir Vásquez
     final btnContactarZona = find.byKey(const Key('btn_llamar_abogado_paso3')).first;
     await tester.ensureVisible(btnContactarZona);
     await tester.tap(btnContactarZona);
     await tester.pump();
 
-    expect(find.textContaining('Esperando respuesta'), findsOneWidget);
-    expect(find.text('¿No contesta? Conectar con otro abogado ahora'),
-        findsOneWidget);
+    expect(Get.find<ConductorController>().llamadaIniciada.value, true);
+    expect(find.textContaining('+593 98 845 6189'), findsWidgets);
 
-    // 4. Escalar caso al Dr. Emir Vásquez
-    final btnEscalar = find.text('¿No contesta? Conectar con otro abogado ahora');
-    await tester.ensureVisible(btnEscalar);
-    await tester.tap(btnEscalar);
-    await tester.pumpAndSettle();
-
-    // Verificar que el caso ahora está a cargo de Dr. Emir Vásquez (sin etiquetas redundantes)
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
-    expect(find.text('Caso asignado a otro abogado'), findsNothing);
-    expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
-
-    // 5. Abrir credencial del Dr. Emir Vásquez
-    final pillVerCredencialSuper = find.text('Ver credencial ›');
-    await tester.ensureVisible(pillVerCredencialSuper);
-    await tester.tap(pillVerCredencialSuper);
-    await tester.pumpAndSettle();
-
-    expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
-    expect(
-        find.text('Doctor en Jurisprudencia y Abogado de la República'),
-        findsOneWidget);
-    expect(find.text('Matrícula F.A. 17-2010-415 · Pichincha / Corte Nacional'),
-        findsOneWidget);
-    expect(find.text('Director Jurídico Nacional'), findsWidgets);
-    expect(find.text('Vásquez & Asociados · Despacho Matriz Nacional'),
-        findsWidgets);
+    Get.find<ConductorController>().reiniciarFlujo();
+    await tester.pump();
   });
 
   test(
-      'ConductorController: Temporizador de 1 minuto (60s) y escalamiento al Dr. Emir Vásquez',
+      'ConductorController: Contacto directo prioritario con Dr. Emir Vásquez',
       () {
     final controller = ConductorController();
-    expect(controller.abogadoActivo.nombre, 'Dr. Esteban Narváez');
-    expect(controller.segundosRestantes.value, 60);
-    expect(controller.casoEscaladoASuperAbogado.value, false);
-
-    controller.iniciarLlamada();
-    expect(controller.llamadaIniciada.value, true);
-    expect(controller.segundosRestantes.value, 60);
-
-    // Escalar al Dr. Emir Vásquez
-    controller.escalarASuperAbogado();
-    expect(controller.casoEscaladoASuperAbogado.value, true);
     expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
-    expect(controller.abogadoActivo.esSuperAbogado, true);
     expect(controller.telefonoAbogado, '+593 98 845 6189');
     expect(controller.matriculaAbogado,
         '17-2010-415 · Pichincha / Corte Nacional');
 
-    // Comprobar que el mensaje de WhatsApp se actualiza con los datos del Dr. Emir Vásquez
+    controller.iniciarLlamada();
+    expect(controller.llamadaIniciada.value, true);
+
+    // Comprobar que el mensaje de WhatsApp contiene los datos del Dr. Emir Vásquez
     final mensaje = controller.obtenerMensajeWhatsApp();
-    expect(mensaje, contains('TRANSFERIDO A DR. EMIR VÁSQUEZ'));
+    expect(mensaje, contains('ALERTA SOS - ASISTENCIA LEGAL'));
     expect(controller.obtenerEnlaceWhatsApp(), startsWith('https://wa.me/593988456189'));
 
-    // Reiniciar flujo y verificar regreso a estado inicial con abogado de zona
+    // Reiniciar flujo
     controller.reiniciarFlujo();
-    expect(controller.casoEscaladoASuperAbogado.value, false);
-    expect(controller.abogadoActivo.nombre, 'Dr. Esteban Narváez');
-    expect(controller.segundosRestantes.value, 60);
+    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
     expect(controller.llamadaIniciada.value, false);
   });
 }

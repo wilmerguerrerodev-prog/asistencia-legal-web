@@ -137,12 +137,36 @@ class ConductorController extends GetxController {
   final RxString rolActivo = 'conductor'.obs;
   final RxBool abogadoDisponibleGuardia = true.obs;
 
+  // Datos reactivos de Suscripción / Membresía Legal
+  final RxString estadoSuscripcion = "Activo y Protegido".obs;
+  final RxBool estaSuscripcionActiva = true.obs;
+  final RxString planSuscripcion = "Cobertura Total 24/7 (\$1.00 / mes)".obs;
+  final RxString fechaUltimoPago = "15 de Septiembre, 2026".obs;
+  final RxString fechaVencimiento = "15 de Octubre, 2026".obs;
+  final RxInt diasRestantesSuscripcion = 14.obs;
+
   void toggleGuardiaAbogado() {
     abogadoDisponibleGuardia.value = !abogadoDisponibleGuardia.value;
   }
 
   void cambiarRol(String nuevoRol) {
     rolActivo.value = nuevoRol;
+  }
+
+  void actualizarSuscripcion({
+    String? estado,
+    bool? activa,
+    String? plan,
+    String? ultimoPago,
+    String? vencimiento,
+    int? diasRestantes,
+  }) {
+    if (estado != null) estadoSuscripcion.value = estado;
+    if (activa != null) estaSuscripcionActiva.value = activa;
+    if (plan != null) planSuscripcion.value = plan;
+    if (ultimoPago != null) fechaUltimoPago.value = ultimoPago;
+    if (vencimiento != null) fechaVencimiento.value = vencimiento;
+    if (diasRestantes != null) diasRestantesSuscripcion.value = diasRestantes;
   }
 
   String get nombreConductor => _nombreConductor.value;
@@ -184,23 +208,23 @@ class ConductorController extends GetxController {
     estaAutenticado.value = true;
   }
 
-  // Abogado de zona más cercano (asignado automáticamente según geolocalización del incidente)
+  // Abogado titular / Director Jurídico asignado directamente
   final AbogadoDefensor abogadoZona = const AbogadoDefensor(
-    nombre: "Dr. Esteban Narváez",
-    rol: "Abogado de Zona Asignado (Más cercano)",
-    zonaODistancia: "En territorio · A 1.2 km del incidente",
-    especialidad: "Especialista en Tránsito, Peritajes y COIP",
-    telefono: "+593 97 937 6024",
-    matricula: "17-2018-842 · Pichincha",
+    nombre: "Dr. Emir Vásquez",
+    rol: "Director Jurídico Nacional",
+    zonaODistancia: "Dirección Jurídica General · Cobertura Inmediata",
+    especialidad: "Abogado Penalista y Consultor Político · Especialista en Tránsito y COIP",
+    telefono: "+593 98 845 6189",
+    matricula: "17-2010-415 · Pichincha / Corte Nacional",
     entidadAcreditadora: "Consejo de la Judicatura del Ecuador",
     universidad: "Universidad Central del Ecuador",
-    tituloGrado: "Abogado de los Tribunales y Juzgados de la República",
-    especialidadPosgrado: "Especialista Superior en Derecho Penal y Tránsito (COIP)",
-    maestria: "Magíster en Litigación Oral y Solución de Controversias",
-    experiencia: "+12 años defendiendo a transportistas y conductores",
-    casosAtendidos: "Más de 450 peritajes y audiencias de tránsito",
-    despacho: "Red LegalTech · Auxilio Inmediato en Territorio",
-    esSuperAbogado: false,
+    tituloGrado: "Doctor en Jurisprudencia y Abogado de la República",
+    especialidadPosgrado: "Especialista Superior en Derecho Penal Económico y Tránsito",
+    maestria: "Magíster en Derecho Penal y Procesal Penal",
+    experiencia: "+18 años en litigación penal de tránsito y defensa corporativa",
+    casosAtendidos: "Más de 1.200 juicios de tránsito y flagrancias resueltas",
+    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    esSuperAbogado: true,
   );
 
   // Super Abogado (Director General titular que contrató y respalda el servicio)
@@ -222,9 +246,8 @@ class ConductorController extends GetxController {
     esSuperAbogado: true,
   );
 
-  // Abogado activo según estado de escalamiento (de zona o Super Abogado)
-  AbogadoDefensor get abogadoActivo =>
-      casoEscaladoASuperAbogado.value ? superAbogado : abogadoZona;
+  // Abogado activo asignado directamente al Director General Dr. Emir Vásquez
+  AbogadoDefensor get abogadoActivo => superAbogado;
 
   // Propiedades dinámicas compatibles con las vistas
   String get nombreAbogado => abogadoActivo.nombre;

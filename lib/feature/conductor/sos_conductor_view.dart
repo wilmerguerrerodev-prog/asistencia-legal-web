@@ -179,47 +179,36 @@ class SosConductorView extends StatelessWidget {
               ),
               Obx(() {
                 final bool isAuth = controller.estaAutenticado.value;
+                if (isAuth) return const SizedBox.shrink();
                 return InkWell(
-                  onTap: () => Get.toNamed(isAuth
-                      ? RouteHelper.loginScreen
-                      : RouteHelper.loginScreen),
+                  onTap: () => Get.toNamed(RouteHelper.loginScreen),
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                     decoration: BoxDecoration(
-                      color: isAuth
-                          ? const Color(0xFF16A34A).withValues(alpha: 0.12)
-                          : const Color(0xFF2563EB).withValues(alpha: 0.12),
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isAuth
-                            ? const Color(0xFF16A34A).withValues(alpha: 0.4)
-                            : const Color(0xFF2563EB).withValues(alpha: 0.4),
+                        color: const Color(0xFF2563EB).withValues(alpha: 0.4),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isAuth
-                              ? Icons.verified_user_rounded
-                              : Icons.login_rounded,
+                          Icons.login_rounded,
                           size: 13,
-                          color: isAuth
-                              ? const Color(0xFF16A34A)
-                              : const Color(0xFF2563EB),
+                          color: Color(0xFF2563EB),
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
-                          isAuth ? "Sesión Activa" : "Ingresar",
+                          "Ingresar",
                           style: TextStyle(
                             fontFamily: 'Montserrat',
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
-                            color: isAuth
-                                ? const Color(0xFF16A34A)
-                                : const Color(0xFF2563EB),
+                            color: Color(0xFF2563EB),
                           ),
                         ),
                       ],
@@ -1259,8 +1248,6 @@ class SosConductorView extends StatelessWidget {
         // --- PASO 4: CONTACTO DE ASISTENCIA INMEDIATA ---
         Obx(() {
           final esEscalado = controller.casoEscaladoASuperAbogado.value;
-          final llamadaEnCurso = controller.llamadaIniciada.value;
-          final seg = controller.segundosRestantes.value;
           final abogado = controller.abogadoActivo;
 
           return Container(
@@ -1428,91 +1415,7 @@ class SosConductorView extends StatelessWidget {
                   ),
                 ),
 
-                // Temporizador mientras se espera respuesta (1 minuto)
-                if (llamadaEnCurso && !esEscalado) ...[
-                  Container(
-                    margin: const EdgeInsets.only(top: 14),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
-                        width: 1.2,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFF59E0B),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.timer_rounded,
-                                  size: 16, color: Colors.white),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Esperando respuesta · 0:${seg.toString().padLeft(2, '0')}",
-                                    style: const TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 12.5,
-                                      color: Color(0xFFD97706),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  const Text(
-                                    "Si no contesta en 1 minuto, te conectaremos con otro abogado.",
-                                    style: TextStyle(
-                                      fontFamily: 'Plus Jakarta Sans',
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          height: 38,
-                          child: OutlinedButton.icon(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: const Color(0xFFB45309),
-                              side: const BorderSide(
-                                  color: Color(0xFFF59E0B), width: 1.2),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                            ),
-                            onPressed: () => controller.escalarASuperAbogado(),
-                            icon:
-                                const Icon(Icons.swap_horiz_rounded, size: 16),
-                            label: const Text(
-                              "¿No contesta? Conectar con otro abogado ahora",
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+
 
                 const SizedBox(height: 16),
 
@@ -1624,20 +1527,6 @@ class SosConductorView extends StatelessWidget {
                   ],
                 ),
 
-                // Nota simple bajo el botón en estado inicial
-                if (!esEscalado && !llamadaEnCurso) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    "⏱️ Si no responde en 1 minuto, te conectaremos con otro abogado disponible.",
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11,
-                      color: isDark ? Colors.white54 : const Color(0xFF64748B),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
               ],
             ),
           );
@@ -2265,69 +2154,9 @@ class SosConductorView extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // 5. Botones de Acción Rápida (Llamar / WhatsApp)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF25D366),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            controller.contactarAbogadoPorWhatsApp();
-                          },
-                          icon: const Icon(Icons.chat_bubble_rounded, size: 18),
-                          label: const Text(
-                            "WhatsApp",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2563EB),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                            controller.llamarAbogadoPorTelefono();
-                          },
-                          icon: const Icon(Icons.phone_in_talk_rounded, size: 18),
-                          label: const Text(
-                            "Llama, él es tu abogado",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 10),
-
                   // Botón Cerrar
                   OutlinedButton(
+                    key: const Key('btn_cerrar_credencial_inferior'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor:
                           isDark ? Colors.white70 : const Color(0xFF475569),

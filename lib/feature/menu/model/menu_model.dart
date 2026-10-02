@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/route_helper.dart';
-import 'package:getdash/utils/images.dart';
 
 class MenuModel {
   String? icon;
@@ -29,36 +28,35 @@ class SubMenu {
   });
 }
 
+/// Menú global para Administrador TI con acceso a todos los módulos legales
 List<MenuModel> menuList = [
   MenuModel(
-    icon: Images.dashboard,
     iconData: Icons.local_taxi_rounded,
     menuTitle: 'LegalTech Cliente',
     route: RouteHelper.getSosConductorRoute(),
   ),
   MenuModel(
-    icon: Images.dashboard,
     iconData: Icons.badge_rounded,
     menuTitle: 'Mi Perfil',
     route: RouteHelper.getUserProfileScreen(),
   ),
   MenuModel(
-    icon: Images.dashboard,
+    iconData: Icons.card_membership_rounded,
+    menuTitle: 'Mi Suscripción',
+    route: RouteHelper.getConductorSuscripcionRoute(),
+  ),
+  MenuModel(
     iconData: Icons.shield_rounded,
     menuTitle: 'Centro de Mando Legal',
     route: RouteHelper.getLegalCenterRoute(),
   ),
   MenuModel(
-    icon: Images.dashboard,
     iconData: Icons.gavel_rounded,
     menuTitle: 'Mi Despacho (Abogado)',
     route: RouteHelper.getLawyerWorkspaceRoute(),
   ),
   MenuModel(
-    menuTitle: 'features',
-  ),
-  MenuModel(
-    icon: Images.dashboard,
+    iconData: Icons.policy_rounded,
     menuTitle: 'asistencia_juridica',
     subMenus: [
       SubMenu(
@@ -79,159 +77,9 @@ List<MenuModel> menuList = [
       ),
     ],
   ),
-  MenuModel(
-    icon: Images.calendar,
-    menuTitle: 'Calendar',
-    route: RouteHelper.getCalendarScreen(),
-  ),
-  MenuModel(
-    icon: Images.googleMaps,
-    menuTitle: 'Google Map',
-    route: RouteHelper.getMapScreen(),
-  ),
-  MenuModel(
-    icon: Images.chartsMenu,
-    menuTitle: 'Charts',
-    route: RouteHelper.getChartsScreen(),
-  ),
-  MenuModel(
-    icon: Images.kanban,
-    menuTitle: 'Kanban',
-    route: RouteHelper.getKanbanScreen(),
-  ),
-  MenuModel(
-    icon: Images.conversation,
-    menuTitle: 'conversation',
-    route: RouteHelper.getConversationScreen(),
-  ),
-  MenuModel(icon: Images.users, menuTitle: 'manage_users', subMenus: [
-    SubMenu(
-        subMenuTitle: 'all_users_list',
-        route: RouteHelper.getAllUsersScreen('')),
-    SubMenu(subMenuTitle: 'add_user', route: RouteHelper.getAddUserScreen()),
-  ]),
-  MenuModel(icon: Images.users, menuTitle: 'manage_sellers', subMenus: [
-    SubMenu(
-        subMenuTitle: 'all_seller', route: RouteHelper.getAllSellerScreen('')),
-    SubMenu(
-        subMenuTitle: 'add_seller', route: RouteHelper.getAddSellerScreen()),
-  ]),
-  MenuModel(
-      icon: Images.contentManagement,
-      menuTitle: 'manage_product',
-      subMenus: [
-        SubMenu(
-            subMenuTitle: 'product_list',
-            route: RouteHelper.getAllProductListScreen()),
-        SubMenu(
-            subMenuTitle: 'add_product',
-            route: RouteHelper.getAddProductScreen()),
-        SubMenu(
-            subMenuTitle: 'product_details',
-            route: RouteHelper.getProductDetailsScreen()),
-      ]),
-  MenuModel(
-    icon: Images.mediaLibrary,
-    menuTitle: 'media_library',
-    route: RouteHelper.getMediaLibraryScreen(),
-  ),
-  MenuModel(
-      icon: Images.paymentGateway,
-      menuTitle: 'payment_gateway',
-      route: RouteHelper.getPaymentGatewayScreen('url')),
-  MenuModel(
-      icon: Images.smsAndOtp,
-      menuTitle: 'sms_and_otp',
-      route: RouteHelper.getSmsOtpScreen()),
-  MenuModel(
-      icon: Images.pushNotification,
-      menuTitle: 'push_notification',
-      subMenus: [
-        SubMenu(
-            subMenuTitle: 'send_notification',
-            route: RouteHelper.getNotificationScreen()),
-        SubMenu(
-            subMenuTitle: 'create_notification',
-            route: RouteHelper.getCreateNotificationScreen()),
-        SubMenu(
-            subMenuTitle: 'settings',
-            route: RouteHelper.getNotificationSettingScreen()),
-      ]),
-  MenuModel(
-    icon: Images.pages,
-    menuTitle: 'pages',
-    route: RouteHelper.getAllPageScreen(),
-  ),
-  MenuModel(icon: Images.blog, menuTitle: 'blog', subMenus: [
-    SubMenu(
-        subMenuTitle: 'application_blogs',
-        route: RouteHelper.getApplicationBlogScreen()),
-    SubMenu(subMenuTitle: 'add_blog', route: RouteHelper.getAddBlogScreen()),
-  ]),
-  MenuModel(
-    icon: Images.refund,
-    menuTitle: 'order_refunds',
-    route: RouteHelper.getOrderRefundScreen(),
-  ),
-  MenuModel(
-      icon: Images.support,
-      menuTitle: 'support',
-      route: RouteHelper.getSupportRoute()),
-  MenuModel(icon: Images.marketing, menuTitle: 'marketing', subMenus: [
-    SubMenu(
-        subMenuTitle: 'subscribers', route: RouteHelper.getSubscriberScreen()),
-    SubMenu(subMenuTitle: 'bulk_sms', route: RouteHelper.getBulkSmsScreen()),
-  ]),
-  MenuModel(icon: Images.dashboard, menuTitle: 'coupons', subMenus: [
-    SubMenu(
-        subMenuTitle: 'coupon_list', route: RouteHelper.getCouponScreenRoute()),
-    SubMenu(
-        subMenuTitle: 'add_new_coupon',
-        route: RouteHelper.getAddCouponScreen()),
-  ]),
-  MenuModel(icon: Images.accounts, menuTitle: 'accounts', subMenus: [
-    SubMenu(
-        subMenuTitle: 'transaction', route: RouteHelper.getTransactionScreen()),
-    SubMenu(
-        subMenuTitle: 'bank_accounts',
-        route: RouteHelper.getBankAccountsScreen()),
-    SubMenu(
-        subMenuTitle: 'add_bank_account',
-        route: RouteHelper.getAddBankAccountsScreen()),
-    SubMenu(
-        subMenuTitle: 'withdraw_requests',
-        route: RouteHelper.getWithdrawRequestScreen()),
-    SubMenu(
-        subMenuTitle: 'delivery_men_earning',
-        route: RouteHelper.getDeliveryManEarningScreen()),
-  ]),
-  MenuModel(icon: Images.reports, menuTitle: 'report', subMenus: [
-    SubMenu(
-        subMenuTitle: 'sales_report',
-        route: RouteHelper.getSalesReportScreen()),
-    SubMenu(
-        subMenuTitle: 'commission_history',
-        route: RouteHelper.getCommissionHistoryScreen()),
-    SubMenu(
-        subMenuTitle: 'payment_history',
-        route: RouteHelper.getPaymentHistoryScreen()),
-  ]),
-  MenuModel(icon: Images.dashboard, menuTitle: 'manage_employee', subMenus: [
-    SubMenu(
-        subMenuTitle: 'employee_list',
-        route: RouteHelper.getEmployeeListScreen()),
-    SubMenu(
-        subMenuTitle: 'add_new_employee',
-        route: RouteHelper.getAddEmployeeScreen()),
-  ]),
-  MenuModel(icon: Images.setup, menuTitle: 'authentication', subMenus: [
-    SubMenu(subMenuTitle: 'login_screen', route: RouteHelper.getLoginScreen()),
-    SubMenu(
-        subMenuTitle: 'registration_screen',
-        route: RouteHelper.getRegistrationScreen()),
-  ]),
 ];
 
+/// Menú filtrado por roles estrictos de la plataforma
 List<MenuModel> getMenuListForRole(UserRole role) {
   switch (role) {
     case UserRole.itAdmin:
@@ -240,19 +88,16 @@ List<MenuModel> getMenuListForRole(UserRole role) {
     case UserRole.adminLawyer:
       return [
         MenuModel(
-          icon: Images.dashboard,
           iconData: Icons.shield_rounded,
           menuTitle: 'Centro de Mando',
           route: RouteHelper.getLegalCenterRoute(),
         ),
         MenuModel(
-          icon: Images.dashboard,
           iconData: Icons.badge_rounded,
           menuTitle: 'Mi Perfil',
           route: RouteHelper.getUserProfileScreen(),
         ),
         MenuModel(
-          icon: Images.dashboard,
           iconData: Icons.gavel_rounded,
           menuTitle: 'asistencia_juridica',
           subMenus: [
@@ -307,7 +152,11 @@ List<MenuModel> getMenuListForRole(UserRole role) {
           menuTitle: 'Mi Perfil',
           route: RouteHelper.getUserProfileScreen(),
         ),
+        MenuModel(
+          iconData: Icons.card_membership_rounded,
+          menuTitle: 'Mi Suscripción',
+          route: RouteHelper.getConductorSuscripcionRoute(),
+        ),
       ];
   }
 }
-
