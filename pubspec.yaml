@@ -27,19 +27,7 @@ dependencies:
   universal_platform: ^1.1.0
   image_picker: ^1.1.2
   cached_network_image: ^3.4.1
-  shimmer_animation: ^2.1.0+1
   file_picker: ^8.1.4
-  fl_chart: ^0.68.0
-  dotted_border: ^2.1.0
-  data_table_2: ^2.5.15
-  google_maps_flutter: ^2.9.0
-  appflowy_board: 0.1.1
-  calendar_view: 1.0.4
-  flutter_colorpicker: ^1.1.0
-  badges: ^3.1.2
-  flutter_charts: ^0.5.2
-  syncfusion_flutter_charts: any
-  d_chart: 2.6.3
   flutter_svg: ^2.0.10+1
   geolocator: ^12.0.0
   url_launcher: ^6.3.0

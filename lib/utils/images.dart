@@ -1,6 +1,6 @@
 class Images {
   static String get edu => 'img/1.png';
-  static String get logo => 'getdash'.png;
+  static String get logo => 'legaltech_logo'.png;
   static const String placeholder = 'assets/images/placeholder.png';
   static const String placeholderMedium =
       'assets/images/placeholder_medium.png';
@@ -239,7 +239,6 @@ class Images {
   static get glasshat2 => 'image 71'.png;
   static get glasshat3 => 'image 72'.png;
   static get glasshat4 => 'image 73'.png;
-  static get dashboardmainphoto => 'ddemo'.png;
   static get dashboardshopcart => 'shopcart'.png;
   static get dashboarddollar => 'dollarsign'.png;
   static get dashboardsymbol => 'dollarsymbol'.png;
@@ -249,8 +248,6 @@ class Images {
   static get facebookdemo3 => 'facebook'.png;
   static get twitterdemo3 => 'twitter'.png;
   static get googledemo3 => 'googles'.png;
-  static get natureimg1 => 'natureimg1'.png;
-  static get natureimg2 => 'natureimg2'.png;
   static get miclebolt => 'miclebold'.png;
 }
 
