@@ -210,8 +210,8 @@ class ConductorController extends GetxController {
 
   // Abogado titular / Director Jurídico asignado directamente
   final AbogadoDefensor abogadoZona = const AbogadoDefensor(
-    nombre: "Dr. Emir Vásquez",
-    rol: "Director Jurídico Nacional",
+    nombre: "Grupo Ecuador Total Abogados",
+    rol: "Despacho Jurídico Corporativo",
     zonaODistancia: "Dirección Jurídica General · Cobertura Inmediata",
     especialidad: "Abogado Penalista y Consultor Político · Especialista en Tránsito y COIP",
     telefono: "+593 98 845 6189",
@@ -223,14 +223,14 @@ class ConductorController extends GetxController {
     maestria: "Magíster en Derecho Penal y Procesal Penal",
     experiencia: "+18 años en litigación penal de tránsito y defensa corporativa",
     casosAtendidos: "Más de 1.200 juicios de tránsito y flagrancias resueltas",
-    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    despacho: "Grupo Ecuador Total Abogados · Despacho Matriz Nacional",
     esSuperAbogado: true,
   );
 
   // Super Abogado (Director General titular que contrató y respalda el servicio)
   final AbogadoDefensor superAbogado = const AbogadoDefensor(
-    nombre: "Dr. Emir Vásquez",
-    rol: "Director Jurídico Nacional",
+    nombre: "Grupo Ecuador Total Abogados",
+    rol: "Despacho Jurídico Corporativo",
     zonaODistancia: "Dirección Jurídica General · Cobertura Inmediata",
     especialidad: "Abogado Penalista y Consultor Político · Especialista en Tránsito y COIP",
     telefono: "+593 98 845 6189",
@@ -242,7 +242,7 @@ class ConductorController extends GetxController {
     maestria: "Magíster en Derecho Penal y Procesal Penal",
     experiencia: "+18 años en litigación penal de tránsito y defensa corporativa",
     casosAtendidos: "Más de 1.200 juicios de tránsito y flagrancias resueltas",
-    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    despacho: "Grupo Ecuador Total Abogados · Despacho Matriz Nacional",
     esSuperAbogado: true,
   );
 
@@ -500,8 +500,8 @@ class ConductorController extends GetxController {
     final dictamen = obtenerDictamenIA();
     final ubicacion = obtenerEnlaceUbicacion();
     final encabezado = casoEscaladoASuperAbogado.value
-        ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (TRANSFERIDO A DR. EMIR VÁSQUEZ)*"
-        : "🚨 *ALERTA SOS - ASISTENCIA LEGAL*";
+        ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (GRUPO ECUADOR TOTAL ABOGADOS)*"
+        : "🚨 *ALERTA SOS - ASISTENCIA LEGAL (GRUPO ECUADOR TOTAL ABOGADOS)*";
     return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
         "🚘 *Unidad:* $unidadTaxi - $cooperativa\n"

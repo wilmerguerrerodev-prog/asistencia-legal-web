@@ -59,7 +59,7 @@ void main() {
     // -------------------------------------------------------------
     // CASO 1: Operativo de Tránsito (Paso directo al dictamen)
     // -------------------------------------------------------------
-    expect(find.text('LegalTech Conductor'), findsOneWidget);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsOneWidget);
     expect(
         find.text('Operativo de Tránsito / Retención Ilegal'), findsOneWidget);
 
@@ -249,8 +249,8 @@ void main() {
     await tester.tap(opcionOperativo);
     await tester.pumpAndSettle();
 
-    // En Paso 3 aparece el abogado asignado (Dr. Emir Vásquez) y los botones de acción rápida
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
+    // En Paso 3 aparece el despacho asignado (Grupo Ecuador Total Abogados) y los botones de acción rápida
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
     expect(find.textContaining('A 1.2 km de tu incidente'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
     expect(find.text('Llamar'), findsWidgets);
@@ -263,7 +263,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
     expect(find.text('FORMACIÓN ACADÉMICA (SENESCYT)'), findsOneWidget);
     expect(find.text('TRAYECTORIA Y RESPALDO'), findsOneWidget);
     expect(find.text('Cerrar credencial'), findsOneWidget);
@@ -287,10 +287,10 @@ void main() {
   });
 
   test(
-      'ConductorController: Contacto directo prioritario con Dr. Emir Vásquez',
+      'ConductorController: Contacto directo prioritario con Grupo Ecuador Total Abogados',
       () {
     final controller = ConductorController();
-    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
+    expect(controller.abogadoActivo.nombre, 'Grupo Ecuador Total Abogados');
     expect(controller.telefonoAbogado, '+593 98 845 6189');
     expect(controller.matriculaAbogado,
         '17-2010-415 · Pichincha / Corte Nacional');
@@ -305,7 +305,7 @@ void main() {
 
     // Reiniciar flujo
     controller.reiniciarFlujo();
-    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
+    expect(controller.abogadoActivo.nombre, 'Grupo Ecuador Total Abogados');
     expect(controller.llamadaIniciada.value, false);
   });
 }

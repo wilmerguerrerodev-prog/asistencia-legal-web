@@ -99,7 +99,7 @@ class SosConductorView extends StatelessWidget {
           isDark ? const Color(0xFF0B132B) : const Color(0xFFEBF3FC),
       appBar: AppBar(
         title: const Text(
-          "Portal Conductor SOS",
+          "Grupo Ecuador Total Abogados",
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF0F172A),
@@ -167,14 +167,46 @@ class SosConductorView extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  "LegalTech Conductor",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w800,
-                    fontSize: isWide ? 16 : 14.5,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Grupo Ecuador Total Abogados",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w800,
+                        fontSize: isWide ? 16 : 14.5,
+                        color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 11,
+                          color: Color(0xFF2563EB),
+                        ),
+                        SizedBox(width: 3),
+                        Flexible(
+                          child: Text(
+                            "Exclusivo Ibarra · Fase Piloto",
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF2563EB),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               Obx(() {
@@ -1072,67 +1104,35 @@ class SosConductorView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Badge de Nivel
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: colorNivel,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(dictamen.iconoNivel,
-                              size: 14, color: Colors.white),
-                          const SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              dictamen.nivel,
-                              style: const TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 0.4,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2563EB),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.auto_awesome, size: 12, color: Colors.white),
-                        SizedBox(width: 4),
-                        Text(
-                          "Dictamen IA",
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+              // Badge de Nivel de Gravedad (Limpio y directo, sin botón redundante de Dictamen IA)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: colorNivel,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(dictamen.iconoNivel,
+                        size: 14, color: Colors.white),
+                    const SizedBox(width: 5),
+                    Flexible(
+                      child: Text(
+                        dictamen.nivel,
+                        style: const TextStyle(
+                          fontFamily: 'Plus Jakarta Sans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
                         ),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               const SizedBox(height: 12),
