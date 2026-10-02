@@ -219,20 +219,63 @@ class AuthMockController extends GetxController {
     return true;
   }
 
+  /// Busca un usuario mock o registrado por cédula o correo
+  MockUser? findUserByIdentifier(String identifier) {
+    final clean = identifier.trim().toLowerCase();
+    if (clean.isEmpty) return null;
+
+    try {
+      return registeredLawyers.firstWhere(
+        (u) => (u.cedula != null && u.cedula!.trim() == clean) || u.email.trim().toLowerCase() == clean,
+      );
+    } catch (_) {}
+
+    try {
+      return allMockUsers.firstWhere(
+        (u) => (u.cedula != null && u.cedula!.trim() == clean) || u.email.trim().toLowerCase() == clean,
+      );
+    } catch (_) {}
+
+    return null;
+  }
+
   /// Método modular listo para que Darío lo enlace a Firebase
   /// Actualiza la contraseña del usuario actual y retira la bandera de cambio obligatorio
   Future<bool> onChangePassword({
     required String newPassword,
   }) async {
-    currentUser.value = currentUser.value.copyWith(
+    final updatedUser = currentUser.value.copyWith(
       debeCambiarClave: false,
       temporaryPassword: newPassword,
     );
+    currentUser.value = updatedUser;
+
+    // Actualizar en allMockUsers y registeredLawyers para que persista en memoria
+    final allIdx = allMockUsers.indexWhere((u) =>
+        u.id == updatedUser.id ||
+        (u.cedula != null && u.cedula == updatedUser.cedula) ||
+        u.email.toLowerCase() == updatedUser.email.toLowerCase());
+    if (allIdx != -1) {
+      allMockUsers[allIdx] = updatedUser;
+    }
+
+    final regIdx = registeredLawyers.indexWhere((u) =>
+        u.id == updatedUser.id ||
+        (u.cedula != null && u.cedula == updatedUser.cedula) ||
+        u.email.toLowerCase() == updatedUser.email.toLowerCase());
+    if (regIdx != -1) {
+      registeredLawyers[regIdx] = updatedUser;
+    }
+
     update();
 
     // Actualizar contraseña en Firebase Auth y Firestore
     try {
-      await FirebaseService().updatePassword(newPassword);
+      await FirebaseService().updatePassword(
+        newPassword,
+        cedula: updatedUser.cedula,
+        email: updatedUser.email,
+      );
     } catch (e) {
       debugPrint('Firebase onChangePassword sync: $e');
     }

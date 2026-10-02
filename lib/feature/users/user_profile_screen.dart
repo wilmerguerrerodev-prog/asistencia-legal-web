@@ -7,6 +7,7 @@ import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/feature/conductor/controller/conductor_controller.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:image_picker/image_picker.dart';
@@ -255,6 +256,7 @@ class _UserProfileState extends State<UserProfile> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.pop(ctx);
+                          FirebaseService().signOut();
                           Get.offAllNamed(RouteHelper.loginScreen);
                         },
                         style: ElevatedButton.styleFrom(

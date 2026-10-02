@@ -13,6 +13,7 @@ import 'package:getdash/feature/legal_center/view/legal_lawyers_screen.dart';
 import 'package:getdash/feature/legal_center/widgets/register_lawyer_dialog.dart';
 import 'package:getdash/feature/legal_center/widgets/territory_lawyers_grid.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
+import 'package:getdash/core/helper/route_helper.dart';
 import 'package:getdash/feature/menu/controller/menu_drawer_controller.dart';
 import 'package:getdash/feature/menu/model/menu_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -326,6 +327,83 @@ void main() {
       expect(subMenuTitles.contains('abogados_territorio'), isTrue);
       expect(subMenuTitles.contains('cooperativas_flotas'), isTrue);
       expect(subMenuTitles.contains('dictamenes_actas'), isTrue);
+    });
+
+    testWidgets('Temporary password expires after change: old temporary password is rejected with error', (tester) async {
+      tester.view.physicalSize = const Size(1280, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final authCtrl = AuthMockController.to;
+
+      // 1. Registrar nuevo abogado con clave temporal
+      await authCtrl.onSaveLawyer(
+        nombre: 'Dr. Santiago Test',
+        cedula: '1002003001',
+        email: 'santiago.test@legaltech.ec',
+        telefono: '0991122334',
+        canton: 'Otavalo',
+        matriculaForo: '10-2026-999-CJ',
+        temporaryPassword: 'ClaveTemporal123!',
+      );
+
+      final lawyer = authCtrl.findUserByIdentifier('1002003001');
+      expect(lawyer, isNotNull);
+      expect(lawyer!.debeCambiarClave, isTrue);
+      expect(lawyer.temporaryPassword, 'ClaveTemporal123!');
+
+      // 2. Simular cambio de clave por el abogado a "Nuevo123!"
+      authCtrl.switchUser(lawyer, navigate: false);
+      await authCtrl.onChangePassword(newPassword: 'Nuevo123!');
+
+      final updatedLawyer = authCtrl.findUserByIdentifier('1002003001');
+      expect(updatedLawyer!.debeCambiarClave, isFalse);
+      expect(updatedLawyer.temporaryPassword, 'Nuevo123!');
+
+      // 3. Montar LoginScreen y probar ingresar con la clave temporal antigua
+      authCtrl.switchUser(AuthMockController.mockClientDriver, navigate: false);
+      expect(authCtrl.user.cedula, '1002345678');
+
+      await tester.pumpWidget(
+        GetMaterialApp(
+          home: const LoginScreen(),
+          getPages: [
+            GetPage(name: RouteHelper.lawyerWorkspaceScreen, page: () => const Scaffold(body: Text('Workspace'))),
+            GetPage(name: RouteHelper.changeTemporaryPasswordScreen, page: () => const Scaffold(body: Text('ChangePassword'))),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final textFields = find.byType(TextField);
+      final idField = textFields.at(0);
+      final passField = textFields.at(1);
+
+      // Ingresar cédula y contraseña TEMPORAL ANTIGUA
+      await tester.enterText(idField, '1002003001');
+      await tester.enterText(passField, 'ClaveTemporal123!');
+      await tester.pumpAndSettle();
+
+      final btnLogin = find.widgetWithText(ElevatedButton, 'Iniciar Sesión');
+      await tester.ensureVisible(btnLogin);
+      await tester.tap(btnLogin);
+      await tester.pumpAndSettle();
+
+      // Debe rechazar el inicio de sesión: el usuario activo NO debe haber cambiado al abogado
+      expect(authCtrl.user.cedula, '1002345678');
+      expect(authCtrl.user.role, UserRole.clientDriver);
+
+      // 4. Ahora ingresar con la NUEVA contraseña "Nuevo123!"
+      await tester.enterText(passField, 'Nuevo123!');
+      await tester.pumpAndSettle();
+
+      await tester.tap(btnLogin);
+      await tester.pumpAndSettle();
+
+      // Debe autenticar exitosamente con la nueva clave y con debeCambiarClave == false
+      expect(authCtrl.user.cedula, '1002003001');
+      expect(authCtrl.user.debeCambiarClave, isFalse);
+      expect(authCtrl.user.role, UserRole.associateLawyer);
     });
   });
 }

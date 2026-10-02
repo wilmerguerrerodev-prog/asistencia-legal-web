@@ -6,6 +6,7 @@ import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
 import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/core/helper/route_helper.dart';
+import 'package:getdash/core/services/firebase_service.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/images.dart';
 import 'package:getdash/utils/styles.dart';
@@ -100,6 +101,7 @@ class _MenuDrawerState extends State<MenuDrawer> {
                           if (Get.isRegistered<MenuDrawerController>()) {
                             Get.find<MenuDrawerController>().closeMobileDrawer();
                           }
+                          FirebaseService().signOut();
                           Get.offAllNamed(RouteHelper.loginScreen);
                         },
                         style: ElevatedButton.styleFrom(
