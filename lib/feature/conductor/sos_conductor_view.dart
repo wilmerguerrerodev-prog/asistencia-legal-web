@@ -1595,20 +1595,6 @@ class SosConductorView extends StatelessWidget {
                   ],
                 ),
 
-                // Nota simple bajo el botón en estado inicial
-                if (!llamadaEnCurso) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    "🛡️ Conexión directa y prioritaria con el Director Legal Dr. Emir Vásquez.",
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11,
-                      color: isDark ? Colors.white54 : const Color(0xFF64748B),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
               ],
             ),
           );
