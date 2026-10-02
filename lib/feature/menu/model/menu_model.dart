@@ -46,6 +46,11 @@ List<MenuModel> menuList = [
     route: RouteHelper.getConductorSuscripcionRoute(),
   ),
   MenuModel(
+    iconData: Icons.receipt_long_rounded,
+    menuTitle: 'Suscripciones y Cobros',
+    route: RouteHelper.getAdminSubscriptionsRoute(),
+  ),
+  MenuModel(
     iconData: Icons.shield_rounded,
     menuTitle: 'Centro de Mando Legal',
     route: RouteHelper.getLegalCenterRoute(),

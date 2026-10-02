@@ -214,6 +214,12 @@ class LegalCase {
   final List<DriverEvidence> evidencias;
   List<CaseTimelineEvent> timeline;
 
+  // Datos de Suscripción / Membresía LegalTech
+  bool suscripcionActiva;
+  String suscripcionEstado;
+  String suscripcionPlan;
+  bool asistenciaCondicionadaAutorizada;
+
   LegalCase({
     required this.id,
     required this.taxistaNombre,
@@ -247,7 +253,13 @@ class LegalCase {
     this.motivoAsignacion,
     required this.evidencias,
     required this.timeline,
+    this.suscripcionActiva = true,
+    this.suscripcionEstado = 'Activo y Protegido',
+    this.suscripcionPlan = 'Cobertura Total 24/7 (\$1.00 / mes)',
+    this.asistenciaCondicionadaAutorizada = false,
   }) : _alertaNivel = alertaNivel;
+
+  bool get isMembresiaActiva => suscripcionActiva || asistenciaCondicionadaAutorizada;
 
   AlertaNivel get alertaNivel {
     if (_alertaNivel != null) return _alertaNivel!;

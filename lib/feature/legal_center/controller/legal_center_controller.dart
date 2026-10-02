@@ -624,6 +624,9 @@ class LegalCenterController extends GetxController {
         lat: 0.2210,
         lng: -78.2580,
         horaReporte: 'Hace 35 min',
+        suscripcionActiva: false,
+        suscripcionEstado: 'Membresía Vencida',
+        asistenciaCondicionadaAutorizada: false,
         dictamenIaCorto:
             'Art. 380 COIP: Acuerdo transaccional notarial • Pago directo de faro posterior sin paralizar unidad.',
         relatoConductor:
@@ -1048,6 +1051,77 @@ class LegalCenterController extends GetxController {
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 4),
       );
+    }
+  }
+
+  // --- TOMA DE DECISIONES DE DESPACHO Y COBERTURA (ROL 2: DR. EMIR VÁSQUEZ) ---
+
+  /// Autoriza asistencia legal condicionada a un conductor con membresía vencida
+  void autorizarAsistenciaCondicionada(String caseId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.asistenciaCondicionadaAutorizada = true;
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '🛡️ Cobertura Condicionada Autorizada',
+          description:
+              'El Director Legal Dr. Emir Vásquez autorizó el patrocinio humanitario inmediato para evitar retención del vehículo en patio.',
+          icon: Icons.verified_user_rounded,
+          color: const Color(0xFF16A34A),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '🛡️ Asistencia Condicionada Autorizada',
+          'El Director Dr. Emir Vásquez aprobó la cobertura para ${c.taxistaNombre} (${c.cooperativa}). Procediendo con asignación prioritaria.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFF16A34A),
+          colorText: Colors.white,
+          icon: const Icon(Icons.shield_rounded, color: Colors.amber, size: 28),
+          duration: const Duration(seconds: 5),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
+
+  /// Notifica al conductor o a la cooperativa para regularizar el pago de membresía
+  void notificarRegularizacionPago(String caseId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '📲 Notificación de Regularización Emitida',
+          description:
+              'Aviso formal enviado a ${c.taxistaNombre} y directiva de ${c.cooperativa} para regularizar el aporte (\$1.00/mes).',
+          icon: Icons.notification_important_rounded,
+          color: const Color(0xFFD97706),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '📲 Recordatorio de Pago Enviado',
+          'Se notificó la regularización a ${c.taxistaNombre} (${c.cooperativa}) al teléfono ${c.taxistaTelefono}.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: const Color(0xFFD97706),
+          colorText: Colors.white,
+          icon: const Icon(Icons.send_rounded, color: Colors.white, size: 24),
+          duration: const Duration(seconds: 4),
+          margin: const EdgeInsets.all(16),
+        );
+      }
     }
   }
 

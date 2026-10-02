@@ -490,26 +490,84 @@ class LegalRealtimeTable extends StatelessWidget {
           const SizedBox(height: 3),
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                decoration: BoxDecoration(
-                  color: Colors.amber.shade50,
-                  borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: Colors.amber.shade400),
-                ),
-                child: Text(
-                  '${c.unidad} • ${c.cooperativa}',
-                  style: ubuntuBold.copyWith(
-                    fontSize: 9,
-                    color: const Color(0xFFE65100),
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.amber.shade400),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  child: Text(
+                    '${c.unidad} • ${c.cooperativa}',
+                    style: ubuntuBold.copyWith(
+                      fontSize: 9,
+                      color: const Color(0xFFE65100),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 3),
+          _buildMembershipBadge(c),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMembershipBadge(LegalCase c) {
+    if (c.asistenciaCondicionadaAutorizada) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3C7),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: const Color(0xFFD97706), width: 1),
+        ),
+        child: const FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            "🛡️ Cobertura Condicionada",
+            style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 8.5, fontWeight: FontWeight.w800, color: Color(0xFFB45309)),
+          ),
+        ),
+      );
+    }
+
+    if (c.suscripcionActiva) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF0FDF4),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: const Color(0xFF16A34A), width: 1),
+        ),
+        child: const FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            "🟢 [🛡️ Membresía Activa]",
+            style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 8.5, fontWeight: FontWeight.w800, color: Color(0xFF15803D)),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFFDC2626), width: 1),
+      ),
+      child: const FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          "🔴 [⚠️ Membresía Vencida]",
+          style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 8.5, fontWeight: FontWeight.w800, color: Color(0xFFB91C1C)),
+        ),
       ),
     );
   }
@@ -850,6 +908,8 @@ class LegalRealtimeTable extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 6),
+              _buildMembershipBadge(c),
               const SizedBox(height: 8),
 
               // Dictamen IA

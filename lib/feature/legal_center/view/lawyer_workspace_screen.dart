@@ -670,6 +670,147 @@ class _LawyerWorkspaceScreenState extends State<LawyerWorkspaceScreen> {
                   ),
                 ),
 
+                // BANNER DE MEMBRESÍA & ALCANCE DE COBERTURA 24/7 (ROL 3: ABOGADO ASOCIADO)
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: activeCase.isMembresiaActiva
+                        ? (isDark ? const Color(0xFF064E3B).withValues(alpha: 0.3) : const Color(0xFFF0FDF4))
+                        : (isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.3) : const Color(0xFFFEF2F2)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: activeCase.isMembresiaActiva
+                          ? const Color(0xFF16A34A).withValues(alpha: 0.5)
+                          : const Color(0xFFDC2626).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                activeCase.isMembresiaActiva
+                                    ? Icons.verified_user_rounded
+                                    : Icons.warning_amber_rounded,
+                                size: 18,
+                                color: activeCase.isMembresiaActiva
+                                    ? const Color(0xFF16A34A)
+                                    : const Color(0xFFDC2626),
+                              ),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Text(
+                                  activeCase.asistenciaCondicionadaAutorizada
+                                      ? "Asistencia Condicionada Autorizada • Caso Emergente"
+                                      : (activeCase.suscripcionActiva
+                                          ? "Cliente LegalTech Verificado • Cobertura 24/7 Activa"
+                                          : "⚠️ Membresía Vencida • Requiere Regularización"),
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: isMobile ? 11.5 : 12.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: activeCase.isMembresiaActiva
+                                        ? (isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D))
+                                        : (isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: (activeCase.isMembresiaActiva
+                                      ? const Color(0xFF16A34A)
+                                      : const Color(0xFFDC2626))
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              activeCase.suscripcionPlan,
+                              style: TextStyle(
+                                fontFamily: 'Plus Jakarta Sans',
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w700,
+                                color: activeCase.isMembresiaActiva
+                                    ? const Color(0xFF16A34A)
+                                    : const Color(0xFFDC2626),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Alcance del Patrocinio en Vía:",
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white70 : const Color(0xFF334155),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.check_circle_outline_rounded,
+                              size: 13,
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            child: Text(
+                              "Patrocinio legal presencial y audiencia de tránsito (Art. 380 COIP).",
+                              style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 10.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.check_circle_outline_rounded,
+                              size: 13,
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            child: Text(
+                              "Acompañamiento en peritaje SIAT, prueba de alcoholemia y entrega de vehículo sin patio.",
+                              style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 10.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.check_circle_outline_rounded,
+                              size: 13,
+                              color: isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A)),
+                          const SizedBox(width: 6),
+                          const Expanded(
+                            child: Text(
+                              "Mediación y suscripción de acta de finiquito con contraparte.",
+                              style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 10.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
                 const SizedBox(height: 14),
 
                 // BOTONES DE ACCIÓN RÁPIDA

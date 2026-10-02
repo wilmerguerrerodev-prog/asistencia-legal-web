@@ -140,50 +140,57 @@ class SuscripcionConductorScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: estaActiva ? const Color(0xFF2563EB) : Colors.redAccent,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.shield_rounded,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "MEMBRESÍA LEGALTECH",
-                                      style: TextStyle(
-                                        fontFamily: 'Plus Jakarta Sans',
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.8,
-                                        color: isDark ? Colors.white70 : const Color(0xFF475569),
-                                      ),
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              final isNarrow = constraints.maxWidth < 440;
+
+                              final headerLeft = Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: estaActiva ? const Color(0xFF2563EB) : Colors.redAccent,
+                                      shape: BoxShape.circle,
                                     ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      "Defensa Jurídica para Conductor",
-                                      style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w800,
-                                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                                      ),
+                                    child: const Icon(
+                                      Icons.shield_rounded,
+                                      color: Colors.white,
+                                      size: 20,
                                     ),
-                                  ],
-                                ),
-                              ),
-                              // Chip de Estado
-                              Container(
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "MEMBRESÍA LEGALTECH",
+                                          style: TextStyle(
+                                            fontFamily: 'Plus Jakarta Sans',
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: 0.8,
+                                            color: isDark ? Colors.white70 : const Color(0xFF475569),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          "Defensa Jurídica para Conductor",
+                                          style: TextStyle(
+                                            fontFamily: 'Montserrat',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w800,
+                                            color: isDark ? Colors.white : const Color(0xFF0F172A),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+
+                              final chipEstado = Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                 decoration: BoxDecoration(
                                   color: estaActiva
@@ -222,8 +229,28 @@ class SuscripcionConductorScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                              );
+
+                              if (isNarrow) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    headerLeft,
+                                    const SizedBox(height: 10),
+                                    chipEstado,
+                                  ],
+                                );
+                              }
+
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(child: headerLeft),
+                                  const SizedBox(width: 8),
+                                  chipEstado,
+                                ],
+                              );
+                            },
                           ),
                         ),
 
@@ -313,14 +340,18 @@ class SuscripcionConductorScreen extends StatelessWidget {
                                             color: const Color(0xFF2563EB).withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(8),
                                           ),
-                                          child: Text(
-                                            "Te quedan $diasRestantes días de cobertura activa",
-                                            style: const TextStyle(
+                                          child: FittedBox(
+                                             fit: BoxFit.scaleDown,
+                                             alignment: Alignment.centerLeft,
+                                             child: Text(
+                                               "Te quedan $diasRestantes días de cobertura activa",
+                                               style: const TextStyle(
                                               fontFamily: 'Plus Jakarta Sans',
                                               fontSize: 11,
                                               fontWeight: FontWeight.w700,
                                               color: Color(0xFF2563EB),
-                                            ),
+                                             ),
+                                           ),
                                           ),
                                         ),
                                       ],

@@ -368,6 +368,7 @@ class ConductorController extends GetxController {
 
   @override
   void onClose() {
+    _subFirestoreListener?.cancel();
     _timerEscalamiento?.cancel();
     super.onClose();
   }
@@ -502,10 +503,13 @@ class ConductorController extends GetxController {
     final encabezado = casoEscaladoASuperAbogado.value
         ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (TRANSFERIDO A DR. EMIR VÁSQUEZ)*"
         : "🚨 *ALERTA SOS - ASISTENCIA LEGAL*";
+    final estadoMembresiaTexto = estaSuscripcionActiva.value ? "🟢 Activa y Protegida (24/7)" : "⚠️ Regularización Pendiente";
+
     return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
         "🚘 *Unidad:* $unidadTaxi - $cooperativa\n"
         "📋 *Placa:* $placaVehiculo\n"
+        "🛡️ *Membresía:* $estadoMembresiaTexto\n"
         "⚖️ *Diagnóstico:* ${dictamen.titulo}\n\n"
         "📍 *Ubicación del incidente:*\n"
         "$ubicacion";
@@ -523,6 +527,7 @@ class ConductorController extends GetxController {
     try {
       FirebaseService().createSosEmergency({
         'conductor': nombreConductor,
+        'cedula': cedulaConductor,
         'cooperativa': cooperativa,
         'unidad': unidadTaxi,
         'placa': placaVehiculo,
@@ -533,6 +538,9 @@ class ConductorController extends GetxController {
         'estado': 'En Proceso • Abogado Notificado',
         'abogadoAsignado': nombreAbogado,
         'telefonoAbogado': telefonoAbogado,
+        'suscripcionActiva': estaSuscripcionActiva.value,
+        'suscripcionEstado': estadoSuscripcion.value,
+        'suscripcionPlan': planSuscripcion.value,
       });
     } catch (e) {
       debugPrint('Error registrando SOS en Firebase: $e');
@@ -811,5 +819,38 @@ class ConductorController extends GetxController {
       accionInmediata:
           "Llama a tu abogado para que fije el valor justo del daño y convenza al tercero de pagar de inmediato.",
     );
+  }
+
+  StreamSubscription? _subFirestoreListener;
+
+  /// Inicia la escucha reactiva del documento del conductor en Firestore
+  void iniciarEscuchaSuscripcionFirestore() {
+    try {
+      final fs = FirebaseService().firestore;
+      _subFirestoreListener?.cancel();
+      _subFirestoreListener = fs
+          .collection('conductores')
+          .where('cedula', isEqualTo: cedulaConductor)
+          .limit(1)
+          .snapshots()
+          .listen((snap) {
+        if (snap.docs.isNotEmpty) {
+          final data = snap.docs.first.data();
+          final subData = data['suscripcion'] as Map<String, dynamic>?;
+          if (subData != null) {
+            actualizarSuscripcion(
+              activa: subData['activa'],
+              estado: subData['estado'],
+              plan: subData['planNombre'],
+              ultimoPago: subData['fechaUltimoPago'],
+              vencimiento: subData['fechaVencimiento'],
+              diasRestantes: subData['diasRestantes'],
+            );
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('Firestore subscription listener: $e');
+    }
   }
 }

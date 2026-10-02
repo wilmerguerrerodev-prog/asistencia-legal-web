@@ -501,4 +501,20 @@ class FirebaseService {
   Stream<QuerySnapshot<Map<String, dynamic>>> streamCases() {
     return _firestore.collection('casos_legales').orderBy('fecha', descending: true).snapshots();
   }
+
+  /// Actualiza la suscripción de un conductor en Firestore
+  Future<void> updateDriverSubscription({
+    required String driverId,
+    required Map<String, dynamic> subscriptionData,
+  }) async {
+    try {
+      await _firestore.collection('conductores').doc(driverId).set({
+        'suscripcion': subscriptionData,
+        'subscriptionStatus': subscriptionData['activa'] == true ? 'active' : 'suspended',
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Error actualizando suscripción en Firestore: $e');
+    }
+  }
 }

@@ -10,6 +10,7 @@ import 'package:getdash/feature/legal_center/view/legal_center_screen.dart';
 import 'package:getdash/feature/legal_center/view/legal_cooperatives_screen.dart';
 import 'package:getdash/feature/legal_center/view/legal_documents_screen.dart';
 import 'package:getdash/feature/legal_center/view/legal_lawyers_screen.dart';
+import 'package:getdash/feature/subscriptions/view/admin_subscriptions_screen.dart';
 import 'package:getdash/feature/users/user_profile_screen.dart';
 
 class RouteHelper {
@@ -23,6 +24,9 @@ class RouteHelper {
   // Rutas de Conductor (Cliente SOS)
   static const String sosConductorScreen = '/sos';
   static const String conductorSuscripcionScreen = '/conductorSuscripcion';
+
+  // Rutas de Suscripciones (Administrador TI)
+  static const String adminSubscriptionsScreen = '/adminSuscripciones';
 
   // Rutas de Centro de Mando y Despacho Legal
   static const String legalCenterScreen = '/WeblandingPage';
@@ -42,6 +46,8 @@ class RouteHelper {
 
   static String getSosConductorRoute() => sosConductorScreen;
   static String getConductorSuscripcionRoute() => conductorSuscripcionScreen;
+  static String getSuscripcionConductorRoute() => conductorSuscripcionScreen;
+  static String getAdminSubscriptionsRoute() => adminSubscriptionsScreen;
 
   static String getLegalCenterRoute() => legalCenterScreen;
   static String getEdutechRoute() => legalCenterScreen;
@@ -60,6 +66,7 @@ class RouteHelper {
     GetPage(name: userProfileScreen, page: () => const UserProfile()),
     GetPage(name: sosConductorScreen, page: () => const DashboardScreen()),
     GetPage(name: conductorSuscripcionScreen, page: () => const SuscripcionConductorScreen()),
+    GetPage(name: adminSubscriptionsScreen, page: () => const AdminSubscriptionsScreen()),
     GetPage(name: legalCenterScreen, page: () => const LegalCenterScreen()),
     GetPage(name: legalCasesScreen, page: () => const LegalCasesScreen()),
     GetPage(name: legalLawyersScreen, page: () => const LegalLawyersScreen()),

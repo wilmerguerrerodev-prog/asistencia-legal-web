@@ -139,6 +139,7 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final isDesktop = ResponsiveHelper.isDesktop(context);
     final isMobile = ResponsiveHelper.isMobile(context);
+    final isVeryNarrow = MediaQuery.of(context).size.width < 340;
 
     return Container(
       color: Theme.of(context).cardColor,
@@ -146,100 +147,110 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
         bottom: false,
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 10 : Dimensions.paddingSizeDefault,
+            horizontal: isMobile
+                ? (isVeryNarrow ? 6 : 10)
+                : Dimensions.paddingSizeDefault,
             vertical: 8,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Logo e Icono de Menú
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      if (Get.isRegistered<MenuDrawerController>()) {
-                        final ctrl = Get.find<MenuDrawerController>();
-                        if (isDesktop) {
-                          ctrl.toggleMenuDrawer();
+              Flexible(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        if (Get.isRegistered<MenuDrawerController>()) {
+                          final ctrl = Get.find<MenuDrawerController>();
+                          if (isDesktop) {
+                            ctrl.toggleMenuDrawer();
+                          } else {
+                            ctrl.toggleMobileDrawer();
+                          }
                         } else {
-                          ctrl.toggleMobileDrawer();
+                          try {
+                            Scaffold.of(context).openDrawer();
+                          } catch (_) {}
                         }
-                      } else {
-                        try {
-                          Scaffold.of(context).openDrawer();
-                        } catch (_) {}
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      height: 36,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        border: Border.all(
-                          color: Theme.of(context).dividerColor.withValues(alpha: 0.25),
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).cardColor,
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor.withValues(alpha: 0.25),
+                          ),
+                          shape: BoxShape.circle,
                         ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: GetBuilder<MenuDrawerController>(
-                        builder: (menuCtrl) {
-                          final isOpen = isDesktop
-                              ? menuCtrl.isMenuDrawerExpanded
-                              : menuCtrl.isMobileDrawerOpen;
-                          return Icon(
-                            isOpen ? Icons.menu_open_rounded : Icons.menu_rounded,
-                            size: 20,
-                            color: isOpen
-                                ? (Theme.of(context).secondaryHeaderColor)
-                                : Theme.of(context).textTheme.bodyLarge?.color,
-                          );
-                        },
+                        child: GetBuilder<MenuDrawerController>(
+                          builder: (menuCtrl) {
+                            final isOpen = isDesktop
+                                ? menuCtrl.isMenuDrawerExpanded
+                                : menuCtrl.isMobileDrawerOpen;
+                            return Icon(
+                              isOpen ? Icons.menu_open_rounded : Icons.menu_rounded,
+                              size: 20,
+                              color: isOpen
+                                  ? (Theme.of(context).secondaryHeaderColor)
+                                  : Theme.of(context).textTheme.bodyLarge?.color,
+                            );
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  InkWell(
-                    onTap: _navegarAInicioSegunRol,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "LegalTech",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: isMobile ? 15 : 17,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.3,
-                              color: Theme.of(context).textTheme.bodyLarge?.color,
-                            ),
-                          ),
-                          if (!isMobile) ...[
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF1D4ED8).withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Text(
-                                "24/7",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1D4ED8),
+                    SizedBox(width: isVeryNarrow ? 6 : 8),
+                    Flexible(
+                      child: InkWell(
+                        onTap: _navegarAInicioSegunRol,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  "LegalTech",
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: isVeryNarrow ? 14 : (isMobile ? 15 : 17),
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.3,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ],
+                              if (!isMobile) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF1D4ED8).withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: const Text(
+                                    "24/7",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF1D4ED8),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               // Acciones del lado derecho (Tema, Perfil y Cerrar Sesión)
@@ -273,7 +284,7 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     );
                   }),
-                  SizedBox(width: isMobile ? 6 : 10),
+                  SizedBox(width: isVeryNarrow ? 4 : (isMobile ? 6 : 10)),
 
                   // Botón Mi Perfil
                   Tooltip(
@@ -301,7 +312,7 @@ class WebMenuBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: isMobile ? 6 : 10),
+                  SizedBox(width: isVeryNarrow ? 4 : (isMobile ? 6 : 10)),
 
                   // Botón Cerrar Sesión
                   Tooltip(

@@ -387,6 +387,128 @@ class Expediente360Panel extends StatelessWidget {
               ),
             ),
           ],
+
+          // SECCIÓN DE CONTROL DE COBERTURA / MEMBRESÍA (ROL 2: DR. EMIR VÁSQUEZ)
+          if (!caseItem.suscripcionActiva && !caseItem.asistenciaCondicionadaAutorizada) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.5)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFDC2626)),
+                      SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Membresía Vencida • Decisión del Director Legal',
+                          style: TextStyle(fontFamily: 'Montserrat', fontSize: 11.5, fontWeight: FontWeight.w800, color: Color(0xFFB91C1C)),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'El conductor adeuda su mensualidad. Puedes autorizar auxilio humanitario condicionado para no dejar desprotegida a la unidad en vía, o notificar cobro a la cooperativa.',
+                    style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 10.5, color: Color(0xFF7F1D1D)),
+                  ),
+                  const SizedBox(height: 8),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final isNarrow = constraints.maxWidth < 360;
+
+                      final authBtn = ElevatedButton.icon(
+                        key: const Key('btn_autorizar_asistencia_condicionada'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF16A34A),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: () => controller.autorizarAsistenciaCondicionada(caseItem.id),
+                        icon: const Icon(Icons.verified_user_rounded, size: 14),
+                        label: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Autorizar Asistencia Condicionada',
+                            style: TextStyle(fontFamily: 'Montserrat', fontSize: 10.5, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      );
+
+                      final notifBtn = OutlinedButton.icon(
+                        key: const Key('btn_notificar_regularizacion'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFFD97706),
+                          side: const BorderSide(color: Color(0xFFD97706)),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                        ),
+                        onPressed: () => controller.notificarRegularizacionPago(caseItem.id),
+                        icon: const Icon(Icons.send_rounded, size: 13),
+                        label: const FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Notificar Cobro',
+                            style: TextStyle(fontFamily: 'Montserrat', fontSize: 10.5, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      );
+
+                      if (isNarrow) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            authBtn,
+                            const SizedBox(height: 6),
+                            notifBtn,
+                          ],
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          Expanded(child: authBtn),
+                          const SizedBox(width: 6),
+                          notifBtn,
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ] else if (caseItem.asistenciaCondicionadaAutorizada) ...[
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF3C7),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: const Color(0xFFF59E0B)),
+              ),
+              child: Row(
+                children: const [
+                  Icon(Icons.shield_rounded, size: 15, color: Color(0xFFD97706)),
+                  SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      '🛡️ Cobertura Condicionada Autorizada por Director Legal (Dr. Emir Vásquez)',
+                      style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF92400E)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -469,6 +591,84 @@ class Expediente360Panel extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+
+          // Insignia de Membresía y Cobertura Activa
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: caseItem.isMembresiaActiva
+                  ? const Color(0xFFF0FDF4)
+                  : const Color(0xFFFEF2F2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: caseItem.isMembresiaActiva
+                    ? const Color(0xFF16A34A).withValues(alpha: 0.4)
+                    : const Color(0xFFDC2626).withValues(alpha: 0.4),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          caseItem.isMembresiaActiva
+                              ? Icons.verified_user_rounded
+                              : Icons.warning_amber_rounded,
+                          size: 16,
+                          color: caseItem.isMembresiaActiva
+                              ? const Color(0xFF16A34A)
+                              : const Color(0xFFDC2626),
+                        ),
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: Text(
+                            caseItem.isMembresiaActiva
+                                ? "Cliente LegalTech Verificado • Cobertura 24/7 Activa"
+                                : "Membresía Vencida • Pendiente de Regularización",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: caseItem.isMembresiaActiva
+                                  ? const Color(0xFF15803D)
+                                  : const Color(0xFFB91C1C),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      caseItem.suscripcionPlan,
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  "Alcance de la Cobertura: Patrocinio penal/tránsito Art. 380 COIP • Peritaje técnico SIAT • Acta de entrega sin retención en patio • Mediación directa de daños.",
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    color: Color(0xFF475569),
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 12),
           // Cuadrícula de datos del vehículo (Responsiva para evitar overflow)
@@ -896,45 +1096,56 @@ class Expediente360Panel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: caseItem.evidencias.map((ev) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(ev.icon, size: 18, color: Theme.of(context).primaryColor),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: caseItem.evidencias.map((ev) {
+                  return Container(
+                    constraints: BoxConstraints(maxWidth: constraints.maxWidth),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          ev.title,
-                          style: ubuntuMedium.copyWith(
-                            fontSize: Dimensions.fontSizeExtraSmall,
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
-                        ),
-                        Text(
-                          ev.detail,
-                          style: ubuntuRegular.copyWith(
-                            fontSize: 9,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
+                        Icon(ev.icon, size: 18, color: Theme.of(context).primaryColor),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ev.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: ubuntuMedium.copyWith(
+                                  fontSize: Dimensions.fontSizeExtraSmall,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                ),
+                              ),
+                              Text(
+                                ev.detail,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: ubuntuRegular.copyWith(
+                                  fontSize: 9,
+                                  color: Theme.of(context).textTheme.bodySmall?.color,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                }).toList(),
               );
-            }).toList(),
+            },
           ),
         ],
       ),
