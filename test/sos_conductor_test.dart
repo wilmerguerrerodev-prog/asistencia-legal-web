@@ -273,8 +273,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado (solo wizard y saludo)
-    expect(find.text('Documentos'), findsOneWidget);
+    // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado ni documentos antiguos
+    expect(find.text('Documentos'), findsNothing);
+    expect(find.text('Conoce más sobre Grupo Ecuador Total'), findsOneWidget);
+    expect(find.text('Saber más'), findsOneWidget);
     expect(find.text('Credencial'), findsNothing);
     expect(find.text('ABOGADO DE GUARDIA 24/7 EN LÍNEA'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsNothing);
@@ -347,5 +349,46 @@ void main() {
     expect(controller.abogadoActivo.nombre, 'Grupo Ecuador Total Abogados');
     expect(controller.llamadaIniciada.value, false);
   });
+
+  testWidgets('Abrir modal institucional de Grupo Ecuador Total Abogados',
+      (WidgetTester tester) async {
+    final controller = ConductorController();
+    Get.put<ConductorController>(controller);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        theme: light,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: SosConductorView(isEmbeddedInDashboard: true),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final btnSaberMas = find.text('Saber más');
+    await tester.ensureVisible(btnSaberMas);
+    await tester.tap(btnSaberMas);
+    await tester.pumpAndSettle();
+
+    expect(find.text('RESPALDO JURÍDICO OFICIAL'), findsOneWidget);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
+    expect(find.text('Dr. Emir Vásquez'), findsOneWidget);
+    expect(find.text('Doctor en Jurisprudencia · UCE'), findsOneWidget);
+    expect(find.textContaining('17-2010-415 Pichincha'), findsOneWidget);
+    expect(find.text('Tránsito y Flagrancias (COIP)'), findsOneWidget);
+    expect(find.text('Defensa Laboral y Liquidaciones'), findsOneWidget);
+    expect(find.text('Plan Piloto Ibarra y Sede Quito'), findsOneWidget);
+    expect(find.byKey(const Key('btn_llamar_firma_modal')), findsOneWidget);
+    expect(find.byKey(const Key('btn_whatsapp_firma_modal')), findsOneWidget);
+
+    final btnCerrar = find.byKey(const Key('btn_cerrar_conoce_mas_modal'));
+    await tester.tap(btnCerrar);
+    await tester.pumpAndSettle();
+
+    expect(find.text('RESPALDO JURÍDICO OFICIAL'), findsNothing);
+  });
 }
+
 

@@ -74,15 +74,16 @@ class SosConductorView extends StatelessWidget {
                 }),
               ),
 
-              // 3. ACCESO DIRECTO A DOCUMENTOS (SIEMPRE DISPONIBLE AL FINAL)
+              // 3. INSTITUCIONAL: CONOCE MÁS SOBRE GRUPO ECUADOR TOTAL
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   isWideScreen ? 24 : 14,
                   0,
                   isWideScreen ? 24 : 14,
-                  18,
+                  24,
                 ),
-                child: _buildDocumentosCompacta(context, isDark),
+                child: _buildConoceMasGrupoEcuadorTotal(
+                    context, isDark, controller),
               ),
             ],
           ),
@@ -1770,249 +1771,573 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
-  // --- 3. DOCUMENTOS COMPACTA (ACCESO DIRECTO A PAPELES EN COLOR SÓLIDO) ---
-  Widget _buildDocumentosCompacta(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 1.0,
+  // --- 3. CONOCE MÁS SOBRE GRUPO ECUADOR TOTAL (RESPALDO JURÍDICO OFICIAL) ---
+  Widget _buildConoceMasGrupoEcuadorTotal(
+      BuildContext context, bool isDark, ConductorController controller) {
+    return InkWell(
+      onTap: () => _mostrarConoceMasModal(context, isDark, controller),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            width: 1.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-      ),
-      child: Row(
-        children: [
-          // Badge blanco grande con icono moderno
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+        child: Row(
+          children: [
+            // Badge institucional con balanza jurídica
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF1E3A8A), Color(0xFF0F172A)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(Icons.folder_shared_rounded,
-                  color: Color(0xFF2563EB), size: 26),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        "Documentos",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w800,
-                          color:
-                              isDark ? Colors.white : const Color(0xFF0F172A),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Icon(Icons.verified,
-                        size: 15, color: Color(0xFF10B981)),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "Licencia Tipo C · Matrícula",
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 11.5,
-                    color: isDark ? Colors.white60 : const Color(0xFF64748B),
-                    fontWeight: FontWeight.w600,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF1E3A8A).withValues(alpha: 0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2563EB),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 0,
-            ),
-            onPressed: () => _mostrarDocumentosModal(context),
-            icon: const Icon(Icons.qr_code_2_rounded, size: 18),
-            label: const Text(
-              "Ver QR",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
+                ],
+              ),
+              child: const Center(
+                child: Icon(Icons.balance_rounded,
+                    color: Color(0xFFFBBF24), size: 24),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "Conoce más sobre Grupo Ecuador Total",
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color:
+                                isDark ? Colors.white : const Color(0xFF0F172A),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.verified,
+                          size: 14, color: Color(0xFF10B981)),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "Firma Jurídica y Respaldo 24/7 · Dr. Emir Vásquez",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                      fontWeight: FontWeight.w600,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F172A),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                elevation: 0,
+              ),
+              onPressed: () =>
+                  _mostrarConoceMasModal(context, isDark, controller),
+              icon: const Icon(Icons.info_outline_rounded, size: 15),
+              label: const Text(
+                "Saber más",
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Modal para mostrar el documento digital con QR oficial
-  void _mostrarDocumentosModal(BuildContext context) {
+  // Modal institucional con detalles de la firma, Dr. Emir Vásquez, áreas de defensa y contacto
+  void _mostrarConoceMasModal(
+      BuildContext context, bool isDark, ConductorController controller) {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
-        final ConductorController controller = Get.find<ConductorController>();
-
         return Dialog(
+          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 420),
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF059669),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.verified, size: 14, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text(
-                            "DOCUMENTOS EN REGLA",
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 1. Barra superior: Insignia oficial y botón cerrar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF059669),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified,
+                                    size: 14, color: Colors.white),
+                                SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    "RESPALDO JURÍDICO OFICIAL",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 20),
-                      onPressed: () => Navigator.of(dialogContext).pop(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Credencial Digital Oficial",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text(
-                  "Válido ante agentes de tránsito y peritos judiciales",
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF0F172A)
-                        : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF334155)
-                          : const Color(0xFFE2E8F0),
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _FichaDocRow(
-                          label: "Conductor:",
-                          valor: controller.nombreConductor),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Licencia:", valor: controller.tipoLicencia),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Unidad / Vehículo:",
-                          valor:
-                              "${controller.unidadTaxi} · ${controller.cooperativa}"),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Placa / RTV:",
-                          valor:
-                              "${controller.placaVehiculo} · RTV 2024 Aprobada"),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        key: const Key('btn_cerrar_conoce_mas_modal'),
+                        icon: const Icon(Icons.close, size: 22),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 14),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
+                  const SizedBox(height: 16),
+
+                  // 2. Cabecera Institucional
+                  Container(
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                            : [const Color(0xFFEFF6FF), const Color(0xFFDBEAFE)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
                     ),
-                    child: const Icon(Icons.qr_code_2_rounded,
-                        size: 90, color: Color(0xFF0F172A)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF0F172A),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.balance_rounded,
+                                color: Color(0xFFFBBF24), size: 28),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Grupo Ecuador Total Abogados",
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w900,
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                "Firma jurídica y patrocinio integral para conductores y socios transportistas.",
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11.5,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF475569),
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F172A),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                  const SizedBox(height: 16),
+
+                  // 3. Dirección Jurídica: Dr. Emir Vásquez
+                  Text(
+                    "DIRECCIÓN JURÍDICA NACIONAL",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      letterSpacing: 0.8,
+                    ),
                   ),
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text("Cerrar Documento"),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFE2E8F0),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Color(0xFF1E3A8A),
+                              child: Text(
+                                "EV",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Dr. Emir Vásquez",
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "Doctor en Jurisprudencia · UCE",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 11,
+                                      color: isDark
+                                          ? Colors.white60
+                                          : const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 18,
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.badge_outlined,
+                                size: 16, color: Color(0xFF2563EB)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Matrícula: 17-2010-415 Pichincha / Corte Nacional",
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF334155),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 4. Áreas de Especialidad y Cobertura
+                  Text(
+                    "SERVICIOS Y COBERTURA",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildEspecialidadItem(
+                    isDark: isDark,
+                    emoji: "🚨",
+                    titulo: "Tránsito y Flagrancias (COIP)",
+                    descripcion:
+                        "Defensa inmediata 24/7 en accidentes graves (Art. 377), choques (Art. 380), operativos y retención de vehículos.",
+                  ),
+                  const SizedBox(height: 6),
+                  _buildEspecialidadItem(
+                    isDark: isDark,
+                    emoji: "⚖️",
+                    titulo: "Defensa Laboral y Liquidaciones",
+                    descripcion:
+                        "Patrocinio ante despidos intempestivos, cobro de finiquitos y mediación en cooperativas sin firmar documentos en blanco.",
+                  ),
+                  const SizedBox(height: 6),
+                  _buildEspecialidadItem(
+                    isDark: isDark,
+                    emoji: "📍",
+                    titulo: "Plan Piloto Ibarra y Sede Quito",
+                    descripcion:
+                        "Atención prioritaria y despliegue rápido para taxistas de Ibarra, con respaldo de la firma central en Quito.",
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 5. Garantía institucional para el conductor
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3C7),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFFFDE68A),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("💡", style: TextStyle(fontSize: 16)),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            "Consejo Legal: Ante cualquier operativo o accidente, no admitas culpas ni firmes hojas en blanco. Comunícate de inmediato con tu abogado.",
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF92400E),
+                              height: 1.35,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+                  // 6. Botones de acción directa (Llamada + WhatsApp + Cerrar)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          key: const Key('btn_llamar_firma_modal'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0F172A),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            controller.llamarAbogadoPorTelefono();
+                          },
+                          icon: const Icon(Icons.call_rounded, size: 16),
+                          label: const Text(
+                            "Llamar",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          key: const Key('btn_whatsapp_firma_modal'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF16A34A),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            controller.contactarAbogadoPorWhatsApp();
+                          },
+                          icon: const Icon(Icons.chat_bubble_outline_rounded,
+                              size: 16),
+                          label: const Text(
+                            "WhatsApp",
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: Text(
+                      "Entendido / Cerrar",
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        color:
+                            isDark ? Colors.white60 : const Color(0xFF64748B),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEspecialidadItem({
+    required bool isDark,
+    required String emoji,
+    required String titulo,
+    required String descripcion,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  descripcion,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10.5,
+                    color: isDark ? Colors.white70 : const Color(0xFF475569),
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2474,42 +2799,6 @@ class _ItemCredencialWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _FichaDocRow extends StatelessWidget {
-  final String label;
-  final String valor;
-
-  const _FichaDocRow({required this.label, required this.valor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontSize: 11,
-            color: Colors.grey,
-          ),
-        ),
-        Flexible(
-          child: Text(
-            valor,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.end,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
     );
   }
 }
