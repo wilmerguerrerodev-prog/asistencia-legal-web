@@ -894,9 +894,6 @@ class EncarcelaronFamiliarVectorPainter extends CustomPainter {
     final barHighlightColor = useModernColors
         ? const Color(0xFFF1F5F9)
         : Colors.white.withValues(alpha: 0.5);
-    final badgeBgColor =
-        useModernColors ? const Color(0xFFF59E0B) : const Color(0xFFD97706);
-    const scaleColor = Colors.white;
 
     // --- 1. Fondo de la celda / Marco de seguridad ---
     final bgPaint = Paint()..color = cellBgColor;
@@ -976,42 +973,6 @@ class EncarcelaronFamiliarVectorPainter extends CustomPainter {
     // Manos del familiar sosteniendo las rejas (en x = 42 y x = 58 a la altura y = 54)
     canvas.drawCircle(const Offset(42, 54), 3.8, skinPaint);
     canvas.drawCircle(const Offset(58, 54), 3.8, skinPaint);
-
-    // --- 4. Emblema de la Balanza de Justicia / Respaldo Legal (Esquina inferior derecha) ---
-    final badgePaint = Paint()
-      ..color = badgeBgColor
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(const Offset(74, 70), 16, badgePaint);
-
-    final badgeBorder = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawCircle(const Offset(74, 70), 16, badgeBorder);
-
-    // Iconografía de la balanza de justicia dentro del círculo
-    final scalePaint = Paint()
-      ..color = scaleColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.8
-      ..strokeCap = StrokeCap.round;
-
-    // Poste vertical de la balanza
-    canvas.drawLine(const Offset(74, 61), const Offset(74, 78), scalePaint);
-    // Base de la balanza
-    canvas.drawLine(const Offset(70, 78), const Offset(78, 78), scalePaint);
-    // Brazo horizontal
-    canvas.drawLine(const Offset(67, 64), const Offset(81, 64), scalePaint);
-
-    // Platillo izquierdo
-    canvas.drawLine(const Offset(67, 64), const Offset(65, 70), scalePaint);
-    canvas.drawLine(const Offset(67, 64), const Offset(69, 70), scalePaint);
-    canvas.drawLine(const Offset(64, 70), const Offset(70, 70), scalePaint);
-
-    // Platillo derecho
-    canvas.drawLine(const Offset(81, 64), const Offset(79, 70), scalePaint);
-    canvas.drawLine(const Offset(81, 64), const Offset(83, 70), scalePaint);
-    canvas.drawLine(const Offset(78, 70), const Offset(84, 70), scalePaint);
 
     canvas.restore();
   }
