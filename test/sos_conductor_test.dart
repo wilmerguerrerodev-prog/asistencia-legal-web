@@ -291,7 +291,7 @@ void main() {
 
     // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado ni documentos antiguos
     expect(find.text('Documentos'), findsNothing);
-    expect(find.text('Conoce más sobre nosotros'), findsOneWidget);
+    expect(find.text('Quiénes somos'), findsOneWidget);
     expect(find.text('Ver más'), findsOneWidget);
     expect(find.text('Credencial'), findsNothing);
     expect(find.text('ABOGADO DE GUARDIA 24/7 EN LÍNEA'), findsNothing);

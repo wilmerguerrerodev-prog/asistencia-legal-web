@@ -1725,10 +1725,10 @@ class SosConductorView extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      "Conoce más sobre nosotros",
+                      "Quiénes somos",
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 13.5,
+                        fontSize: 14,
                         fontWeight: FontWeight.w800,
                         color:
                             isDark ? Colors.white : const Color(0xFF0F172A),
