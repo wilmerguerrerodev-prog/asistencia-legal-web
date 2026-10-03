@@ -74,15 +74,16 @@ class SosConductorView extends StatelessWidget {
                 }),
               ),
 
-              // 3. ACCESO DIRECTO A DOCUMENTOS (SIEMPRE DISPONIBLE AL FINAL)
+              // 3. INSTITUCIONAL: CONOCE MÁS SOBRE GRUPO ECUADOR TOTAL
               Padding(
                 padding: EdgeInsets.fromLTRB(
                   isWideScreen ? 24 : 14,
                   0,
                   isWideScreen ? 24 : 14,
-                  18,
+                  24,
                 ),
-                child: _buildDocumentosCompacta(context, isDark),
+                child: _buildConoceMasGrupoEcuadorTotal(
+                    context, isDark, controller),
               ),
             ],
           ),
@@ -99,7 +100,7 @@ class SosConductorView extends StatelessWidget {
           isDark ? const Color(0xFF0B132B) : const Color(0xFFEBF3FC),
       appBar: AppBar(
         title: const Text(
-          "Portal Conductor SOS",
+          "Grupo Ecuador Total Abogados",
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFF0F172A),
@@ -168,13 +169,15 @@ class SosConductorView extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  "LegalTech Conductor",
+                  "Grupo Ecuador Total Abogados",
                   style: TextStyle(
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w800,
                     fontSize: isWide ? 16 : 14.5,
                     color: isDark ? Colors.white : const Color(0xFF0F172A),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Obx(() {
@@ -221,99 +224,121 @@ class SosConductorView extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // Ficha del Conductor simple y limpia
+          // Ficha del Conductor simple, limpia y legible en 2 líneas
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(8),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color:
                     isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                 width: 1,
               ),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.directions_car_rounded,
-                    color: Color(0xFF2563EB), size: 16),
-                const SizedBox(width: 8),
-                Expanded(
+                Row(
+                  children: [
+                    const Icon(Icons.directions_car_rounded,
+                        color: Color(0xFF2563EB), size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        controller.nombreConductor,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                          color:
+                              isDark ? Colors.white : const Color(0xFF0F172A),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Indicador reactivo de GPS
+                    Obx(() {
+                      final estado = controller.estadoGps.value;
+                      Color colorPunto;
+                      Color colorFondo;
+                      if (estado == 'GPS activo') {
+                        colorPunto = const Color(0xFF10B981);
+                        colorFondo =
+                            const Color(0xFF10B981).withValues(alpha: 0.12);
+                      } else if (estado == 'Localizando...') {
+                        colorPunto = const Color(0xFFF59E0B);
+                        colorFondo =
+                            const Color(0xFFF59E0B).withValues(alpha: 0.12);
+                      } else {
+                        colorPunto = const Color(0xFFEF4444);
+                        colorFondo =
+                            const Color(0xFFEF4444).withValues(alpha: 0.12);
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          controller.capturarUbicacionInicial();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Reintentando conectar con satélite GPS..."),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: colorFondo,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: colorPunto,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4.5),
+                              Text(
+                                estado,
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorPunto,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Padding(
+                  padding: const EdgeInsets.only(left: 24),
                   child: Text(
-                    "${controller.nombreConductor} · ${controller.unidadTaxi} (${controller.cooperativa})",
+                    "${controller.unidadTaxi} · ${controller.cooperativa}",
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white70 : const Color(0xFF475569),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
                     ),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
-                // Indicador reactivo de GPS
-                Obx(() {
-                  final estado = controller.estadoGps.value;
-                  Color colorPunto;
-                  Color colorFondo;
-                  if (estado == 'GPS activo') {
-                    colorPunto = const Color(0xFF10B981);
-                    colorFondo =
-                        const Color(0xFF10B981).withValues(alpha: 0.12);
-                  } else if (estado == 'Localizando...') {
-                    colorPunto = const Color(0xFFF59E0B);
-                    colorFondo =
-                        const Color(0xFFF59E0B).withValues(alpha: 0.12);
-                  } else {
-                    colorPunto = const Color(0xFFEF4444);
-                    colorFondo =
-                        const Color(0xFFEF4444).withValues(alpha: 0.12);
-                  }
-
-                  return GestureDetector(
-                    onTap: () {
-                      controller.capturarUbicacionInicial();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text("Reintentando conectar con satélite GPS..."),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2.5),
-                      decoration: BoxDecoration(
-                        color: colorFondo,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: colorPunto,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4.5),
-                          Text(
-                            estado,
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: colorPunto,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
               ],
             ),
           ),
@@ -363,49 +388,78 @@ class SosConductorView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // 4 Botones grandes cuadrados sin mensajes inferiores (Grilla 2x2 en móvil, 4 en línea en escritorio)
+        // 6 Botones grandes cuadrados sin mensajes inferiores (Grilla 3x2 en móvil, 2 filas de 3 en escritorio)
         if (isWide)
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[0],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[0].tipo),
-                    isWide: true,
-                  ),
+          Column(
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[0],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[0].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[1],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[1].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[2],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[2].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[1],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[1].tipo),
-                    isWide: true,
-                  ),
+              ),
+              const SizedBox(height: 12),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[3],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[3].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[4],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[4].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[5],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[5].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[2],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[2].tipo),
-                    isWide: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[3],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[3].tipo),
-                    isWide: true,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           )
         else
           Column(
@@ -453,6 +507,31 @@ class SosConductorView extends StatelessWidget {
                         opcion: controller.opcionesIncidentes[3],
                         onTap: () => controller.seleccionarIncidente(
                             controller.opcionesIncidentes[3].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[4],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[4].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[5],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[5].tipo),
                         isWide: false,
                       ),
                     ),
@@ -545,11 +624,14 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
+
+
   // Tarjeta interactiva y táctil para las opciones de Triage
   Widget _buildBotonTriageCard({
     required String titulo,
     required Color color,
-    required IconData icono,
+    IconData? icono,
+    Widget? customIcon,
     required VoidCallback onTap,
     required bool isDark,
     required bool isWide,
@@ -595,11 +677,12 @@ class SosConductorView extends StatelessWidget {
                     ],
                   ),
                   child: Center(
-                    child: Icon(
-                      icono,
-                      color: color,
-                      size: isWide ? 32 : 28,
-                    ),
+                    child: customIcon ??
+                        Icon(
+                          icono ?? Icons.emergency_rounded,
+                          color: color,
+                          size: isWide ? 32 : 28,
+                        ),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -652,8 +735,16 @@ class SosConductorView extends StatelessWidget {
     bool isDark,
     bool isWide,
   ) {
-    final subPaso = controller.subPasoTriage.value;
     final tipo = controller.tipoSeleccionado.value ?? TipoIncidente.meChoque;
+    if (tipo == TipoIncidente.otroProblema) {
+      return FormularioOtroProblemaWidget(
+        controller: controller,
+        isDark: isDark,
+        isWide: isWide,
+      );
+    }
+
+    final subPaso = controller.subPasoTriage.value;
     final bool esAgresion = (tipo == TipoIncidente.agresionProblemaPersonal);
     final bool esChocado = (tipo == TipoIncidente.meChocaron);
 
@@ -798,22 +889,28 @@ class SosConductorView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 if (esAgresion) ...[
-                  // Opción 1: Agresión física / heridos
+                  // Opción 1: Agresión física / heridos (Persona golpeando a otra)
                   _buildBotonTriageCard(
                     titulo: "HAY AGRESIÓN FÍSICA O HERIDOS",
                     color: const Color(0xFFDC2626),
-                    icono: Icons.front_hand_rounded,
+                    customIcon: AgresionFisicaGolpeIcon(
+                      size: isWide ? 40 : 36,
+                      useModernColors: true,
+                    ),
                     onTap: () => controller
                         .responderSeveridad(SeveridadVictimas.heridos),
                     isDark: isDark,
                     isWide: isWide,
                   ),
 
-                  // Opción 2: Solo discusión / altercado verbal
+                  // Opción 2: Solo discusión / altercado verbal (Dos personas discutiendo / insultándose)
                   _buildBotonTriageCard(
                     titulo: "SOLO CONFLICTO VERBAL O AMENAZA",
                     color: const Color(0xFF7C3AED),
-                    icono: Icons.forum_rounded,
+                    customIcon: ConflictoVerbalInsultosIcon(
+                      size: isWide ? 40 : 36,
+                      useModernColors: true,
+                    ),
                     onTap: () => controller
                         .responderSeveridad(SeveridadVictimas.ninguna),
                     isDark: isDark,
@@ -1072,67 +1169,35 @@ class SosConductorView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Badge de Nivel
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: colorNivel,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(dictamen.iconoNivel,
-                              size: 14, color: Colors.white),
-                          const SizedBox(width: 5),
-                          Flexible(
-                            child: Text(
-                              dictamen.nivel,
-                              style: const TextStyle(
-                                fontFamily: 'Plus Jakarta Sans',
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 0.4,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2563EB),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.auto_awesome, size: 12, color: Colors.white),
-                        SizedBox(width: 4),
-                        Text(
-                          "Dictamen IA",
-                          style: TextStyle(
-                            fontFamily: 'Plus Jakarta Sans',
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+              // Badge de Nivel de Gravedad (Limpio y directo, sin botón redundante de Dictamen IA)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: colorNivel,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(dictamen.iconoNivel,
+                        size: 14, color: Colors.white),
+                    const SizedBox(width: 5),
+                    Flexible(
+                      child: Text(
+                        dictamen.nivel,
+                        style: const TextStyle(
+                          fontFamily: 'Plus Jakarta Sans',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
                         ),
-                      ],
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               const SizedBox(height: 12),
@@ -1615,249 +1680,469 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
-  // --- 3. DOCUMENTOS COMPACTA (ACCESO DIRECTO A PAPELES EN COLOR SÓLIDO) ---
-  Widget _buildDocumentosCompacta(BuildContext context, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          width: 1.0,
+  // --- 3. CONOCE MÁS SOBRE GRUPO ECUADOR TOTAL (RESPALDO JURÍDICO OFICIAL) ---
+  Widget _buildConoceMasGrupoEcuadorTotal(
+      BuildContext context, bool isDark, ConductorController controller) {
+    return InkWell(
+      onTap: () => _mostrarConoceMasModal(context, isDark, controller),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+            width: 1.0,
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          // Badge blanco grande con icono moderno
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Center(
-              child: Icon(Icons.folder_shared_rounded,
-                  color: Color(0xFF2563EB), size: 26),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        "Documentos",
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w800,
-                          color:
-                              isDark ? Colors.white : const Color(0xFF0F172A),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Icon(Icons.verified,
-                        size: 15, color: Color(0xFF10B981)),
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  "Licencia Tipo C · Matrícula",
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 11.5,
-                    color: isDark ? Colors.white60 : const Color(0xFF64748B),
-                    fontWeight: FontWeight.w600,
+        child: Row(
+          children: [
+            // Badge blanco/oscuro grande con icono institucional azul
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2563EB),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              elevation: 0,
-            ),
-            onPressed: () => _mostrarDocumentosModal(context),
-            icon: const Icon(Icons.qr_code_2_rounded, size: 18),
-            label: const Text(
-              "Ver QR",
-              style: TextStyle(
-                fontFamily: 'Montserrat',
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
+                ],
+              ),
+              child: const Center(
+                child: Icon(Icons.balance_rounded,
+                    color: Color(0xFF2563EB), size: 24),
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      "Quiénes somos",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color:
+                            isDark ? Colors.white : const Color(0xFF0F172A),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  const Icon(Icons.verified,
+                      size: 15, color: Color(0xFF10B981)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2563EB),
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () =>
+                  _mostrarConoceMasModal(context, isDark, controller),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Ver más",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(Icons.arrow_forward_ios_rounded, size: 11),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  // Modal para mostrar el documento digital con QR oficial
-  void _mostrarDocumentosModal(BuildContext context) {
+  // Modal institucional con detalles de la firma, Dr. Emir Vásquez, áreas de defensa y contacto
+  void _mostrarConoceMasModal(
+      BuildContext context, bool isDark, ConductorController controller) {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
-        final ConductorController controller = Get.find<ConductorController>();
-
         return Dialog(
+          backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 420),
             padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF059669),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.verified, size: 14, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text(
-                            "DOCUMENTOS EN REGLA",
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // 1. Barra superior: Insignia oficial y botón cerrar
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF059669),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified,
+                                    size: 14, color: Colors.white),
+                                SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    "RESPALDO JURÍDICO OFICIAL",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.close, size: 20),
-                      onPressed: () => Navigator.of(dialogContext).pop(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  "Credencial Digital Oficial",
-                  style: TextStyle(
-                    fontFamily: 'Montserrat',
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Text(
-                  "Válido ante agentes de tránsito y peritos judiciales",
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 11,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? const Color(0xFF0F172A)
-                        : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF334155)
-                          : const Color(0xFFE2E8F0),
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _FichaDocRow(
-                          label: "Conductor:",
-                          valor: controller.nombreConductor),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Licencia:", valor: controller.tipoLicencia),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Unidad / Vehículo:",
-                          valor:
-                              "${controller.unidadTaxi} · ${controller.cooperativa}"),
-                      Divider(
-                          height: 12,
-                          color: isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0)),
-                      _FichaDocRow(
-                          label: "Placa / RTV:",
-                          valor:
-                              "${controller.placaVehiculo} · RTV 2024 Aprobada"),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        key: const Key('btn_cerrar_conoce_mas_modal'),
+                        icon: const Icon(Icons.close, size: 22),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                      ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 14),
-                Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
+                  const SizedBox(height: 16),
+
+                  // 2. Cabecera Institucional
+                  Container(
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                            : [const Color(0xFFEFF6FF), const Color(0xFFDBEAFE)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
                     ),
-                    child: const Icon(Icons.qr_code_2_rounded,
-                        size: 90, color: Color(0xFF0F172A)),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF0F172A),
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: const Center(
+                            child: Icon(Icons.balance_rounded,
+                                color: Color(0xFFFBBF24), size: 28),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Grupo Ecuador Total Abogados",
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w900,
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                "Firma jurídica y patrocinio integral para conductores y socios transportistas.",
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11.5,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF475569),
+                                  height: 1.3,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F172A),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                  const SizedBox(height: 16),
+
+                  // 3. Dirección Jurídica: Dr. Emir Vásquez
+                  Text(
+                    "DIRECCIÓN JURÍDICA NACIONAL",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      letterSpacing: 0.8,
+                    ),
                   ),
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text("Cerrar Documento"),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFE2E8F0),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Color(0xFF1E3A8A),
+                              child: Text(
+                                "EV",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Dr. Emir Vásquez",
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "Doctor en Jurisprudencia · UCE",
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 11,
+                                      color: isDark
+                                          ? Colors.white60
+                                          : const Color(0xFF64748B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 18,
+                          color: isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.badge_outlined,
+                                size: 16, color: Color(0xFF2563EB)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Matrícula: 17-2010-415 Pichincha / Corte Nacional",
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : const Color(0xFF334155),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 4. Áreas de Especialidad y Cobertura
+                  Text(
+                    "SERVICIOS Y COBERTURA",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildEspecialidadItem(
+                    isDark: isDark,
+                    emoji: "🚨",
+                    titulo: "Tránsito y Flagrancias (COIP)",
+                    descripcion:
+                        "Defensa inmediata 24/7 en accidentes graves (Art. 377), choques (Art. 380), operativos y retención de vehículos.",
+                  ),
+                  const SizedBox(height: 6),
+                  _buildEspecialidadItem(
+                    isDark: isDark,
+                    emoji: "⚖️",
+                    titulo: "Defensa Laboral y Liquidaciones",
+                    descripcion:
+                        "Patrocinio ante despidos intempestivos, cobro de finiquitos y mediación en cooperativas sin firmar documentos en blanco.",
+                  ),
+                  const SizedBox(height: 20),
+
+                  // 5. Botón Cerrar idéntico al sistema de modales
+                  OutlinedButton(
+                    key: const Key('btn_cerrar_modal_bottom'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:
+                          isDark ? Colors.white70 : const Color(0xFF475569),
+                      side: BorderSide(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFCBD5E1),
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                    ),
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: const Text(
+                      "Cerrar",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEspecialidadItem({
+    required bool isDark,
+    required String emoji,
+    required String titulo,
+    required String descripcion,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  titulo,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : const Color(0xFF0F172A),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  descripcion,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10.5,
+                    color: isDark ? Colors.white70 : const Color(0xFF475569),
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2323,35 +2608,355 @@ class _ItemCredencialWidget extends StatelessWidget {
   }
 }
 
-class _FichaDocRow extends StatelessWidget {
-  final String label;
-  final String valor;
+/// Widget con estado para el formulario del Paso 2 de "Tengo otro problema / Cuéntanos tu caso"
+class FormularioOtroProblemaWidget extends StatefulWidget {
+  final ConductorController controller;
+  final bool isDark;
+  final bool isWide;
 
-  const _FichaDocRow({required this.label, required this.valor});
+  const FormularioOtroProblemaWidget({
+    super.key,
+    required this.controller,
+    required this.isDark,
+    required this.isWide,
+  });
+
+  @override
+  State<FormularioOtroProblemaWidget> createState() =>
+      _FormularioOtroProblemaWidgetState();
+}
+
+class _FormularioOtroProblemaWidgetState
+    extends State<FormularioOtroProblemaWidget> {
+  late final TextEditingController _textController;
+  String? _categoriaSeleccionada;
+
+  final List<String> _categorias = const [
+    "⚖️ Despido intempestivo",
+    "💼 Cobro de liquidación",
+    "🏠 Contrato o arriendo",
+    "👨‍👩‍👧 Pensión alimenticia",
+    "👮 Retención arbitraria",
+    "📋 Consulta general",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(
+      text: widget.controller.descripcionOtroProblema.value,
+    );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _seleccionarCategoria(String cat) {
+    setState(() {
+      _categoriaSeleccionada = cat;
+      final textoLimpio = cat.replaceFirst(RegExp(r'^[^\s]+\s+'), '');
+      if (_textController.text.trim().isEmpty) {
+        _textController.text = textoLimpio;
+      } else if (!_textController.text.contains(textoLimpio)) {
+        _textController.text = "$textoLimpio - ${_textController.text}";
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final isDark = widget.isDark;
+    final isWide = widget.isWide;
+    const colorTeal = Color(0xFF0D9488);
+
+    return Column(
+      key: const ValueKey('paso_2_formulario_otro_problema'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: 'Plus Jakarta Sans',
-            fontSize: 11,
-            color: Colors.grey,
-          ),
-        ),
-        Flexible(
-          child: Text(
-            valor,
-            style: const TextStyle(
-              fontFamily: 'Plus Jakarta Sans',
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
+        // Botón de Volver y Badge de Paso
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Material(
+                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: widget.controller.retrocederPaso,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_rounded,
+                          size: 16,
+                          color: isDark
+                              ? const Color(0xFF93C5FD)
+                              : const Color(0xFF1D4ED8),
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            "Regresar",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? const Color(0xFF93C5FD)
+                                  : const Color(0xFF1D4ED8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
-            textAlign: TextAlign.end,
-            overflow: TextOverflow.ellipsis,
+            const SizedBox(width: 8),
+            Flexible(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorTeal,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  "PASO 2 DE 3: CUÉNTANOS TU CASO",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Contenedor principal del formulario
+        Container(
+          padding: EdgeInsets.all(isWide ? 20 : 16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              width: 1.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colorTeal.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    "⚖️ ASESORÍA JURÍDICA PERSONALIZADA",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: colorTeal,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "¿Qué situación o problema legal tienes?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: isWide ? 19 : 17,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.3,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "Toca una categoría frecuente o escribe un breve resumen para que tu abogado prepare tu defensa:",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 12.5,
+                  color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Chips de categorías frecuentes
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: _categorias.map((cat) {
+                  final seleccionada = _categoriaSeleccionada == cat;
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _seleccionarCategoria(cat),
+                      borderRadius: BorderRadius.circular(20),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: seleccionada
+                              ? colorTeal
+                              : (isDark
+                                  ? const Color(0xFF1E293B)
+                                  : Colors.white),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: seleccionada
+                                ? colorTeal
+                                : (isDark
+                                    ? const Color(0xFF334155)
+                                    : const Color(0xFFCBD5E1)),
+                            width: seleccionada ? 1.5 : 1.0,
+                          ),
+                          boxShadow: seleccionada
+                              ? [
+                                  BoxShadow(
+                                    color: colorTeal.withValues(alpha: 0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Text(
+                          cat,
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: seleccionada
+                                ? Colors.white
+                                : (isDark
+                                    ? Colors.white.withValues(alpha: 0.9)
+                                    : const Color(0xFF334155)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de texto multilínea
+              TextField(
+                controller: _textController,
+                maxLines: 4,
+                minLines: 3,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 13.5,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+                decoration: InputDecoration(
+                  hintText:
+                      "Ejemplo: Despido sin aviso previo / No pagan mi liquidación / Problema con contrato de arriendo / Infracción injustificada...",
+                  hintStyle: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.5,
+                    color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                  ),
+                  filled: true,
+                  fillColor:
+                      isDark ? const Color(0xFF1E293B) : Colors.white,
+                  contentPadding: const EdgeInsets.all(14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: colorTeal,
+                      width: 2.0,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Botón de Enviar a Asesoría Legal
+              ElevatedButton.icon(
+                onPressed: () {
+                  widget.controller
+                      .enviarOtroProblema(_textController.text);
+                },
+                icon: const Icon(Icons.arrow_forward_rounded,
+                    size: 18, color: Colors.white),
+                label: const Text(
+                  "CONTINUAR CON ASESORÍA LEGAL",
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorTeal,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                  shadowColor: colorTeal.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
           ),
         ),
       ],

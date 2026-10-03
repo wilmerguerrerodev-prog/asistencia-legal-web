@@ -29,7 +29,7 @@ void main() {
   });
 
   testWidgets(
-      'SosConductorView mobile flow: Triage diferenciado para los 4 casos y 3 niveles de víctimas',
+      'SosConductorView mobile flow: Menú reordenado, triage diferenciado para los 5 casos y nuevo flujo Tengo otro problema',
       (WidgetTester tester) async {
     tester.view.physicalSize = const Size(375, 812);
     tester.view.devicePixelRatio = 1.0;
@@ -59,11 +59,10 @@ void main() {
     // -------------------------------------------------------------
     // CASO 1: Operativo de Tránsito (Paso directo al dictamen)
     // -------------------------------------------------------------
-    expect(find.text('LegalTech Conductor'), findsOneWidget);
-    expect(
-        find.text('Operativo de Tránsito / Retención Ilegal'), findsOneWidget);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsOneWidget);
+    expect(find.text('Operativo de Tránsito'), findsOneWidget);
 
-    await tapVisible('Operativo de Tránsito / Retención Ilegal');
+    await tapVisible('Operativo de Tránsito');
 
     expect(find.text('GARANTÍAS Y CONTROL VIAL'), findsOneWidget);
     expect(
@@ -133,7 +132,7 @@ void main() {
         find.text('Vehículo Inmovilizado por Impacto de Tercero'), findsOneWidget);
 
     // -------------------------------------------------------------
-    // CASO 4: Agresión / Problema personal
+    // CASO 4: Agresión física / Riña personal (Opción 1 prioritaria arriba)
     // -------------------------------------------------------------
     await tapVisible('Nuevo caso');
 
@@ -150,9 +149,48 @@ void main() {
     expect(find.text('PROTECCIÓN Y CONTENCIÓN PERSONAL'), findsOneWidget);
     expect(find.text('Altercado Verbal o Conflicto con Pasajero / Tercero'),
         findsOneWidget);
+
+    // -------------------------------------------------------------
+    // CASO 5: Encarcelaron un familiar (Detención urgente penal)
+    // -------------------------------------------------------------
+    await tapVisible('Nuevo caso');
+
+    expect(find.text('Encarcelaron un familiar'), findsOneWidget);
+    await tapVisible('Encarcelaron un familiar');
+
+    // Pasa directo al dictamen penal por detención/flagrancia
+    expect(
+        find.text('EMERGENCIA PENAL — DETENCIÓN / FLAGRANCIA'), findsOneWidget);
+    expect(find.text('Protección Legal Inmediata por Detención de Familiar'),
+        findsOneWidget);
+    expect(find.textContaining('Art. 77 Constitución'), findsOneWidget);
+
+    // -------------------------------------------------------------
+    // CASO 6: Tengo otro problema (6ta opción)
+    // -------------------------------------------------------------
+    await tapVisible('Nuevo caso');
+
+    expect(find.text('Tengo otro problema'), findsOneWidget);
+    await tapVisible('Tengo otro problema');
+
+    // Validar formulario de caso personalizado
+    expect(find.text('PASO 2 DE 3: CUÉNTANOS TU CASO'), findsOneWidget);
+    expect(find.text('¿Qué situación o problema legal tienes?'), findsOneWidget);
+    expect(find.text('⚖️ Despido intempestivo'), findsOneWidget);
+    expect(find.text('CONTINUAR CON ASESORÍA LEGAL'), findsOneWidget);
+
+    // Tocar chip de categoría rápida y continuar
+    await tapVisible('⚖️ Despido intempestivo');
+    await tapVisible('CONTINUAR CON ASESORÍA LEGAL');
+
+    // Validar dictamen especializado
+    expect(find.text('ASESORÍA JURÍDICA ESPECIALIZADA'), findsOneWidget);
+    expect(find.textContaining('Código del Trabajo'), findsOneWidget);
+    expect(
+        find.textContaining('NO FIRMES DOCUMENTOS EN BLANCO'), findsOneWidget);
   });
 
-  testWidgets('IncidenteVectorIcon renders all 4 incident types properly',
+  testWidgets('IncidenteVectorIcon renders all 6 incident types properly',
       (WidgetTester tester) async {
     for (final tipo in TipoIncidente.values) {
       await tester.pumpWidget(
@@ -170,6 +208,25 @@ void main() {
       );
       expect(find.byType(IncidenteVectorIcon), findsOneWidget);
     }
+  });
+
+  testWidgets(
+      'AgresionFisicaGolpeIcon and ConflictoVerbalInsultosIcon render properly',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              AgresionFisicaGolpeIcon(size: 40),
+              ConflictoVerbalInsultosIcon(size: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(AgresionFisicaGolpeIcon), findsOneWidget);
+    expect(find.byType(ConflictoVerbalInsultosIcon), findsOneWidget);
   });
 
   test(
@@ -214,6 +271,22 @@ void main() {
         decodedText, contains('https://maps.google.com/?q=-0.22985,-78.52495'));
   });
 
+  test(
+      'ConductorController.obtenerEnlaceWhatsApp includes custom description for otroProblema',
+      () {
+    final controller = ConductorController();
+    controller.seleccionarIncidente(TipoIncidente.otroProblema);
+    controller.enviarOtroProblema('Despido intempestivo tras 5 años');
+    final link = controller.obtenerEnlaceWhatsApp();
+
+    expect(link, startsWith('https://wa.me/593988456189?text='));
+    final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
+    expect(decodedText, contains('ALERTA SOS - ASISTENCIA LEGAL'));
+    expect(decodedText,
+        contains('*Detalle del caso:* Despido intempestivo tras 5 años'));
+    expect(decodedText, contains('Protección y Asesoría Legal Inmediata: Despido intempestivo tras 5 años'));
+  });
+
   testWidgets(
       'SosConductorView: Asignación por cercanía en Paso 3 y escalamiento al Super Abogado Dr. Emir Vásquez',
       (WidgetTester tester) async {
@@ -234,8 +307,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado (solo wizard y saludo)
-    expect(find.text('Documentos'), findsOneWidget);
+    // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado ni documentos antiguos
+    expect(find.text('Documentos'), findsNothing);
+    expect(find.text('Quiénes somos'), findsOneWidget);
+    expect(find.text('Ver más'), findsOneWidget);
     expect(find.text('Credencial'), findsNothing);
     expect(find.text('ABOGADO DE GUARDIA 24/7 EN LÍNEA'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsNothing);
@@ -244,13 +319,13 @@ void main() {
 
     // 2. Avanzar a Paso 3 (Dictamen): Asignación automática del abogado más cercano
     final opcionOperativo =
-        find.text('Operativo de Tránsito / Retención Ilegal');
+        find.text('Operativo de Tránsito');
     await tester.ensureVisible(opcionOperativo);
     await tester.tap(opcionOperativo);
     await tester.pumpAndSettle();
 
-    // En Paso 3 aparece el abogado asignado (Dr. Emir Vásquez) y los botones de acción rápida
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
+    // En Paso 3 aparece el despacho asignado (Grupo Ecuador Total Abogados) y los botones de acción rápida
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
     expect(find.textContaining('A 1.2 km de tu incidente'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsWidgets);
     expect(find.text('Llamar'), findsWidgets);
@@ -263,7 +338,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('DEFENSA LEGAL CERTIFICADA'), findsOneWidget);
-    expect(find.text('Dr. Emir Vásquez'), findsWidgets);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
     expect(find.text('FORMACIÓN ACADÉMICA (SENESCYT)'), findsOneWidget);
     expect(find.text('TRAYECTORIA Y RESPALDO'), findsOneWidget);
     expect(find.text('Cerrar credencial'), findsOneWidget);
@@ -287,10 +362,10 @@ void main() {
   });
 
   test(
-      'ConductorController: Contacto directo prioritario con Dr. Emir Vásquez',
+      'ConductorController: Contacto directo prioritario con Grupo Ecuador Total Abogados',
       () {
     final controller = ConductorController();
-    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
+    expect(controller.abogadoActivo.nombre, 'Grupo Ecuador Total Abogados');
     expect(controller.telefonoAbogado, '+593 98 845 6189');
     expect(controller.matriculaAbogado,
         '17-2010-415 · Pichincha / Corte Nacional');
@@ -305,8 +380,52 @@ void main() {
 
     // Reiniciar flujo
     controller.reiniciarFlujo();
-    expect(controller.abogadoActivo.nombre, 'Dr. Emir Vásquez');
+    expect(controller.abogadoActivo.nombre, 'Grupo Ecuador Total Abogados');
     expect(controller.llamadaIniciada.value, false);
   });
+
+  testWidgets('Abrir modal institucional de Grupo Ecuador Total Abogados',
+      (WidgetTester tester) async {
+    final controller = ConductorController();
+    Get.put<ConductorController>(controller);
+
+    await tester.pumpWidget(
+      GetMaterialApp(
+        theme: light,
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: SosConductorView(isEmbeddedInDashboard: true),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final btnVerMas = find.text('Ver más');
+    await tester.ensureVisible(btnVerMas);
+    await tester.tap(btnVerMas);
+    await tester.pumpAndSettle();
+
+    expect(find.text('RESPALDO JURÍDICO OFICIAL'), findsOneWidget);
+    expect(find.text('Grupo Ecuador Total Abogados'), findsWidgets);
+    expect(find.text('Dr. Emir Vásquez'), findsOneWidget);
+    expect(find.text('Doctor en Jurisprudencia · UCE'), findsOneWidget);
+    expect(find.textContaining('17-2010-415 Pichincha'), findsOneWidget);
+    expect(find.text('Tránsito y Flagrancias (COIP)'), findsOneWidget);
+    expect(find.text('Defensa Laboral y Liquidaciones'), findsOneWidget);
+    expect(find.text('Plan Piloto Ibarra y Sede Quito'), findsNothing);
+    expect(find.textContaining('Consejo Legal'), findsNothing);
+    expect(find.byKey(const Key('btn_llamar_firma_modal')), findsNothing);
+    expect(find.byKey(const Key('btn_whatsapp_firma_modal')), findsNothing);
+    expect(find.byKey(const Key('btn_cerrar_modal_bottom')), findsOneWidget);
+
+    final btnCerrar = find.byKey(const Key('btn_cerrar_modal_bottom'));
+    await tester.ensureVisible(btnCerrar);
+    await tester.tap(btnCerrar);
+    await tester.pumpAndSettle();
+
+    expect(find.text('RESPALDO JURÍDICO OFICIAL'), findsNothing);
+  });
 }
+
 

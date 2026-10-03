@@ -222,7 +222,7 @@ void main() {
   });
 
   group('Login Flow Interception & Role Permissions Tests', () {
-    testWidgets('LoginScreen shows 4 official credential chips and autofills fields on tap', (tester) async {
+    testWidgets('LoginScreen allows typing credentials directly in production style', (tester) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -235,13 +235,10 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Admin TI'), findsOneWidget);
-      expect(find.text('Director'), findsOneWidget);
-      expect(find.text('Abogada'), findsOneWidget);
-      expect(find.text('Conductor'), findsOneWidget);
-
-      // Tap on Conductor chip to autofill credentials
-      await tester.tap(find.text('Conductor'));
+      // Ingreso directo de credenciales en campos
+      final textFields = find.byType(TextField);
+      await tester.enterText(textFields.first, 'conductor@legaltech.ec');
+      await tester.enterText(textFields.last, 'conductor123');
       await tester.pumpAndSettle();
 
       expect(find.text('conductor@legaltech.ec'), findsWidgets);

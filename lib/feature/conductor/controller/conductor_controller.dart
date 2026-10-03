@@ -7,10 +7,12 @@ import 'package:getdash/core/services/firebase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum TipoIncidente {
+  agresionProblemaPersonal,
   meChoque,
   meChocaron,
   operativoTransito,
-  agresionProblemaPersonal,
+  encarcelaronFamiliar,
+  otroProblema,
 }
 
 enum SeveridadVictimas {
@@ -112,6 +114,9 @@ class ConductorController extends GetxController {
   final Rx<bool?> hayHeridos = Rx<bool?>(null);
   final Rx<bool?> daniosGraves = Rx<bool?>(null);
 
+  // Descripción personalizada para caso "Otro problema"
+  final RxString descripcionOtroProblema = ''.obs;
+
   // Variables reactivas de geolocalización
   final Rx<Position?> posicionActual = Rx<Position?>(null);
   final RxBool obteniendoUbicacion = false.obs;
@@ -210,8 +215,8 @@ class ConductorController extends GetxController {
 
   // Abogado titular / Director Jurídico asignado directamente
   final AbogadoDefensor abogadoZona = const AbogadoDefensor(
-    nombre: "Dr. Emir Vásquez",
-    rol: "Director Jurídico Nacional",
+    nombre: "Grupo Ecuador Total Abogados",
+    rol: "Despacho Jurídico Corporativo",
     zonaODistancia: "Dirección Jurídica General · Cobertura Inmediata",
     especialidad: "Abogado Penalista y Consultor Político · Especialista en Tránsito y COIP",
     telefono: "+593 98 845 6189",
@@ -223,14 +228,14 @@ class ConductorController extends GetxController {
     maestria: "Magíster en Derecho Penal y Procesal Penal",
     experiencia: "+18 años en litigación penal de tránsito y defensa corporativa",
     casosAtendidos: "Más de 1.200 juicios de tránsito y flagrancias resueltas",
-    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    despacho: "Grupo Ecuador Total Abogados · Despacho Matriz Nacional",
     esSuperAbogado: true,
   );
 
   // Super Abogado (Director General titular que contrató y respalda el servicio)
   final AbogadoDefensor superAbogado = const AbogadoDefensor(
-    nombre: "Dr. Emir Vásquez",
-    rol: "Director Jurídico Nacional",
+    nombre: "Grupo Ecuador Total Abogados",
+    rol: "Despacho Jurídico Corporativo",
     zonaODistancia: "Dirección Jurídica General · Cobertura Inmediata",
     especialidad: "Abogado Penalista y Consultor Político · Especialista en Tránsito y COIP",
     telefono: "+593 98 845 6189",
@@ -242,7 +247,7 @@ class ConductorController extends GetxController {
     maestria: "Magíster en Derecho Penal y Procesal Penal",
     experiencia: "+18 años en litigación penal de tránsito y defensa corporativa",
     casosAtendidos: "Más de 1.200 juicios de tránsito y flagrancias resueltas",
-    despacho: "Vásquez & Asociados · Despacho Matriz Nacional",
+    despacho: "Grupo Ecuador Total Abogados · Despacho Matriz Nacional",
     esSuperAbogado: true,
   );
 
@@ -270,6 +275,22 @@ class ConductorController extends GetxController {
   // Opciones de incidentes con alto contraste táctil fuertemente tipadas
   final List<OpcionIncidente> opcionesIncidentes = const [
     OpcionIncidente(
+      tipo: TipoIncidente.agresionProblemaPersonal,
+      emoji: "🥊",
+      titulo: "Agresión / Problema personal",
+      descripcion: "Conflicto o altercado urgente en vía pública",
+      color: Color(0xFF8B5CF6),
+      icono: Icons.sports_mma_rounded,
+    ),
+    OpcionIncidente(
+      tipo: TipoIncidente.operativoTransito,
+      emoji: "👮",
+      titulo: "Operativo de Tránsito",
+      descripcion: "Revisión documental o intento de grúa / retención",
+      color: Color(0xFF2563EB),
+      icono: Icons.fact_check_outlined,
+    ),
+    OpcionIncidente(
       tipo: TipoIncidente.meChoque,
       emoji: "💥",
       titulo: "Me choqué",
@@ -286,20 +307,20 @@ class ConductorController extends GetxController {
       icono: Icons.directions_car_rounded,
     ),
     OpcionIncidente(
-      tipo: TipoIncidente.operativoTransito,
-      emoji: "👮",
-      titulo: "Operativo de Tránsito / Retención Ilegal",
-      descripcion: "Revisión documental o intento de grúa / retención",
-      color: Color(0xFF2563EB),
-      icono: Icons.fact_check_outlined,
+      tipo: TipoIncidente.encarcelaronFamiliar,
+      emoji: "⚖️",
+      titulo: "Encarcelaron un familiar",
+      descripcion: "",
+      color: Color(0xFF4F46E5),
+      icono: Icons.gavel_rounded,
     ),
     OpcionIncidente(
-      tipo: TipoIncidente.agresionProblemaPersonal,
-      emoji: "⚠️",
-      titulo: "Agresión / Problema personal",
-      descripcion: "Conflicto o altercado en vía pública",
-      color: Color(0xFF8B5CF6),
-      icono: Icons.shield_outlined,
+      tipo: TipoIncidente.otroProblema,
+      emoji: "📄",
+      titulo: "Tengo otro problema",
+      descripcion: "",
+      color: Color(0xFF0D9488),
+      icono: Icons.assignment_rounded,
     ),
   ];
 
@@ -376,16 +397,29 @@ class ConductorController extends GetxController {
   // Paso 1: Seleccionar tipo de incidente
   void seleccionarIncidente(TipoIncidente tipo) {
     tipoSeleccionado.value = tipo;
-    if (tipo == TipoIncidente.operativoTransito) {
-      // En operativos no hay colisión, pasa directo al dictamen de garantías ciudadanas
+    if (tipo == TipoIncidente.operativoTransito ||
+        tipo == TipoIncidente.encarcelaronFamiliar) {
+      // En operativos o detención de familiar no hay colisión vial, pasa directo al dictamen y llamada urgente
       severidadVictimas.value = SeveridadVictimas.ninguna;
       hayHeridos.value = false;
       daniosGraves.value = false;
       pasoActual.value = 2;
+    } else if (tipo == TipoIncidente.otroProblema) {
+      // En otro problema, no hay triaje de heridos viales: pasa al formulario para describir el caso
+      severidadVictimas.value = SeveridadVictimas.ninguna;
+      hayHeridos.value = false;
+      daniosGraves.value = false;
+      pasoActual.value = 1;
     } else {
       subPasoTriage.value = 0;
       pasoActual.value = 1;
     }
+  }
+
+  // Envía la descripción del caso personalizado y avanza al dictamen y llamada
+  void enviarOtroProblema(String descripcion) {
+    descripcionOtroProblema.value = descripcion.trim();
+    pasoActual.value = 2;
   }
 
   // Paso 2 (Pregunta 1): ¿Cuál es el estado de las personas / víctimas?
@@ -428,8 +462,11 @@ class ConductorController extends GetxController {
     if (pasoActual.value == 2) {
       casoEscaladoASuperAbogado.value = false;
       segundosRestantes.value = 60;
-      if (tipoSeleccionado.value == TipoIncidente.operativoTransito) {
+      if (tipoSeleccionado.value == TipoIncidente.operativoTransito ||
+          tipoSeleccionado.value == TipoIncidente.encarcelaronFamiliar) {
         pasoActual.value = 0;
+      } else if (tipoSeleccionado.value == TipoIncidente.otroProblema) {
+        pasoActual.value = 1;
       } else if (tipoSeleccionado.value ==
           TipoIncidente.agresionProblemaPersonal) {
         pasoActual.value = 1;
@@ -443,7 +480,9 @@ class ConductorController extends GetxController {
         subPasoTriage.value = 1;
       }
     } else if (pasoActual.value == 1) {
-      if (subPasoTriage.value == 1) {
+      if (tipoSeleccionado.value == TipoIncidente.otroProblema) {
+        pasoActual.value = 0;
+      } else if (subPasoTriage.value == 1) {
         subPasoTriage.value = 0;
       } else {
         pasoActual.value = 0;
@@ -463,6 +502,7 @@ class ConductorController extends GetxController {
     severidadVictimas.value = null;
     hayHeridos.value = null;
     daniosGraves.value = null;
+    descripcionOtroProblema.value = '';
   }
 
   // Simulación de llamada directa con temporizador de escalamiento (1 minuto = 60 segundos)
@@ -502,15 +542,23 @@ class ConductorController extends GetxController {
     final ubicacion = obtenerEnlaceUbicacion();
     final encabezado = casoEscaladoASuperAbogado.value
         ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (TRANSFERIDO A DR. EMIR VÁSQUEZ)*"
-        : "🚨 *ALERTA SOS - ASISTENCIA LEGAL*";
-    final estadoMembresiaTexto = estaSuscripcionActiva.value ? "🟢 Activa y Protegida (24/7)" : "⚠️ Regularización Pendiente";
+        : "🚨 *ALERTA SOS - ASISTENCIA LEGAL (GRUPO ECUADOR TOTAL ABOGADOS)*";
+    final estadoMembresiaTexto = estaSuscripcionActiva.value
+        ? "🟢 Activa y Protegida (24/7)"
+        : "⚠️ Regularización Pendiente";
+
+    final detalleExtra = (tipoSeleccionado.value == TipoIncidente.otroProblema &&
+            descripcionOtroProblema.value.isNotEmpty)
+        ? "\n📝 *Detalle del caso:* ${descripcionOtroProblema.value}"
+        : "";
 
     return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
         "🚘 *Unidad:* $unidadTaxi - $cooperativa\n"
         "📋 *Placa:* $placaVehiculo\n"
         "🛡️ *Membresía:* $estadoMembresiaTexto\n"
-        "⚖️ *Diagnóstico:* ${dictamen.titulo}\n\n"
+        "⚖️ *Diagnóstico:* ${dictamen.titulo}"
+        "$detalleExtra\n\n"
         "📍 *Ubicación del incidente:*\n"
         "$ubicacion";
   }
@@ -532,6 +580,7 @@ class ConductorController extends GetxController {
         'unidad': unidadTaxi,
         'placa': placaVehiculo,
         'tipoIncidente': tipoSeleccionado.value?.name ?? 'Incidente Vial',
+        'descripcion': descripcionOtroProblema.value,
         'latitud': posicionActual.value?.latitude ?? -0.22985,
         'longitud': posicionActual.value?.longitude ?? -78.52495,
         'ubicacionEnlace': obtenerEnlaceUbicacion(),
@@ -587,7 +636,56 @@ class ConductorController extends GetxController {
         "$nombreConductor, mantén la calma. Sigue estos sencillos pasos:";
 
     // =========================================================================
-    // CASO 1: OPERATIVO DE TRÁNSITO O RETENCIÓN
+    // CASO 0: ASESORÍA JURÍDICA ESPECIALIZADA / OTRO PROBLEMA
+    // =========================================================================
+    if (tipo == TipoIncidente.otroProblema) {
+      final String casoDetalle = descripcionOtroProblema.value.isNotEmpty
+          ? ": ${descripcionOtroProblema.value}"
+          : "";
+      return DictamenLegal(
+        nivel: "ASESORÍA JURÍDICA ESPECIALIZADA",
+        colorNivel: const Color(0xFF0D9488),
+        iconoNivel: Icons.gavel_rounded,
+        saludo: saludoUniversal,
+        titulo: "Protección y Asesoría Legal Inmediata$casoDetalle",
+        normativa:
+            "Marco legal: Código del Trabajo, COGEP y Garantías Constitucionales del Ecuador.",
+        reglas: const [
+          "NO FIRMES DOCUMENTOS EN BLANCO NI FINIQUITOS: Nunca firmes renuncias voluntarias, hojas en blanco ni acuerdos sin la previa revisión de tu abogado.",
+          "CONSERVA TODA PRUEBA Y EVIDENCIA: Guarda chats de WhatsApp, audios, correos, recibos, transferencias o contratos que respalden tu caso.",
+          "TODO DERECHO LABORAL ES IRRENUNCIABLE: Conforme al Art. 326 de la Constitución, los derechos de los trabajadores son intangibles e irrenunciables.",
+          "ASESORÍA INMEDIATA CON TU ABOGADO: Tu caso es atendido por especialistas para calcular tu liquidación justa o estructurar tu reclamo judicial.",
+        ],
+        accionInmediata:
+            "Presiona el botón para comunicarte directamente con el Dr. Emir Vásquez y su equipo en Grupo Ecuador Total Abogados.",
+      );
+    }
+
+    // =========================================================================
+    // CASO 1: ENCARCELARON UN FAMILIAR (DETENCIÓN / FLAGRANCIA PENAL)
+    // =========================================================================
+    if (tipo == TipoIncidente.encarcelaronFamiliar) {
+      return DictamenLegal(
+        nivel: "EMERGENCIA PENAL — DETENCIÓN / FLAGRANCIA",
+        colorNivel: const Color(0xFF4F46E5),
+        iconoNivel: Icons.gavel_rounded,
+        saludo: saludoUniversal,
+        titulo: "Protección Legal Inmediata por Detención de Familiar",
+        normativa:
+            "Marco legal: Garantías básicas del debido proceso (Art. 77 Constitución) y Flagrancia (Art. 526 y siguientes del COIP).",
+        reglas: const [
+          "DERECHO CONSTITUCIONAL AL SILENCIO: Tu familiar tiene derecho a no autoincriminarse ni declarar sin su abogado defensor presente (Art. 77 num. 7 CRE).",
+          "PLAZO MÁXIMO DE FLAGRANCIA (24 HORAS): La persona detenida debe ser puesta ante un juez de garantías penales en un plazo improrrogable de 24 horas.",
+          "NO FIRMAR HOJAS EN BLANCO NI ACUERDOS: Exige a tu familiar que no firme declaraciones, partes ni hojas sin que su abogado revise el texto.",
+          "DERECHO A COMUNICACIÓN INMEDIATA: La policía tiene la obligación legal de permitir una llamada con un familiar o abogado de confianza.",
+        ],
+        accionInmediata:
+            "Presiona el botón para comunicarte de inmediato con Grupo Ecuador Total Abogados y asignar la defensa técnica penal.",
+      );
+    }
+
+    // =========================================================================
+    // CASO 2: OPERATIVO DE TRÁNSITO O RETENCIÓN
     // =========================================================================
     if (tipo == TipoIncidente.operativoTransito) {
       return DictamenLegal(
