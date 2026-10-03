@@ -224,99 +224,121 @@ class SosConductorView extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // Ficha del Conductor simple y limpia
+          // Ficha del Conductor simple, limpia y legible en 2 líneas
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(8),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color:
                     isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
                 width: 1,
               ),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.directions_car_rounded,
-                    color: Color(0xFF2563EB), size: 16),
-                const SizedBox(width: 8),
-                Expanded(
+                Row(
+                  children: [
+                    const Icon(Icons.directions_car_rounded,
+                        color: Color(0xFF2563EB), size: 16),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        controller.nombreConductor,
+                        style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                          color:
+                              isDark ? Colors.white : const Color(0xFF0F172A),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Indicador reactivo de GPS
+                    Obx(() {
+                      final estado = controller.estadoGps.value;
+                      Color colorPunto;
+                      Color colorFondo;
+                      if (estado == 'GPS activo') {
+                        colorPunto = const Color(0xFF10B981);
+                        colorFondo =
+                            const Color(0xFF10B981).withValues(alpha: 0.12);
+                      } else if (estado == 'Localizando...') {
+                        colorPunto = const Color(0xFFF59E0B);
+                        colorFondo =
+                            const Color(0xFFF59E0B).withValues(alpha: 0.12);
+                      } else {
+                        colorPunto = const Color(0xFFEF4444);
+                        colorFondo =
+                            const Color(0xFFEF4444).withValues(alpha: 0.12);
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          controller.capturarUbicacionInicial();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  "Reintentando conectar con satélite GPS..."),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: colorFondo,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: colorPunto,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4.5),
+                              Text(
+                                estado,
+                                style: TextStyle(
+                                  fontFamily: 'Plus Jakarta Sans',
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorPunto,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Padding(
+                  padding: const EdgeInsets.only(left: 24),
                   child: Text(
-                    "${controller.nombreConductor} · ${controller.unidadTaxi} (${controller.cooperativa})",
+                    "${controller.unidadTaxi} · ${controller.cooperativa}",
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white70 : const Color(0xFF475569),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
                     ),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
-                // Indicador reactivo de GPS
-                Obx(() {
-                  final estado = controller.estadoGps.value;
-                  Color colorPunto;
-                  Color colorFondo;
-                  if (estado == 'GPS activo') {
-                    colorPunto = const Color(0xFF10B981);
-                    colorFondo =
-                        const Color(0xFF10B981).withValues(alpha: 0.12);
-                  } else if (estado == 'Localizando...') {
-                    colorPunto = const Color(0xFFF59E0B);
-                    colorFondo =
-                        const Color(0xFFF59E0B).withValues(alpha: 0.12);
-                  } else {
-                    colorPunto = const Color(0xFFEF4444);
-                    colorFondo =
-                        const Color(0xFFEF4444).withValues(alpha: 0.12);
-                  }
-
-                  return GestureDetector(
-                    onTap: () {
-                      controller.capturarUbicacionInicial();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content:
-                              Text("Reintentando conectar con satélite GPS..."),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 7, vertical: 2.5),
-                      decoration: BoxDecoration(
-                        color: colorFondo,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: colorPunto,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4.5),
-                          Text(
-                            estado,
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: colorPunto,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
               ],
             ),
           ),
