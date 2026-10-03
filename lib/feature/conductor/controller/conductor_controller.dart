@@ -7,10 +7,11 @@ import 'package:getdash/core/services/firebase_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 enum TipoIncidente {
+  agresionProblemaPersonal,
   meChoque,
   meChocaron,
   operativoTransito,
-  agresionProblemaPersonal,
+  otroProblema,
 }
 
 enum SeveridadVictimas {
@@ -111,6 +112,9 @@ class ConductorController extends GetxController {
   final Rx<SeveridadVictimas?> severidadVictimas = Rx<SeveridadVictimas?>(null);
   final Rx<bool?> hayHeridos = Rx<bool?>(null);
   final Rx<bool?> daniosGraves = Rx<bool?>(null);
+
+  // Descripción personalizada para caso "Otro problema"
+  final RxString descripcionOtroProblema = ''.obs;
 
   // Variables reactivas de geolocalización
   final Rx<Position?> posicionActual = Rx<Position?>(null);
@@ -270,6 +274,14 @@ class ConductorController extends GetxController {
   // Opciones de incidentes con alto contraste táctil fuertemente tipadas
   final List<OpcionIncidente> opcionesIncidentes = const [
     OpcionIncidente(
+      tipo: TipoIncidente.agresionProblemaPersonal,
+      emoji: "🥊",
+      titulo: "Agresión física / Riña personal",
+      descripcion: "Conflicto o altercado urgente en vía pública",
+      color: Color(0xFF8B5CF6),
+      icono: Icons.sports_mma_rounded,
+    ),
+    OpcionIncidente(
       tipo: TipoIncidente.meChoque,
       emoji: "💥",
       titulo: "Me choqué",
@@ -294,12 +306,12 @@ class ConductorController extends GetxController {
       icono: Icons.fact_check_outlined,
     ),
     OpcionIncidente(
-      tipo: TipoIncidente.agresionProblemaPersonal,
-      emoji: "⚠️",
-      titulo: "Agresión / Problema personal",
-      descripcion: "Conflicto o altercado en vía pública",
-      color: Color(0xFF8B5CF6),
-      icono: Icons.shield_outlined,
+      tipo: TipoIncidente.otroProblema,
+      emoji: "📄",
+      titulo: "Tengo otro problema / Cuéntanos tu caso",
+      descripcion: "Asesoría laboral, despido, contratos, cobros o penal",
+      color: Color(0xFF0D9488),
+      icono: Icons.gavel_rounded,
     ),
   ];
 
@@ -381,10 +393,22 @@ class ConductorController extends GetxController {
       hayHeridos.value = false;
       daniosGraves.value = false;
       pasoActual.value = 2;
+    } else if (tipo == TipoIncidente.otroProblema) {
+      // En otro problema, no hay triaje de heridos viales: pasa al formulario para describir el caso
+      severidadVictimas.value = SeveridadVictimas.ninguna;
+      hayHeridos.value = false;
+      daniosGraves.value = false;
+      pasoActual.value = 1;
     } else {
       subPasoTriage.value = 0;
       pasoActual.value = 1;
     }
+  }
+
+  // Envía la descripción del caso personalizado y avanza al dictamen y llamada
+  void enviarOtroProblema(String descripcion) {
+    descripcionOtroProblema.value = descripcion.trim();
+    pasoActual.value = 2;
   }
 
   // Paso 2 (Pregunta 1): ¿Cuál es el estado de las personas / víctimas?
@@ -429,6 +453,8 @@ class ConductorController extends GetxController {
       segundosRestantes.value = 60;
       if (tipoSeleccionado.value == TipoIncidente.operativoTransito) {
         pasoActual.value = 0;
+      } else if (tipoSeleccionado.value == TipoIncidente.otroProblema) {
+        pasoActual.value = 1;
       } else if (tipoSeleccionado.value ==
           TipoIncidente.agresionProblemaPersonal) {
         pasoActual.value = 1;
@@ -442,7 +468,9 @@ class ConductorController extends GetxController {
         subPasoTriage.value = 1;
       }
     } else if (pasoActual.value == 1) {
-      if (subPasoTriage.value == 1) {
+      if (tipoSeleccionado.value == TipoIncidente.otroProblema) {
+        pasoActual.value = 0;
+      } else if (subPasoTriage.value == 1) {
         subPasoTriage.value = 0;
       } else {
         pasoActual.value = 0;
@@ -462,6 +490,7 @@ class ConductorController extends GetxController {
     severidadVictimas.value = null;
     hayHeridos.value = null;
     daniosGraves.value = null;
+    descripcionOtroProblema.value = '';
   }
 
   // Simulación de llamada directa con temporizador de escalamiento (1 minuto = 60 segundos)
@@ -502,11 +531,18 @@ class ConductorController extends GetxController {
     final encabezado = casoEscaladoASuperAbogado.value
         ? "🚨 *ALERTA SOS - ASISTENCIA LEGAL (GRUPO ECUADOR TOTAL ABOGADOS)*"
         : "🚨 *ALERTA SOS - ASISTENCIA LEGAL (GRUPO ECUADOR TOTAL ABOGADOS)*";
+    
+    final detalleExtra = (tipoSeleccionado.value == TipoIncidente.otroProblema &&
+            descripcionOtroProblema.value.isNotEmpty)
+        ? "\n📝 *Detalle del caso:* ${descripcionOtroProblema.value}\n"
+        : "";
+
     return "$encabezado\n"
         "👤 *Conductor:* $nombreConductor\n"
         "🚘 *Unidad:* $unidadTaxi - $cooperativa\n"
         "📋 *Placa:* $placaVehiculo\n"
-        "⚖️ *Diagnóstico:* ${dictamen.titulo}\n\n"
+        "⚖️ *Diagnóstico:* ${dictamen.titulo}\n"
+        "$detalleExtra"
         "📍 *Ubicación del incidente:*\n"
         "$ubicacion";
   }
@@ -527,6 +563,7 @@ class ConductorController extends GetxController {
         'unidad': unidadTaxi,
         'placa': placaVehiculo,
         'tipoIncidente': tipoSeleccionado.value?.name ?? 'Incidente Vial',
+        'descripcion': descripcionOtroProblema.value,
         'latitud': posicionActual.value?.latitude ?? -0.22985,
         'longitud': posicionActual.value?.longitude ?? -78.52495,
         'ubicacionEnlace': obtenerEnlaceUbicacion(),
@@ -577,6 +614,32 @@ class ConductorController extends GetxController {
     final graves = daniosGraves.value ?? false;
     final String saludoUniversal =
         "$nombreConductor, mantén la calma. Sigue estos sencillos pasos:";
+
+    // =========================================================================
+    // CASO 0: ASESORÍA JURÍDICA ESPECIALIZADA / OTRO PROBLEMA
+    // =========================================================================
+    if (tipo == TipoIncidente.otroProblema) {
+      final String casoDetalle = descripcionOtroProblema.value.isNotEmpty
+          ? ": ${descripcionOtroProblema.value}"
+          : "";
+      return DictamenLegal(
+        nivel: "ASESORÍA JURÍDICA ESPECIALIZADA",
+        colorNivel: const Color(0xFF0D9488),
+        iconoNivel: Icons.gavel_rounded,
+        saludo: saludoUniversal,
+        titulo: "Protección y Asesoría Legal Inmediata$casoDetalle",
+        normativa:
+            "Marco legal: Código del Trabajo, COGEP y Garantías Constitucionales del Ecuador.",
+        reglas: const [
+          "NO FIRMES DOCUMENTOS EN BLANCO NI FINIQUITOS: Nunca firmes renuncias voluntarias, hojas en blanco ni acuerdos sin la previa revisión de tu abogado.",
+          "CONSERVA TODA PRUEBA Y EVIDENCIA: Guarda chats de WhatsApp, audios, correos, recibos, transferencias o contratos que respalden tu caso.",
+          "TODO DERECHO LABORAL ES IRRENUNCIABLE: Conforme al Art. 326 de la Constitución, los derechos de los trabajadores son intangibles e irrenunciables.",
+          "ASESORÍA INMEDIATA CON TU ABOGADO: Tu caso es atendido por especialistas para calcular tu liquidación justa o estructurar tu reclamo judicial.",
+        ],
+        accionInmediata:
+            "Presiona el botón para comunicarte directamente con el Dr. Emir Vásquez y su equipo en Grupo Ecuador Total Abogados.",
+      );
+    }
 
     // =========================================================================
     // CASO 1: OPERATIVO DE TRÁNSITO O RETENCIÓN

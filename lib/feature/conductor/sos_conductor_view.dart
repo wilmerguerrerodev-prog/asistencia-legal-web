@@ -493,6 +493,17 @@ class SosConductorView extends StatelessWidget {
               ),
             ],
           ),
+
+        const SizedBox(height: 14),
+
+        // Opción 5: Tengo otro problema / Cuéntanos tu caso (Banner horizontal destacado)
+        _buildBotonOtroProblemaBanner(
+          opcion: controller.opcionesIncidentes[4],
+          onTap: () => controller.seleccionarIncidente(
+              controller.opcionesIncidentes[4].tipo),
+          isDark: isDark,
+          isWide: isWide,
+        ),
       ],
     );
   }
@@ -568,6 +579,142 @@ class SosConductorView extends StatelessWidget {
                   color: Colors.white,
                   letterSpacing: 0.2,
                   height: 1.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Banner horizontal táctil para la 5ta opción: Tengo otro problema / Cuéntanos tu caso
+  Widget _buildBotonOtroProblemaBanner({
+    required OpcionIncidente opcion,
+    required VoidCallback onTap,
+    required bool isDark,
+    required bool isWide,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isWide ? 20 : 14,
+            vertical: isWide ? 16 : 14,
+          ),
+          decoration: BoxDecoration(
+            color: opcion.color, // Color teal 0xFF0D9488
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: opcion.color.withValues(alpha: 0.38),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Badge blanco con icono vectorial
+              Container(
+                width: isWide ? 58 : 50,
+                height: isWide ? 58 : 50,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: IncidenteVectorIcon(
+                  tipo: opcion.tipo,
+                  size: isWide ? 38 : 34,
+                  useModernColors: true,
+                ),
+              ),
+              const SizedBox(width: 14),
+
+              // Textos: Título + Descripción
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            opcion.titulo,
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: isWide ? 16 : 14.5,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              letterSpacing: 0.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            "NUEVO",
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 9,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      opcion.descripcion,
+                      style: TextStyle(
+                        fontFamily: 'Plus Jakarta Sans',
+                        fontSize: isWide ? 12 : 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withValues(alpha: 0.92),
+                        height: 1.25,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+
+              // Botón circular con flecha de acción
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Colors.white,
                 ),
               ),
             ],
@@ -684,8 +831,16 @@ class SosConductorView extends StatelessWidget {
     bool isDark,
     bool isWide,
   ) {
-    final subPaso = controller.subPasoTriage.value;
     final tipo = controller.tipoSeleccionado.value ?? TipoIncidente.meChoque;
+    if (tipo == TipoIncidente.otroProblema) {
+      return FormularioOtroProblemaWidget(
+        controller: controller,
+        isDark: isDark,
+        isWide: isWide,
+      );
+    }
+
+    final subPaso = controller.subPasoTriage.value;
     final bool esAgresion = (tipo == TipoIncidente.agresionProblemaPersonal);
     final bool esChocado = (tipo == TipoIncidente.meChocaron);
 
@@ -2352,6 +2507,362 @@ class _FichaDocRow extends StatelessWidget {
             ),
             textAlign: TextAlign.end,
             overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Widget con estado para el formulario del Paso 2 de "Tengo otro problema / Cuéntanos tu caso"
+class FormularioOtroProblemaWidget extends StatefulWidget {
+  final ConductorController controller;
+  final bool isDark;
+  final bool isWide;
+
+  const FormularioOtroProblemaWidget({
+    super.key,
+    required this.controller,
+    required this.isDark,
+    required this.isWide,
+  });
+
+  @override
+  State<FormularioOtroProblemaWidget> createState() =>
+      _FormularioOtroProblemaWidgetState();
+}
+
+class _FormularioOtroProblemaWidgetState
+    extends State<FormularioOtroProblemaWidget> {
+  late final TextEditingController _textController;
+  String? _categoriaSeleccionada;
+
+  final List<String> _categorias = const [
+    "⚖️ Despido intempestivo",
+    "💼 Cobro de liquidación",
+    "🏠 Contrato o arriendo",
+    "👨‍👩‍👧 Pensión alimenticia",
+    "👮 Retención arbitraria",
+    "📋 Consulta general",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(
+      text: widget.controller.descripcionOtroProblema.value,
+    );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  void _seleccionarCategoria(String cat) {
+    setState(() {
+      _categoriaSeleccionada = cat;
+      final textoLimpio = cat.replaceFirst(RegExp(r'^[^\s]+\s+'), '');
+      if (_textController.text.trim().isEmpty) {
+        _textController.text = textoLimpio;
+      } else if (!_textController.text.contains(textoLimpio)) {
+        _textController.text = "$textoLimpio - ${_textController.text}";
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+    final isWide = widget.isWide;
+    const colorTeal = Color(0xFF0D9488);
+
+    return Column(
+      key: const ValueKey('paso_2_formulario_otro_problema'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Botón de Volver y Badge de Paso
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Material(
+                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(10),
+                child: InkWell(
+                  onTap: widget.controller.retrocederPaso,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 6, horizontal: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF3B82F6).withValues(alpha: 0.4)
+                            : const Color(0xFFBFDBFE),
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_rounded,
+                          size: 16,
+                          color: isDark
+                              ? const Color(0xFF93C5FD)
+                              : const Color(0xFF1D4ED8),
+                        ),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            "Regresar",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Plus Jakarta Sans',
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: isDark
+                                  ? const Color(0xFF93C5FD)
+                                  : const Color(0xFF1D4ED8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorTeal,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  "PASO 2 DE 3: CUÉNTANOS TU CASO",
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        // Contenedor principal del formulario
+        Container(
+          padding: EdgeInsets.all(isWide ? 20 : 16),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+              width: 1.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: colorTeal.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Text(
+                    "⚖️ ASESORÍA JURÍDICA PERSONALIZADA",
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: colorTeal,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "¿Qué situación o problema legal tienes?",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: isWide ? 19 : 17,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.3,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "Toca una categoría frecuente o escribe un breve resumen para que tu abogado prepare tu defensa:",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 12.5,
+                  color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Chips de categorías frecuentes
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: _categorias.map((cat) {
+                  final seleccionada = _categoriaSeleccionada == cat;
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => _seleccionarCategoria(cat),
+                      borderRadius: BorderRadius.circular(20),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 7),
+                        decoration: BoxDecoration(
+                          color: seleccionada
+                              ? colorTeal
+                              : (isDark
+                                  ? const Color(0xFF1E293B)
+                                  : Colors.white),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: seleccionada
+                                ? colorTeal
+                                : (isDark
+                                    ? const Color(0xFF334155)
+                                    : const Color(0xFFCBD5E1)),
+                            width: seleccionada ? 1.5 : 1.0,
+                          ),
+                          boxShadow: seleccionada
+                              ? [
+                                  BoxShadow(
+                                    color: colorTeal.withValues(alpha: 0.3),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: Text(
+                          cat,
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: seleccionada
+                                ? Colors.white
+                                : (isDark
+                                    ? Colors.white.withValues(alpha: 0.9)
+                                    : const Color(0xFF334155)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Campo de texto multilínea
+              TextField(
+                controller: _textController,
+                maxLines: 4,
+                minLines: 3,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 13.5,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+                decoration: InputDecoration(
+                  hintText:
+                      "Ejemplo: Despido sin aviso previo / No pagan mi liquidación / Problema con contrato de arriendo / Infracción injustificada...",
+                  hintStyle: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 12.5,
+                    color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
+                  ),
+                  filled: true,
+                  fillColor:
+                      isDark ? const Color(0xFF1E293B) : Colors.white,
+                  contentPadding: const EdgeInsets.all(14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: colorTeal,
+                      width: 2.0,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Botón de Enviar a Asesoría Legal
+              ElevatedButton.icon(
+                onPressed: () {
+                  widget.controller
+                      .enviarOtroProblema(_textController.text);
+                },
+                icon: const Icon(Icons.arrow_forward_rounded,
+                    size: 18, color: Colors.white),
+                label: const Text(
+                  "CONTINUAR CON ASESORÍA LEGAL",
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorTeal,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 3,
+                  shadowColor: colorTeal.withValues(alpha: 0.4),
+                ),
+              ),
+            ],
           ),
         ),
       ],

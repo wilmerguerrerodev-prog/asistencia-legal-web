@@ -43,6 +43,9 @@ class IncidenteVectorIcon extends StatelessWidget {
       case TipoIncidente.agresionProblemaPersonal:
         return AgresionPersonalVectorPainter(
             color: color, useModernColors: useModern);
+      case TipoIncidente.otroProblema:
+        return OtroProblemaVectorPainter(
+            color: color, useModernColors: useModern);
     }
   }
 }
@@ -711,6 +714,152 @@ class AgresionPersonalVectorPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant AgresionPersonalVectorPainter oldDelegate) =>
+      oldDelegate.color != color ||
+      oldDelegate.useModernColors != useModernColors;
+}
+
+// ============================================================================
+// 5. OTRO PROBLEMA: Portafolio / Carpeta jurídica con documentos y sello legal
+// ============================================================================
+class OtroProblemaVectorPainter extends CustomPainter {
+  final Color color;
+  final bool useModernColors;
+
+  const OtroProblemaVectorPainter({
+    required this.color,
+    this.useModernColors = true,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 100, size.height / 100);
+
+    final folderBackColor =
+        useModernColors ? const Color(0xFF0F766E) : color;
+    final folderFrontColor =
+        useModernColors ? const Color(0xFF14B8A6) : color;
+    final paperColor =
+        useModernColors ? const Color(0xFFF8FAFC) : Colors.white;
+    final textLineColor = useModernColors
+        ? const Color(0xFF94A3B8)
+        : Colors.black.withValues(alpha: 0.3);
+    final badgeColor =
+        useModernColors ? const Color(0xFFF59E0B) : const Color(0xFFD97706);
+    const gavelColor = Colors.white;
+
+    // --- 1. Pestaña y fondo de la carpeta (Folder back) ---
+    final backPaint = Paint()
+      ..color = folderBackColor
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    // Pestaña superior izquierda
+    final tabPath = Path()
+      ..moveTo(16, 26)
+      ..lineTo(16, 20)
+      ..quadraticBezierTo(16, 16, 20, 16)
+      ..lineTo(44, 16)
+      ..quadraticBezierTo(48, 16, 52, 22)
+      ..lineTo(56, 26)
+      ..close();
+    canvas.drawPath(tabPath, backPaint);
+
+    final folderBackRRect = RRect.fromRectAndRadius(
+      const Rect.fromLTWH(14, 24, 72, 60),
+      const Radius.circular(8),
+    );
+    canvas.drawRRect(folderBackRRect, backPaint);
+
+    // --- 2. Hoja de documento legal saliendo (Document sheet) ---
+    final paperPaint = Paint()
+      ..color = paperColor
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final paperPath = Path()
+      ..moveTo(26, 12)
+      ..lineTo(64, 12)
+      ..lineTo(74, 22) // Esquina doblada
+      ..lineTo(74, 58)
+      ..lineTo(26, 58)
+      ..close();
+    canvas.drawPath(paperPath, paperPaint);
+
+    // Esquina doblada del documento
+    final foldPaint = Paint()
+      ..color = useModernColors
+          ? const Color(0xFFCBD5E1)
+          : Colors.black.withValues(alpha: 0.2)
+      ..style = PaintingStyle.fill;
+    final foldPath = Path()
+      ..moveTo(64, 12)
+      ..lineTo(64, 22)
+      ..lineTo(74, 22)
+      ..close();
+    canvas.drawPath(foldPath, foldPaint);
+
+    // Líneas simuladas de texto legal en el documento
+    final linePaint = Paint()
+      ..color = textLineColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawLine(const Offset(34, 24), const Offset(58, 24), linePaint);
+    canvas.drawLine(const Offset(34, 32), const Offset(66, 32), linePaint);
+    canvas.drawLine(const Offset(34, 40), const Offset(56, 40), linePaint);
+
+    // --- 3. Frente de la carpeta con corte diagonal / bolsillo ---
+    final frontPaint = Paint()
+      ..color = folderFrontColor
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    final frontPath = Path()
+      ..moveTo(14, 42)
+      ..lineTo(44, 38)
+      ..quadraticBezierTo(50, 37, 56, 42)
+      ..lineTo(86, 42)
+      ..lineTo(86, 80)
+      ..quadraticBezierTo(86, 84, 82, 84)
+      ..lineTo(18, 84)
+      ..quadraticBezierTo(14, 84, 14, 80)
+      ..close();
+    canvas.drawPath(frontPath, frontPaint);
+
+    // --- 4. Sello / Emblema dorado de Asesoría Jurídica (Gavel) ---
+    final badgePaint = Paint()
+      ..color = badgeColor
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+    canvas.drawCircle(const Offset(68, 64), 14, badgePaint);
+
+    final badgeBorder = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+    canvas.drawCircle(const Offset(68, 64), 14, badgeBorder);
+
+    // Mini mazo blanco dentro del sello
+    final iconPaint = Paint()
+      ..color = gavelColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4
+      ..strokeCap = StrokeCap.round;
+
+    // Cabeza del mazo inclinada
+    canvas.drawLine(const Offset(62, 59), const Offset(69, 54), iconPaint);
+    // Mango del mazo
+    canvas.drawLine(const Offset(65.5, 56.5), const Offset(74, 71), iconPaint);
+    // Base de madera
+    canvas.drawLine(const Offset(67, 73), const Offset(75, 73), iconPaint);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant OtroProblemaVectorPainter oldDelegate) =>
       oldDelegate.color != color ||
       oldDelegate.useModernColors != useModernColors;
 }

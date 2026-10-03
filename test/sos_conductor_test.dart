@@ -29,7 +29,7 @@ void main() {
   });
 
   testWidgets(
-      'SosConductorView mobile flow: Triage diferenciado para los 4 casos y 3 niveles de víctimas',
+      'SosConductorView mobile flow: Menú reordenado, triage diferenciado para los 5 casos y nuevo flujo Tengo otro problema',
       (WidgetTester tester) async {
     tester.view.physicalSize = const Size(375, 812);
     tester.view.devicePixelRatio = 1.0;
@@ -133,12 +133,12 @@ void main() {
         find.text('Vehículo Inmovilizado por Impacto de Tercero'), findsOneWidget);
 
     // -------------------------------------------------------------
-    // CASO 4: Agresión / Problema personal
+    // CASO 4: Agresión física / Riña personal (Opción 1 prioritaria arriba)
     // -------------------------------------------------------------
     await tapVisible('Nuevo caso');
 
-    expect(find.text('Agresión / Problema personal'), findsOneWidget);
-    await tapVisible('Agresión / Problema personal');
+    expect(find.text('Agresión física / Riña personal'), findsOneWidget);
+    await tapVisible('Agresión física / Riña personal');
 
     // Validar opciones adaptadas para altercado personal
     expect(find.text('HAY AGRESIÓN FÍSICA O HERIDOS'), findsOneWidget);
@@ -150,9 +150,32 @@ void main() {
     expect(find.text('PROTECCIÓN Y CONTENCIÓN PERSONAL'), findsOneWidget);
     expect(find.text('Altercado Verbal o Conflicto con Pasajero / Tercero'),
         findsOneWidget);
+
+    // -------------------------------------------------------------
+    // CASO 5: Tengo otro problema / Cuéntanos tu caso (5ta opción)
+    // -------------------------------------------------------------
+    await tapVisible('Nuevo caso');
+
+    expect(find.text('Tengo otro problema / Cuéntanos tu caso'), findsOneWidget);
+    await tapVisible('Tengo otro problema / Cuéntanos tu caso');
+
+    // Validar formulario de caso personalizado
+    expect(find.text('PASO 2 DE 3: CUÉNTANOS TU CASO'), findsOneWidget);
+    expect(find.text('¿Qué situación o problema legal tienes?'), findsOneWidget);
+    expect(find.text('⚖️ Despido intempestivo'), findsOneWidget);
+    expect(find.text('CONTINUAR CON ASESORÍA LEGAL'), findsOneWidget);
+
+    // Tocar chip de categoría rápida y continuar
+    await tapVisible('⚖️ Despido intempestivo');
+    await tapVisible('CONTINUAR CON ASESORÍA LEGAL');
+
+    // Validar dictamen especializado
+    expect(find.text('ASESORÍA JURÍDICA ESPECIALIZADA'), findsOneWidget);
+    expect(find.textContaining('Código del Trabajo'), findsOneWidget);
+    expect(find.textContaining('NO FIRMES DOCUMENTOS EN BLANCO'), findsOneWidget);
   });
 
-  testWidgets('IncidenteVectorIcon renders all 4 incident types properly',
+  testWidgets('IncidenteVectorIcon renders all 5 incident types properly',
       (WidgetTester tester) async {
     for (final tipo in TipoIncidente.values) {
       await tester.pumpWidget(
@@ -212,6 +235,22 @@ void main() {
     final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
     expect(
         decodedText, contains('https://maps.google.com/?q=-0.22985,-78.52495'));
+  });
+
+  test(
+      'ConductorController.obtenerEnlaceWhatsApp includes custom description for otroProblema',
+      () {
+    final controller = ConductorController();
+    controller.seleccionarIncidente(TipoIncidente.otroProblema);
+    controller.enviarOtroProblema('Despido intempestivo tras 5 años');
+    final link = controller.obtenerEnlaceWhatsApp();
+
+    expect(link, startsWith('https://wa.me/593988456189?text='));
+    final decodedText = Uri.decodeComponent(link.split('?text=')[1]);
+    expect(decodedText, contains('ALERTA SOS - ASISTENCIA LEGAL'));
+    expect(decodedText,
+        contains('*Detalle del caso:* Despido intempestivo tras 5 años'));
+    expect(decodedText, contains('Protección y Asesoría Legal Inmediata: Despido intempestivo tras 5 años'));
   });
 
   testWidgets(
