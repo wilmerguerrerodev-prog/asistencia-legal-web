@@ -60,10 +60,9 @@ void main() {
     // CASO 1: Operativo de Tránsito (Paso directo al dictamen)
     // -------------------------------------------------------------
     expect(find.text('Grupo Ecuador Total Abogados'), findsOneWidget);
-    expect(
-        find.text('Operativo de Tránsito / Retención Ilegal'), findsOneWidget);
+    expect(find.text('Operativo de Tránsito'), findsOneWidget);
 
-    await tapVisible('Operativo de Tránsito / Retención Ilegal');
+    await tapVisible('Operativo de Tránsito');
 
     expect(find.text('GARANTÍAS Y CONTROL VIAL'), findsOneWidget);
     expect(
@@ -301,7 +300,7 @@ void main() {
 
     // 2. Avanzar a Paso 3 (Dictamen): Asignación automática del abogado más cercano
     final opcionOperativo =
-        find.text('Operativo de Tránsito / Retención Ilegal');
+        find.text('Operativo de Tránsito');
     await tester.ensureVisible(opcionOperativo);
     await tester.tap(opcionOperativo);
     await tester.pumpAndSettle();
