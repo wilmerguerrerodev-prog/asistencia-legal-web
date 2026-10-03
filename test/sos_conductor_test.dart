@@ -210,6 +210,25 @@ void main() {
     }
   });
 
+  testWidgets(
+      'AgresionFisicaGolpeIcon and ConflictoVerbalInsultosIcon render properly',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: [
+              AgresionFisicaGolpeIcon(size: 40),
+              ConflictoVerbalInsultosIcon(size: 40),
+            ],
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(AgresionFisicaGolpeIcon), findsOneWidget);
+    expect(find.byType(ConflictoVerbalInsultosIcon), findsOneWidget);
+  });
+
   test(
       'ConductorController.obtenerEnlaceWhatsApp generates valid wa.me URL with clean phone and case metadata',
       () {

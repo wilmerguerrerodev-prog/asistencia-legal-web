@@ -630,7 +630,8 @@ class SosConductorView extends StatelessWidget {
   Widget _buildBotonTriageCard({
     required String titulo,
     required Color color,
-    required IconData icono,
+    IconData? icono,
+    Widget? customIcon,
     required VoidCallback onTap,
     required bool isDark,
     required bool isWide,
@@ -676,11 +677,12 @@ class SosConductorView extends StatelessWidget {
                     ],
                   ),
                   child: Center(
-                    child: Icon(
-                      icono,
-                      color: color,
-                      size: isWide ? 32 : 28,
-                    ),
+                    child: customIcon ??
+                        Icon(
+                          icono ?? Icons.emergency_rounded,
+                          color: color,
+                          size: isWide ? 32 : 28,
+                        ),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -887,22 +889,28 @@ class SosConductorView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 if (esAgresion) ...[
-                  // Opción 1: Agresión física / heridos
+                  // Opción 1: Agresión física / heridos (Persona golpeando a otra)
                   _buildBotonTriageCard(
                     titulo: "HAY AGRESIÓN FÍSICA O HERIDOS",
                     color: const Color(0xFFDC2626),
-                    icono: Icons.front_hand_rounded,
+                    customIcon: AgresionFisicaGolpeIcon(
+                      size: isWide ? 40 : 36,
+                      useModernColors: true,
+                    ),
                     onTap: () => controller
                         .responderSeveridad(SeveridadVictimas.heridos),
                     isDark: isDark,
                     isWide: isWide,
                   ),
 
-                  // Opción 2: Solo discusión / altercado verbal
+                  // Opción 2: Solo discusión / altercado verbal (Dos personas discutiendo / insultándose)
                   _buildBotonTriageCard(
                     titulo: "SOLO CONFLICTO VERBAL O AMENAZA",
                     color: const Color(0xFF7C3AED),
-                    icono: Icons.forum_rounded,
+                    customIcon: ConflictoVerbalInsultosIcon(
+                      size: isWide ? 40 : 36,
+                      useModernColors: true,
+                    ),
                     onTap: () => controller
                         .responderSeveridad(SeveridadVictimas.ninguna),
                     isDark: isDark,
