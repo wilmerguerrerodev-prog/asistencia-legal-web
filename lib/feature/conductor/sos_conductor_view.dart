@@ -1722,6 +1722,7 @@ class SosConductorView extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -1744,40 +1745,30 @@ class SosConductorView extends StatelessWidget {
                           size: 15, color: Color(0xFF10B981)),
                     ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    "Firma Jurídica y Respaldo 24/7 · Dr. Emir Vásquez",
-                    style: TextStyle(
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11.5,
-                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(height: 6),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2563EB),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 7),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      elevation: 0,
                     ),
-                    overflow: TextOverflow.ellipsis,
+                    onPressed: () =>
+                        _mostrarConoceMasModal(context, isDark, controller),
+                    icon: const Icon(Icons.visibility_rounded, size: 15),
+                    label: const Text(
+                      "Ver",
+                      style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                 ],
-              ),
-            ),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                elevation: 0,
-              ),
-              onPressed: () =>
-                  _mostrarConoceMasModal(context, isDark, controller),
-              icon: const Icon(Icons.info_outline_rounded, size: 16),
-              label: const Text(
-                "Saber más",
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
               ),
             ),
           ],

@@ -292,7 +292,7 @@ void main() {
     // 1. Verificar que en la pantalla inicial NO se muestra contacto con abogado ni documentos antiguos
     expect(find.text('Documentos'), findsNothing);
     expect(find.text('Conoce más sobre Grupo Ecuador Total'), findsOneWidget);
-    expect(find.text('Saber más'), findsOneWidget);
+    expect(find.text('Ver'), findsOneWidget);
     expect(find.text('Credencial'), findsNothing);
     expect(find.text('ABOGADO DE GUARDIA 24/7 EN LÍNEA'), findsNothing);
     expect(find.textContaining('Llama, él es tu abogado'), findsNothing);
@@ -383,9 +383,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final btnSaberMas = find.text('Saber más');
-    await tester.ensureVisible(btnSaberMas);
-    await tester.tap(btnSaberMas);
+    final btnVer = find.text('Ver');
+    await tester.ensureVisible(btnVer);
+    await tester.tap(btnVer);
     await tester.pumpAndSettle();
 
     expect(find.text('RESPALDO JURÍDICO OFICIAL'), findsOneWidget);
