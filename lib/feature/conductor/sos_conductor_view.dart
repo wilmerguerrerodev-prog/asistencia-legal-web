@@ -396,49 +396,78 @@ class SosConductorView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // 4 Botones grandes cuadrados sin mensajes inferiores (Grilla 2x2 en móvil, 4 en línea en escritorio)
+        // 6 Botones grandes cuadrados sin mensajes inferiores (Grilla 3x2 en móvil, 2 filas de 3 en escritorio)
         if (isWide)
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[0],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[0].tipo),
-                    isWide: true,
-                  ),
+          Column(
+            children: [
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[0],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[0].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[1],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[1].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[2],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[2].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[1],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[1].tipo),
-                    isWide: true,
-                  ),
+              ),
+              const SizedBox(height: 12),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[3],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[3].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[4],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[4].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[5],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[5].tipo),
+                        isWide: true,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[2],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[2].tipo),
-                    isWide: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildBotonIncidenteCuadrado(
-                    opcion: controller.opcionesIncidentes[3],
-                    onTap: () => controller.seleccionarIncidente(
-                        controller.opcionesIncidentes[3].tipo),
-                    isWide: true,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           )
         else
           Column(
@@ -492,19 +521,33 @@ class SosConductorView extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 12),
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[4],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[4].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildBotonIncidenteCuadrado(
+                        opcion: controller.opcionesIncidentes[5],
+                        onTap: () => controller.seleccionarIncidente(
+                            controller.opcionesIncidentes[5].tipo),
+                        isWide: false,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-
-        const SizedBox(height: 14),
-
-        // Opción 5: Tengo otro problema / Cuéntanos tu caso (Banner horizontal destacado)
-        _buildBotonOtroProblemaBanner(
-          opcion: controller.opcionesIncidentes[4],
-          onTap: () => controller.seleccionarIncidente(
-              controller.opcionesIncidentes[4].tipo),
-          isDark: isDark,
-          isWide: isWide,
-        ),
       ],
     );
   }
@@ -589,141 +632,7 @@ class SosConductorView extends StatelessWidget {
     );
   }
 
-  // Banner horizontal táctil para la 5ta opción: Tengo otro problema / Cuéntanos tu caso
-  Widget _buildBotonOtroProblemaBanner({
-    required OpcionIncidente opcion,
-    required VoidCallback onTap,
-    required bool isDark,
-    required bool isWide,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: isWide ? 20 : 14,
-            vertical: isWide ? 16 : 14,
-          ),
-          decoration: BoxDecoration(
-            color: opcion.color, // Color teal 0xFF0D9488
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: opcion.color.withValues(alpha: 0.38),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Badge blanco con icono vectorial
-              Container(
-                width: isWide ? 58 : 50,
-                height: isWide ? 58 : 50,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.12),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: IncidenteVectorIcon(
-                  tipo: opcion.tipo,
-                  size: isWide ? 38 : 34,
-                  useModernColors: true,
-                ),
-              ),
-              const SizedBox(width: 14),
 
-              // Textos: Título + Descripción
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            opcion.titulo,
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: isWide ? 16 : 14.5,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              letterSpacing: 0.2,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.25),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Text(
-                            "NUEVO",
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 9,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      opcion.descripcion,
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: isWide ? 12 : 11,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white.withValues(alpha: 0.92),
-                        height: 1.25,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-
-              // Botón circular con flecha de acción
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   // Tarjeta interactiva y táctil para las opciones de Triage
   Widget _buildBotonTriageCard({

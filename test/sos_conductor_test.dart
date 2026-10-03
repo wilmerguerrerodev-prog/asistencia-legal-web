@@ -152,12 +152,27 @@ void main() {
         findsOneWidget);
 
     // -------------------------------------------------------------
-    // CASO 5: Tengo otro problema / Cuéntanos tu caso (5ta opción)
+    // CASO 5: Encarcelaron un familiar (Detención urgente penal)
     // -------------------------------------------------------------
     await tapVisible('Nuevo caso');
 
-    expect(find.text('Tengo otro problema / Cuéntanos tu caso'), findsOneWidget);
-    await tapVisible('Tengo otro problema / Cuéntanos tu caso');
+    expect(find.text('Encarcelaron un familiar'), findsOneWidget);
+    await tapVisible('Encarcelaron un familiar');
+
+    // Pasa directo al dictamen penal por detención/flagrancia
+    expect(
+        find.text('EMERGENCIA PENAL — DETENCIÓN / FLAGRANCIA'), findsOneWidget);
+    expect(find.text('Protección Legal Inmediata por Detención de Familiar'),
+        findsOneWidget);
+    expect(find.textContaining('Art. 77 Constitución'), findsOneWidget);
+
+    // -------------------------------------------------------------
+    // CASO 6: Tengo otro problema (6ta opción)
+    // -------------------------------------------------------------
+    await tapVisible('Nuevo caso');
+
+    expect(find.text('Tengo otro problema'), findsOneWidget);
+    await tapVisible('Tengo otro problema');
 
     // Validar formulario de caso personalizado
     expect(find.text('PASO 2 DE 3: CUÉNTANOS TU CASO'), findsOneWidget);
@@ -172,10 +187,11 @@ void main() {
     // Validar dictamen especializado
     expect(find.text('ASESORÍA JURÍDICA ESPECIALIZADA'), findsOneWidget);
     expect(find.textContaining('Código del Trabajo'), findsOneWidget);
-    expect(find.textContaining('NO FIRMES DOCUMENTOS EN BLANCO'), findsOneWidget);
+    expect(
+        find.textContaining('NO FIRMES DOCUMENTOS EN BLANCO'), findsOneWidget);
   });
 
-  testWidgets('IncidenteVectorIcon renders all 5 incident types properly',
+  testWidgets('IncidenteVectorIcon renders all 6 incident types properly',
       (WidgetTester tester) async {
     for (final tipo in TipoIncidente.values) {
       await tester.pumpWidget(

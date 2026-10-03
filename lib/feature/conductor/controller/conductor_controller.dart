@@ -11,6 +11,7 @@ enum TipoIncidente {
   meChoque,
   meChocaron,
   operativoTransito,
+  encarcelaronFamiliar,
   otroProblema,
 }
 
@@ -306,12 +307,20 @@ class ConductorController extends GetxController {
       icono: Icons.directions_car_rounded,
     ),
     OpcionIncidente(
+      tipo: TipoIncidente.encarcelaronFamiliar,
+      emoji: "⚖️",
+      titulo: "Encarcelaron un familiar",
+      descripcion: "",
+      color: Color(0xFF4F46E5),
+      icono: Icons.gavel_rounded,
+    ),
+    OpcionIncidente(
       tipo: TipoIncidente.otroProblema,
       emoji: "📄",
-      titulo: "Tengo otro problema / Cuéntanos tu caso",
-      descripcion: "Asesoría laboral, despido, contratos, cobros o penal",
+      titulo: "Tengo otro problema",
+      descripcion: "",
       color: Color(0xFF0D9488),
-      icono: Icons.gavel_rounded,
+      icono: Icons.assignment_rounded,
     ),
   ];
 
@@ -387,8 +396,9 @@ class ConductorController extends GetxController {
   // Paso 1: Seleccionar tipo de incidente
   void seleccionarIncidente(TipoIncidente tipo) {
     tipoSeleccionado.value = tipo;
-    if (tipo == TipoIncidente.operativoTransito) {
-      // En operativos no hay colisión, pasa directo al dictamen de garantías ciudadanas
+    if (tipo == TipoIncidente.operativoTransito ||
+        tipo == TipoIncidente.encarcelaronFamiliar) {
+      // En operativos o detención de familiar no hay colisión vial, pasa directo al dictamen y llamada urgente
       severidadVictimas.value = SeveridadVictimas.ninguna;
       hayHeridos.value = false;
       daniosGraves.value = false;
@@ -451,7 +461,8 @@ class ConductorController extends GetxController {
     if (pasoActual.value == 2) {
       casoEscaladoASuperAbogado.value = false;
       segundosRestantes.value = 60;
-      if (tipoSeleccionado.value == TipoIncidente.operativoTransito) {
+      if (tipoSeleccionado.value == TipoIncidente.operativoTransito ||
+          tipoSeleccionado.value == TipoIncidente.encarcelaronFamiliar) {
         pasoActual.value = 0;
       } else if (tipoSeleccionado.value == TipoIncidente.otroProblema) {
         pasoActual.value = 1;
@@ -642,7 +653,30 @@ class ConductorController extends GetxController {
     }
 
     // =========================================================================
-    // CASO 1: OPERATIVO DE TRÁNSITO O RETENCIÓN
+    // CASO 1: ENCARCELARON UN FAMILIAR (DETENCIÓN / FLAGRANCIA PENAL)
+    // =========================================================================
+    if (tipo == TipoIncidente.encarcelaronFamiliar) {
+      return DictamenLegal(
+        nivel: "EMERGENCIA PENAL — DETENCIÓN / FLAGRANCIA",
+        colorNivel: const Color(0xFF4F46E5),
+        iconoNivel: Icons.gavel_rounded,
+        saludo: saludoUniversal,
+        titulo: "Protección Legal Inmediata por Detención de Familiar",
+        normativa:
+            "Marco legal: Garantías básicas del debido proceso (Art. 77 Constitución) y Flagrancia (Art. 526 y siguientes del COIP).",
+        reglas: const [
+          "DERECHO CONSTITUCIONAL AL SILENCIO: Tu familiar tiene derecho a no autoincriminarse ni declarar sin su abogado defensor presente (Art. 77 num. 7 CRE).",
+          "PLAZO MÁXIMO DE FLAGRANCIA (24 HORAS): La persona detenida debe ser puesta ante un juez de garantías penales en un plazo improrrogable de 24 horas.",
+          "NO FIRMAR HOJAS EN BLANCO NI ACUERDOS: Exige a tu familiar que no firme declaraciones, partes ni hojas sin que su abogado revise el texto.",
+          "DERECHO A COMUNICACIÓN INMEDIATA: La policía tiene la obligación legal de permitir una llamada con un familiar o abogado de confianza.",
+        ],
+        accionInmediata:
+            "Presiona el botón para comunicarte de inmediato con Grupo Ecuador Total Abogados y asignar la defensa técnica penal.",
+      );
+    }
+
+    // =========================================================================
+    // CASO 2: OPERATIVO DE TRÁNSITO O RETENCIÓN
     // =========================================================================
     if (tipo == TipoIncidente.operativoTransito) {
       return DictamenLegal(

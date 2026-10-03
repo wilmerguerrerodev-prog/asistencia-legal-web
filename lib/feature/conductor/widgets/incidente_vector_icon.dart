@@ -43,6 +43,9 @@ class IncidenteVectorIcon extends StatelessWidget {
       case TipoIncidente.agresionProblemaPersonal:
         return AgresionPersonalVectorPainter(
             color: color, useModernColors: useModern);
+      case TipoIncidente.encarcelaronFamiliar:
+        return EncarcelaronFamiliarVectorPainter(
+            color: color, useModernColors: useModern);
       case TipoIncidente.otroProblema:
         return OtroProblemaVectorPainter(
             color: color, useModernColors: useModern);
@@ -863,3 +866,159 @@ class OtroProblemaVectorPainter extends CustomPainter {
       oldDelegate.color != color ||
       oldDelegate.useModernColors != useModernColors;
 }
+
+// ============================================================================
+// 6. ENCARCELARON UN FAMILIAR: Rejas de detención con persona y balanza de justicia
+// ============================================================================
+class EncarcelaronFamiliarVectorPainter extends CustomPainter {
+  final Color color;
+  final bool useModernColors;
+
+  const EncarcelaronFamiliarVectorPainter({
+    required this.color,
+    this.useModernColors = true,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.save();
+    canvas.scale(size.width / 100, size.height / 100);
+
+    final cellBgColor = useModernColors ? const Color(0xFF1E293B) : color;
+    final wallColor = useModernColors
+        ? const Color(0xFF0F172A)
+        : Colors.black.withValues(alpha: 0.35);
+    final skinColor = useModernColors ? const Color(0xFFFDBA74) : color;
+    final shirtColor = useModernColors ? const Color(0xFF4F46E5) : color;
+    final barColor = useModernColors ? const Color(0xFF94A3B8) : Colors.white;
+    final barHighlightColor = useModernColors
+        ? const Color(0xFFF1F5F9)
+        : Colors.white.withValues(alpha: 0.5);
+    final badgeBgColor =
+        useModernColors ? const Color(0xFFF59E0B) : const Color(0xFFD97706);
+    const scaleColor = Colors.white;
+
+    // --- 1. Fondo de la celda / Marco de seguridad ---
+    final bgPaint = Paint()..color = cellBgColor;
+    final bgRRect = RRect.fromRectAndRadius(
+      const Rect.fromLTWH(10, 12, 80, 76),
+      const Radius.circular(10),
+    );
+    canvas.drawRRect(bgRRect, bgPaint);
+
+    // Muro perimetral oscuro interior
+    final wallPaint = Paint()
+      ..color = wallColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5;
+    canvas.drawRRect(bgRRect, wallPaint);
+
+    // --- 2. Silueta del familiar detenido (dentro de la celda) ---
+    // Cabeza
+    final skinPaint = Paint()..color = skinColor;
+    canvas.drawCircle(const Offset(50, 36), 11, skinPaint);
+
+    // Cabello
+    final hairPaint = Paint()..color = const Color(0xFF334155);
+    final hairPath = Path()
+      ..moveTo(39, 36)
+      ..quadraticBezierTo(40, 24, 50, 24)
+      ..quadraticBezierTo(60, 24, 61, 36)
+      ..lineTo(59, 30)
+      ..quadraticBezierTo(50, 27, 41, 30)
+      ..close();
+    canvas.drawPath(hairPath, hairPaint);
+
+    // Torso / Ropa
+    final shirtPaint = Paint()..color = shirtColor;
+    final torsoPath = Path()
+      ..moveTo(34, 50)
+      ..quadraticBezierTo(50, 46, 66, 50)
+      ..lineTo(70, 76)
+      ..lineTo(30, 76)
+      ..close();
+    canvas.drawPath(torsoPath, shirtPaint);
+
+    // Cuello
+    final neckPaint = Paint()..color = skinColor;
+    const neckRect = Rect.fromLTWH(46, 44, 8, 8);
+    canvas.drawRect(neckRect, neckPaint);
+
+    // --- 3. Rejas verticales de prisión (Detención) ---
+    final barPaint = Paint()
+      ..color = barColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.2
+      ..strokeCap = StrokeCap.round;
+
+    final barHighlightPaint = Paint()
+      ..color = barHighlightColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.4
+      ..strokeCap = StrokeCap.round;
+
+    const barXPositions = [26.0, 42.0, 58.0, 74.0];
+    for (final x in barXPositions) {
+      canvas.drawLine(Offset(x, 14), Offset(x, 86), barPaint);
+      canvas.drawLine(
+          Offset(x - 0.8, 16), Offset(x - 0.8, 84), barHighlightPaint);
+    }
+
+    // Travesaños horizontales (superior e inferior)
+    final railPaint = Paint()
+      ..color = useModernColors ? const Color(0xFF64748B) : barColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.8
+      ..strokeCap = StrokeCap.square;
+    canvas.drawLine(const Offset(12, 22), const Offset(88, 22), railPaint);
+    canvas.drawLine(const Offset(12, 78), const Offset(88, 78), railPaint);
+
+    // Manos del familiar sosteniendo las rejas (en x = 42 y x = 58 a la altura y = 54)
+    canvas.drawCircle(const Offset(42, 54), 3.8, skinPaint);
+    canvas.drawCircle(const Offset(58, 54), 3.8, skinPaint);
+
+    // --- 4. Emblema de la Balanza de Justicia / Respaldo Legal (Esquina inferior derecha) ---
+    final badgePaint = Paint()
+      ..color = badgeBgColor
+      ..style = PaintingStyle.fill;
+    canvas.drawCircle(const Offset(74, 70), 16, badgePaint);
+
+    final badgeBorder = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+    canvas.drawCircle(const Offset(74, 70), 16, badgeBorder);
+
+    // Iconografía de la balanza de justicia dentro del círculo
+    final scalePaint = Paint()
+      ..color = scaleColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round;
+
+    // Poste vertical de la balanza
+    canvas.drawLine(const Offset(74, 61), const Offset(74, 78), scalePaint);
+    // Base de la balanza
+    canvas.drawLine(const Offset(70, 78), const Offset(78, 78), scalePaint);
+    // Brazo horizontal
+    canvas.drawLine(const Offset(67, 64), const Offset(81, 64), scalePaint);
+
+    // Platillo izquierdo
+    canvas.drawLine(const Offset(67, 64), const Offset(65, 70), scalePaint);
+    canvas.drawLine(const Offset(67, 64), const Offset(69, 70), scalePaint);
+    canvas.drawLine(const Offset(64, 70), const Offset(70, 70), scalePaint);
+
+    // Platillo derecho
+    canvas.drawLine(const Offset(81, 64), const Offset(79, 70), scalePaint);
+    canvas.drawLine(const Offset(81, 64), const Offset(83, 70), scalePaint);
+    canvas.drawLine(const Offset(78, 70), const Offset(84, 70), scalePaint);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant EncarcelaronFamiliarVectorPainter oldDelegate) =>
+      oldDelegate.color != color ||
+      oldDelegate.useModernColors != useModernColors;
+}
+
