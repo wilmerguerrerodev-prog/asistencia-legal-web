@@ -177,28 +177,36 @@ class LegalCasesTable extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
-                    Row(
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
                       children: [
-                        // Urgencia
+                        // Badge Categoría Oficial
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
-                            color: c.urgenciaColor.withValues(alpha: 0.12),
+                            color: c.tipoAlerta.backgroundColor,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: c.urgenciaColor),
+                            border: Border.all(color: c.tipoAlerta.color.withValues(alpha: 0.6)),
                           ),
-                          child: Text(
-                            c.urgenciaLabel,
-                            style: ubuntuBold.copyWith(
-                              fontSize: 10,
-                              color: c.urgenciaColor,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(c.tipoAlerta.icon, size: 11, color: c.tipoAlerta.color),
+                              const SizedBox(width: 4),
+                              Text(
+                                c.tipoAlerta.label,
+                                style: ubuntuBold.copyWith(
+                                  fontSize: 9.5,
+                                  color: c.tipoAlerta.color,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: 6),
                         // Estado
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
                             color: c.estadoColor,
                             borderRadius: BorderRadius.circular(12),
@@ -206,7 +214,7 @@ class LegalCasesTable extends StatelessWidget {
                           child: Text(
                             c.estadoLabel,
                             style: ubuntuBold.copyWith(
-                              fontSize: 10,
+                              fontSize: 9.5,
                               color: Colors.white,
                             ),
                           ),
@@ -262,6 +270,73 @@ class LegalCasesTable extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 4),
+                // Badge de Estatus de Membresía / Prueba Gratuita
+                Row(
+                  children: [
+                    if (c.esPruebaGratuita)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF2563EB)),
+                        ),
+                        child: Text(
+                          '🎁 Prueba Gratuita: ${c.consultasGratuitasRestantes}/${c.consultasGratuitasTotales} restantes',
+                          style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF1D4ED8)),
+                        ),
+                      )
+                    else if (c.esPlanVip || c.suscripcionActiva)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0FDF4),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF16A34A)),
+                        ),
+                        child: const Text(
+                          '⭐ Plan VIP 24/7',
+                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Color(0xFF15803D)),
+                        ),
+                      ),
+                  ],
+                ),
+                // Tarjeta destacada de "Otro problema" si aplica
+                if (c.isOtroProblema) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.gavel_rounded, size: 12, color: Color(0xFF7C3AED)),
+                            SizedBox(width: 4),
+                            Text(
+                              'Detalle "Otro Problema" (Consulta Legal):',
+                              style: TextStyle(fontFamily: 'Montserrat', fontSize: 9.5, fontWeight: FontWeight.bold, color: Color(0xFF6D28D9)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          c.descripcionDetalladaCliente,
+                          style: ubuntuRegular.copyWith(fontSize: 10, color: const Color(0xFF4C1D95)),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -381,6 +456,34 @@ class LegalCasesTable extends StatelessWidget {
                         color: Theme.of(context).textTheme.bodySmall?.color,
                       ),
                     ),
+                    if (c.esPruebaGratuita)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEFF6FF),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF2563EB)),
+                        ),
+                        child: Text(
+                          '🎁 Prueba (${c.consultasGratuitasRestantes}/${c.consultasGratuitasTotales})',
+                          style: const TextStyle(fontSize: 8.5, fontWeight: FontWeight.bold, color: Color(0xFF1D4ED8)),
+                        ),
+                      )
+                    else if (c.esPlanVip || c.suscripcionActiva)
+                      Container(
+                        margin: const EdgeInsets.only(top: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0FDF4),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: const Color(0xFF16A34A)),
+                        ),
+                        child: const Text(
+                          '⭐ VIP 24/7',
+                          style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.bold, color: Color(0xFF15803D)),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -411,15 +514,45 @@ class LegalCasesTable extends StatelessWidget {
                 ),
               ),
 
-              // Siniestro
+              // Siniestro y Categoría
               DataCell(
                 SizedBox(
-                  width: 170,
-                  child: Text(
-                    c.tipoIncidente,
-                    style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeSmall),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  width: 210,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: c.tipoAlerta.backgroundColor,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: c.tipoAlerta.color.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(c.tipoAlerta.icon, size: 11, color: c.tipoAlerta.color),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                c.tipoAlerta.label,
+                                style: ubuntuBold.copyWith(fontSize: 9.5, color: c.tipoAlerta.color),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        c.tipoIncidente,
+                        style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeExtraSmall),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ),

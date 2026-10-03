@@ -18,7 +18,7 @@ class LegalMapDetailDialog extends StatelessWidget {
     HapticFeedback.lightImpact();
     final controller = Get.find<LegalCenterController>();
     controller.selectCase(caseItem, moveMap: false);
-    controller.animateMapToCase(caseItem, zoom: 14.5);
+    controller.focusCaseRoute(caseItem);
 
     showDialog(
       context: context,

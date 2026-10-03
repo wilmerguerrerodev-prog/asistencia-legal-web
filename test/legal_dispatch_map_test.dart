@@ -21,8 +21,8 @@ void main() {
       expect(controller.showIncidentsLayer, isTrue);
       expect(controller.showLawyersLayer, isTrue);
       expect(controller.showRoutesLayer, isTrue);
-      expect(controller.targetMapLat, closeTo(0.2800, 0.05));
-      expect(controller.targetMapLng, closeTo(-78.2000, 0.05));
+      expect(controller.targetMapLat, closeTo(0.3517, 0.05));
+      expect(controller.targetMapLng, closeTo(-78.1223, 0.05));
       expect(controller.selectedCase, isNotNull);
     });
 

@@ -36,13 +36,43 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
 
-  // Centro por defecto: Imbabura (Otavalo - Ibarra)
-  static const LatLng _defaultCenter = LatLng(0.2450, -78.2500);
-  static const double _defaultZoom = 12.6;
+  // Centro por defecto: Piloto Ibarra (Laboratorio Central)
+  static const LatLng _defaultCenter = LatLng(0.3517, -78.1223);
+  static const double _defaultZoom = 13.0;
 
   int _lastHandledMoveCounter = 0;
   bool _cardMinimized = false;
+  bool _isSatelliteLayer = false;
   AnimationController? _moveAnimationController;
+
+  /// Genera una traza de ruta GPS realista con curvatura vial y waypoints de navegación táctica
+  List<LatLng> _calculateOptimalGpsRoute(LatLng start, LatLng end) {
+    final points = <LatLng>[start];
+
+    final latDiff = end.latitude - start.latitude;
+    final lngDiff = end.longitude - start.longitude;
+
+    // Waypoint 1: Inserción en avenida principal
+    points.add(LatLng(
+      start.latitude + (latDiff * 0.35),
+      start.longitude + (lngDiff * 0.08),
+    ));
+
+    // Waypoint 2: Tramo central en eje vial rápido
+    points.add(LatLng(
+      start.latitude + (latDiff * 0.65),
+      start.longitude + (lngDiff * 0.45),
+    ));
+
+    // Waypoint 3: Aproximación táctica al siniestro
+    points.add(LatLng(
+      start.latitude + (latDiff * 0.88),
+      start.longitude + (lngDiff * 0.82),
+    ));
+
+    points.add(end);
+    return points;
+  }
 
   @override
   void initState() {
@@ -222,28 +252,46 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
                     ),
                   ),
                   children: [
-                    // Capa de mosaicos OpenStreetMap
+                    // Capa de mosaicos (Calles OpenStreetMap / Satelital Esri World Imagery)
                     TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      key: ValueKey(_isSatelliteLayer ? 'satellite_layer' : 'streets_layer'),
+                      urlTemplate: _isSatelliteLayer
+                          ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                          : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                       userAgentPackageName: 'ec.legaltech.asistencia_legal_web',
+                      maxZoom: 18.0,
                     ),
 
-                    // Capa de Polilínea de Despacho (Ruta Abogado -> Incidente)
+                    // Capa de Polilínea de Despacho (Ruta GPS Óptima Abogado -> Incidente)
                     if (controller.showRoutesLayer &&
                         selectedCase != null &&
                         assignedLawyer != null)
                       PolylineLayer(
                         polylines: [
+                          // 1. Resplandor base de la ruta
                           Polyline(
-                            points: [
+                            points: _calculateOptimalGpsRoute(
                               LatLng(assignedLawyer.lat, assignedLawyer.lng),
                               LatLng(selectedCase.lat, selectedCase.lng),
-                            ],
-                            strokeWidth: 3.8,
-                            color: const Color(0xFF0D47A1),
+                            ),
+                            strokeWidth: 7.0,
+                            color: (_isSatelliteLayer
+                                    ? const Color(0xFF00E5FF)
+                                    : const Color(0xFF1565C0))
+                                .withValues(alpha: 0.35),
+                          ),
+                          // 2. Trazo GPS principal táctico punteado de alta visibilidad
+                          Polyline(
+                            points: _calculateOptimalGpsRoute(
+                              LatLng(assignedLawyer.lat, assignedLawyer.lng),
+                              LatLng(selectedCase.lat, selectedCase.lng),
+                            ),
+                            strokeWidth: 4.2,
+                            color: _isSatelliteLayer
+                                ? const Color(0xFF00E5FF)
+                                : const Color(0xFF0D47A1),
                             pattern: StrokePattern.dashed(
-                              segments: const [10, 6],
+                              segments: const [12, 6],
                             ),
                           ),
                         ],
@@ -723,6 +771,20 @@ class _LegalDispatchMapState extends State<LegalDispatchMap>
                     activeColor: const Color(0xFF0D47A1),
                     isCompact: isMobileMap,
                     onTap: controller.toggleRoutesLayer,
+                  ),
+                  const SizedBox(width: 4),
+                  _layerToggleChip(
+                    context: context,
+                    label: _isSatelliteLayer ? 'Satelital' : 'Calles',
+                    icon: _isSatelliteLayer ? Icons.satellite_alt_rounded : Icons.map_outlined,
+                    isActive: _isSatelliteLayer,
+                    activeColor: const Color(0xFF7C3AED),
+                    isCompact: isMobileMap,
+                    onTap: () {
+                      setState(() {
+                        _isSatelliteLayer = !_isSatelliteLayer;
+                      });
+                    },
                   ),
                 ],
               ),

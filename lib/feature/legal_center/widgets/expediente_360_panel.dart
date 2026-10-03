@@ -93,7 +93,7 @@ class Expediente360Panel extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 480;
+          final isNarrow = constraints.maxWidth < 680;
 
           final titleSection = Row(
             mainAxisSize: MainAxisSize.min,
@@ -158,6 +158,30 @@ class Expediente360Panel extends StatelessWidget {
             runSpacing: 6,
             alignment: isNarrow ? WrapAlignment.start : WrapAlignment.end,
             children: [
+              // Badge de Tipo de Alerta (4 categorías acordadas)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: caseItem.tipoAlerta.backgroundColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: caseItem.tipoAlerta.color, width: 1.2),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(caseItem.tipoAlerta.icon, size: 12, color: caseItem.tipoAlerta.color),
+                    const SizedBox(width: 5),
+                    Text(
+                      caseItem.tipoAlerta.label,
+                      style: ubuntuBold.copyWith(
+                        fontSize: Dimensions.fontSizeExtraSmall,
+                        color: caseItem.tipoAlerta.color,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
               // Badge Urgencia Dinámico
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -246,7 +270,7 @@ class Expediente360Panel extends StatelessWidget {
             children: [
               Expanded(child: titleSection),
               const SizedBox(width: 8),
-              badgesSection,
+              Flexible(child: badgesSection),
             ],
           );
         },
@@ -401,8 +425,8 @@ class Expediente360Panel extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFDC2626)),
                       SizedBox(width: 6),
                       Expanded(
@@ -495,8 +519,8 @@ class Expediente360Panel extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: const Color(0xFFF59E0B)),
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Icon(Icons.shield_rounded, size: 15, color: Color(0xFFD97706)),
                   SizedBox(width: 6),
                   Expanded(
@@ -595,81 +619,7 @@ class Expediente360Panel extends StatelessWidget {
 
           // Insignia de Membresía y Cobertura Activa
           const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            decoration: BoxDecoration(
-              color: caseItem.isMembresiaActiva
-                  ? const Color(0xFFF0FDF4)
-                  : const Color(0xFFFEF2F2),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: caseItem.isMembresiaActiva
-                    ? const Color(0xFF16A34A).withValues(alpha: 0.4)
-                    : const Color(0xFFDC2626).withValues(alpha: 0.4),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          caseItem.isMembresiaActiva
-                              ? Icons.verified_user_rounded
-                              : Icons.warning_amber_rounded,
-                          size: 16,
-                          color: caseItem.isMembresiaActiva
-                              ? const Color(0xFF16A34A)
-                              : const Color(0xFFDC2626),
-                        ),
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Text(
-                            caseItem.isMembresiaActiva
-                                ? "Cliente LegalTech Verificado • Cobertura 24/7 Activa"
-                                : "Membresía Vencida • Pendiente de Regularización",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: caseItem.isMembresiaActiva
-                                  ? const Color(0xFF15803D)
-                                  : const Color(0xFFB91C1C),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      caseItem.suscripcionPlan,
-                      style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).hintColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  "Alcance de la Cobertura: Patrocinio penal/tránsito Art. 380 COIP • Peritaje técnico SIAT • Acta de entrega sin retención en patio • Mediación directa de daños.",
-                  style: TextStyle(
-                    fontFamily: 'Plus Jakarta Sans',
-                    fontSize: 10,
-                    color: Color(0xFF475569),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildMembershipStatusCard(context),
           const SizedBox(height: 12),
           // Cuadrícula de datos del vehículo (Responsiva para evitar overflow)
           Container(
@@ -778,6 +728,250 @@ class Expediente360Panel extends StatelessWidget {
                 },
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMembershipStatusCard(BuildContext context) {
+    if (caseItem.esPruebaGratuita) {
+      final total = caseItem.consultasGratuitasTotales > 0 ? caseItem.consultasGratuitasTotales : 10;
+      final ratio = (caseItem.consultasGratuitasRestantes / total).clamp(0.0, 1.0);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEFF6FF),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.card_giftcard_rounded, size: 16, color: Color(0xFF1D4ED8)),
+                const SizedBox(width: 6),
+                const Expanded(
+                  child: Text(
+                    'Periodo de Prueba Gratuita (Piloto Ibarra)',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF1D4ED8),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFF2563EB)),
+                  ),
+                  child: Text(
+                    '${caseItem.consultasGratuitasRestantes} de ${caseItem.consultasGratuitasTotales} restantes',
+                    style: const TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1D4ED8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: ratio,
+                minHeight: 5,
+                backgroundColor: const Color(0xFFDBEAFE),
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Prueba gratuita para taxistas y conductores en Ibarra. Incluye hasta 10 consultas legales y patrocinio preliminar.',
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: 10,
+                color: Color(0xFF1E40AF),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (!caseItem.isMembresiaActiva) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF2F2),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFDC2626)),
+                const SizedBox(width: 6),
+                const Expanded(
+                  child: Text(
+                    'Membresía Vencida • Pendiente de Regularización',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFFB91C1C),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    caseItem.suscripcionPlan,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'El conductor requiere renovación de cobertura o autorización de despacho condicionada por la dirección legal.',
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: 10,
+                color: Color(0xFF7F1D1D),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (caseItem.asistenciaCondicionadaAutorizada) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3C7),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFD97706)),
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.shield_rounded, size: 16, color: Color(0xFFB45309)),
+                SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Cobertura Condicionada Autorizada',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFFB45309),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 6),
+                Text(
+                  'Autorizado por Dr. Emir Vásquez',
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFB45309),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 6),
+            Text(
+              'Atención urgente despachada con regularización posterior de cuota de afiliación al concluir la diligencia.',
+              style: TextStyle(
+                fontFamily: 'Plus Jakarta Sans',
+                fontSize: 10,
+                color: Color(0xFF92400E),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDF4),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF16A34A).withValues(alpha: 0.4)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFF15803D)),
+              const SizedBox(width: 6),
+              const Expanded(
+                child: Text(
+                  'Cliente LegalTech Verificado • Cobertura 24/7 Activa',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Montserrat',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF15803D),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  caseItem.suscripcionPlan,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Plus Jakarta Sans',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Alcance de la Cobertura: Patrocinio penal/tránsito Art. 380 COIP • Peritaje técnico SIAT • Acta de entrega sin retención en patio • Mediación directa de daños.',
+            style: TextStyle(
+              fontFamily: 'Plus Jakarta Sans',
+              fontSize: 10,
+              color: Color(0xFF475569),
+            ),
           ),
         ],
       ),
@@ -1052,6 +1246,72 @@ class Expediente360Panel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Tarjeta Destacada "Otro Problema" (Consulta Legal: Civil, Laboral, etc.)
+          if (caseItem.isOtroProblema) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+                  width: 1.2,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.gavel_rounded, size: 16, color: Color(0xFF7C3AED)),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Detalle de la Consulta Legal • "Otro Problema":',
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF6D28D9),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Civil / Laboral',
+                          style: TextStyle(
+                            fontFamily: 'Plus Jakarta Sans',
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF5B21B6),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    caseItem.descripcionDetalladaCliente,
+                    style: ubuntuRegular.copyWith(
+                      fontSize: 11.5,
+                      height: 1.45,
+                      color: const Color(0xFF4C1D95),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
           Row(
             children: [
               const Icon(Icons.record_voice_over_rounded, size: 18, color: Colors.purple),

@@ -24,7 +24,7 @@ class LegalRealtimeTable extends StatelessWidget {
   ) {
     controller.selectCase(c);
     if (controller.dispatchViewMode == LegalDispatchViewMode.split) {
-      controller.animateMapToCase(c);
+      controller.focusCaseRoute(c);
     } else {
       LegalMapDetailDialog.show(context, c);
     }
@@ -393,9 +393,9 @@ class LegalRealtimeTable extends StatelessWidget {
 
   // --- COMPONENTES DE CELDAS ---
 
-  // 1. Badge Alerta
+  // 1. Badge Alerta Diferenciado por las 4 Categorías Oficiales
   Widget _buildAlertBadge(LegalCase c) {
-    final alert = c.alertaNivel;
+    final alert = c.tipoAlerta;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -537,7 +537,25 @@ class LegalRealtimeTable extends StatelessWidget {
       );
     }
 
-    if (c.suscripcionActiva) {
+    if (c.esPruebaGratuita) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEFF6FF),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: const Color(0xFF2563EB), width: 1),
+        ),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            "🎁 Prueba: ${c.consultasGratuitasRestantes}/${c.consultasGratuitasTotales} restantes",
+            style: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 8.5, fontWeight: FontWeight.w800, color: Color(0xFF1D4ED8)),
+          ),
+        ),
+      );
+    }
+
+    if (c.suscripcionActiva || c.esPlanVip) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
         decoration: BoxDecoration(
@@ -548,7 +566,7 @@ class LegalRealtimeTable extends StatelessWidget {
         child: const FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
-            "🟢 [🛡️ Membresía Activa]",
+            "⭐ Membresía VIP 24/7",
             style: TextStyle(fontFamily: 'Plus Jakarta Sans', fontSize: 8.5, fontWeight: FontWeight.w800, color: Color(0xFF15803D)),
           ),
         ),
@@ -572,8 +590,43 @@ class LegalRealtimeTable extends StatelessWidget {
     );
   }
 
-  // 4. Dictamen Preliminar IA (1 sola línea con diagnóstico legal automático)
+  // 4. Dictamen Preliminar IA / Detalle de "Otro Problema"
   Widget _buildIaDiagnosisCell(BuildContext context, LegalCase c) {
+    if (c.isOtroProblema) {
+      return Container(
+        width: 290,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(
+            color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+          ),
+        ),
+        child: Tooltip(
+          message: 'Relato del Cliente: ${c.descripcionDetalladaCliente}\n\nDictamen IA: ${c.dictamenIaRecomendacion}',
+          preferBelow: false,
+          child: Row(
+            children: [
+              const Icon(Icons.gavel_rounded, size: 13, color: Color(0xFF7C3AED)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Otro problema: ${c.descripcionDetalladaCliente}',
+                  style: ubuntuMedium.copyWith(
+                    fontSize: 11,
+                    color: const Color(0xFF5B21B6),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Container(
       width: 290,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -912,32 +965,73 @@ class LegalRealtimeTable extends StatelessWidget {
               _buildMembershipBadge(c),
               const SizedBox(height: 8),
 
-              // Dictamen IA
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF056AB4).withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.auto_awesome, size: 12, color: Color(0xFF056AB4)),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        c.shortDictamenSummary,
-                        style: ubuntuMedium.copyWith(
+              // Dictamen IA o Tarjeta "Otro Problema"
+              if (c.isOtroProblema) ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.gavel_rounded, size: 12, color: Color(0xFF7C3AED)),
+                          SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Detalle "Otro Problema" (Consulta Legal):',
+                              style: TextStyle(fontFamily: 'Montserrat', fontSize: 10, fontWeight: FontWeight.bold, color: Color(0xFF6D28D9)),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        c.descripcionDetalladaCliente,
+                        style: ubuntuRegular.copyWith(
                           fontSize: 10,
-                          color: const Color(0xFF0D47A1),
+                          color: const Color(0xFF4C1D95),
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ] else ...[
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF056AB4).withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.auto_awesome, size: 12, color: Color(0xFF056AB4)),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          c.shortDictamenSummary,
+                          style: ubuntuMedium.copyWith(
+                            fontSize: 10,
+                            color: const Color(0xFF0D47A1),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               const SizedBox(height: 8),
 
               // Selector de abogado (fila completa para teléfonos)

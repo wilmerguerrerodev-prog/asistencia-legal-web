@@ -58,6 +58,72 @@ class LegalCaseDetailDialog extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
+                    // 1.5. TARJETA ESPECIALIZADA "OTRO PROBLEMA" (CIVIL, LABORAL, FINIQUITOS, ETC.)
+                    if (caseItem.isOtroProblema) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: const Color(0xFF7C3AED).withValues(alpha: 0.35),
+                            width: 1.2,
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.gavel_rounded, color: Color(0xFF7C3AED), size: 18),
+                                const SizedBox(width: 8),
+                                const Expanded(
+                                  child: Text(
+                                    'Detalle de la Consulta Legal • "Otro Problema"',
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF6D28D9),
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF7C3AED).withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: const Text(
+                                    'Civil / Laboral',
+                                    style: TextStyle(
+                                      fontFamily: 'Plus Jakarta Sans',
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF5B21B6),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              caseItem.descripcionDetalladaCliente,
+                              style: ubuntuRegular.copyWith(
+                                fontSize: Dimensions.fontSizeSmall,
+                                height: 1.45,
+                                color: const Color(0xFF4C1D95),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
                     // 2. DICTAMEN PRELIMINAR IA & ARTÍCULO COIP
                     _buildIaDiagnosisSection(context, caseItem),
 
@@ -130,19 +196,27 @@ class LegalCaseDetailDialog extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
+                          // Badge de la Alerta (4 categorías acordadas)
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: c.alertaNivel.backgroundColor,
+                              color: c.tipoAlerta.backgroundColor,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: c.alertaNivel.color),
+                              border: Border.all(color: c.tipoAlerta.color),
                             ),
-                            child: Text(
-                              c.alertaNivel.label,
-                              style: ubuntuBold.copyWith(
-                                fontSize: 10,
-                                color: c.alertaNivel.color,
-                              ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(c.tipoAlerta.icon, size: 11, color: c.tipoAlerta.color),
+                                const SizedBox(width: 4),
+                                Text(
+                                  c.tipoAlerta.label,
+                                  style: ubuntuBold.copyWith(
+                                    fontSize: 10,
+                                    color: c.tipoAlerta.color,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -226,6 +300,161 @@ class LegalCaseDetailDialog extends StatelessWidget {
               _infoItem(context, 'Vehículo', c.vehiculoModelo, Icons.directions_car_outlined),
               _infoItem(context, 'Seguro', c.estadoSeguro, Icons.shield_outlined),
             ],
+          ),
+          const SizedBox(height: 12),
+          _buildMembershipStatusBadge(context, c),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMembershipStatusBadge(BuildContext context, LegalCase c) {
+    if (c.esPruebaGratuita) {
+      final ratio = (c.consultasGratuitasRestantes / (c.consultasGratuitasTotales > 0 ? c.consultasGratuitasTotales : 10)).clamp(0.0, 1.0);
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFFEFF6FF),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.4)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.card_giftcard_rounded, size: 16, color: Color(0xFF1D4ED8)),
+                const SizedBox(width: 6),
+                const Expanded(
+                  child: Text(
+                    'Usuario en Periodo de Prueba Gratuita (Piloto Ibarra)',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF1D4ED8),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: const Color(0xFF2563EB)),
+                  ),
+                  child: Text(
+                    '${c.consultasGratuitasRestantes} de ${c.consultasGratuitasTotales} restantes',
+                    style: const TextStyle(
+                      fontFamily: 'Plus Jakarta Sans',
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1D4ED8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: ratio,
+                minHeight: 5,
+                backgroundColor: const Color(0xFFDBEAFE),
+                valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2563EB)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (!c.isMembresiaActiva) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF2F2),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFDC2626).withValues(alpha: 0.4)),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, size: 16, color: Color(0xFFB91C1C)),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                '🔴 Membresía Vencida • Pendiente de Regularización',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFFB91C1C),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (c.asistenciaCondicionadaAutorizada) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFEF3C7),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: const Color(0xFFD97706)),
+        ),
+        child: const Row(
+          children: [
+            Icon(Icons.shield_rounded, size: 16, color: Color(0xFFB45309)),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                '🛡️ Cobertura Condicionada Autorizada por Director Legal (Dr. Emir Vásquez)',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFFB45309),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDF4),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF16A34A).withValues(alpha: 0.4)),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFF15803D)),
+          SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              '⭐ Membresía Activa (Plan VIP 24/7) • Cobertura Legal Completa',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF15803D),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

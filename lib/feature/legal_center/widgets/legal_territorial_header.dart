@@ -69,7 +69,7 @@ class LegalTerritorialHeader extends StatelessWidget {
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
-                        'Filtro Territorial en Cascada',
+                        'Filtro Territorial • Piloto Ibarra',
                         style: ubuntuBold.copyWith(
                           fontSize: isMobile ? 11 : Dimensions.fontSizeExtraSmall,
                           color: Theme.of(context).primaryColor,
@@ -85,7 +85,7 @@ class LegalTerritorialHeader extends StatelessWidget {
               const SizedBox(width: 6),
               _buildAutoDispatchToggle(context, controller, isMobile),
               if (controller.selectedProvince != 'Imbabura' ||
-                  controller.selectedCanton != 'Todos' ||
+                  controller.selectedCanton != 'Ibarra' ||
                   controller.selectedCooperative != 'Todas' ||
                   controller.searchQuery.isNotEmpty) ...[
                 const SizedBox(width: 6),
@@ -101,6 +101,36 @@ class LegalTerritorialHeader extends StatelessWidget {
                 ),
               ],
             ],
+          ),
+          const SizedBox(height: 10),
+
+          // Chips de acceso rápido para Piloto Ibarra y Regiones Principales
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _buildQuickTerritoryChip(
+                  context: context,
+                  label: '🎯 Piloto Base: Ibarra',
+                  isActive: controller.selectedProvince == 'Imbabura' && controller.selectedCanton == 'Ibarra',
+                  onTap: () => controller.selectPilotIbarra(),
+                ),
+                const SizedBox(width: 8),
+                _buildQuickTerritoryChip(
+                  context: context,
+                  label: '🏔️ Imbabura (Toda la provincia)',
+                  isActive: controller.selectedProvince == 'Imbabura' && controller.selectedCanton == 'Todos',
+                  onTap: () => controller.selectProvinceImbaburaAll(),
+                ),
+                const SizedBox(width: 8),
+                _buildQuickTerritoryChip(
+                  context: context,
+                  label: '🏛️ Pichincha (Quito y cantones)',
+                  isActive: controller.selectedProvince == 'Pichincha',
+                  onTap: () => controller.selectProvincePichincha(),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 10),
 
@@ -207,6 +237,56 @@ class LegalTerritorialHeader extends StatelessWidget {
             color: Theme.of(context).hintColor,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickTerritoryChip({
+    required BuildContext context,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: isActive
+                ? primaryColor.withValues(alpha: 0.12)
+                : theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isActive ? primaryColor : theme.dividerColor.withValues(alpha: 0.35),
+              width: isActive ? 1.5 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: 10,
+                  fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
+                  color: isActive ? primaryColor : theme.textTheme.bodyMedium?.color,
+                ),
+              ),
+              if (isActive) ...[
+                const SizedBox(width: 4),
+                Icon(Icons.check_circle_rounded, size: 12, color: primaryColor),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

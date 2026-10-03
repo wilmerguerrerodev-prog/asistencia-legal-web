@@ -17,22 +17,32 @@ class DispatchLawyerDialog extends StatefulWidget {
 class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
   final List<Map<String, String>> lawyers = [
     {
+      'name': 'Grupo Ecuador Total Abogados',
+      'specialty': 'Despacho Jurídico Corporativo Central • Tránsito, Civil y Laboral',
+      'distance': 'Central Jurídica (Sede Ibarra) • Atención Inmediata 24/7',
+      'status': 'Despacho Corporativo',
+      'isCorporate': 'true',
+    },
+    {
       'name': 'Dr. Marcelo Dávila',
       'specialty': 'Derecho Penal & Tránsito • Unidad Móvil #1',
       'distance': 'A 3.2 km • Tiempo estimado: 8 min',
       'status': 'Disponible en guardia',
+      'isCorporate': 'false',
     },
     {
       'name': 'Dra. Elena Torres',
       'specialty': 'Litigio Flagrancias • Unidad Móvil #2',
       'distance': 'A 5.8 km • Tiempo estimado: 15 min',
       'status': 'Disponible en guardia',
+      'isCorporate': 'false',
     },
     {
       'name': 'Dr. Fernando Salazar',
       'specialty': 'Contravenciones & Mediación SIAT • Unidad Móvil #3',
       'distance': 'A 7.1 km • Tiempo estimado: 20 min',
       'status': 'Disponible en guardia',
+      'isCorporate': 'false',
     },
   ];
 
@@ -183,9 +193,10 @@ class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
                   onTap: () {
                     setState(() {
                       selectedLawyerIndex = index;
-                      if (index == 0) arrivalMinutes = '8';
-                      if (index == 1) arrivalMinutes = '15';
-                      if (index == 2) arrivalMinutes = '20';
+                      if (index == 0) arrivalMinutes = '5'; // Despacho Corporativo
+                      if (index == 1) arrivalMinutes = '8';
+                      if (index == 2) arrivalMinutes = '15';
+                      if (index == 3) arrivalMinutes = '20';
                     });
                   },
                   borderRadius: BorderRadius.circular(8),
@@ -247,15 +258,34 @@ class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE8F5E9),
+                                      color: lawyer['isCorporate'] == 'true'
+                                          ? const Color(0xFFEFF6FF)
+                                          : const Color(0xFFE8F5E9),
                                       borderRadius: BorderRadius.circular(4),
+                                      border: lawyer['isCorporate'] == 'true'
+                                          ? Border.all(color: const Color(0xFF2563EB).withValues(alpha: 0.4))
+                                          : null,
                                     ),
-                                    child: Text(
-                                      lawyer['status']!,
-                                      style: ubuntuMedium.copyWith(
-                                        fontSize: 10,
-                                        color: const Color(0xFF2E7D32),
-                                      ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (lawyer['isCorporate'] == 'true') ...[
+                                          const Icon(Icons.business_rounded, size: 10, color: Color(0xFF1D4ED8)),
+                                          const SizedBox(width: 3),
+                                        ],
+                                        Text(
+                                          lawyer['status']!,
+                                          style: ubuntuMedium.copyWith(
+                                            fontSize: 10,
+                                            fontWeight: lawyer['isCorporate'] == 'true'
+                                                ? FontWeight.bold
+                                                : FontWeight.normal,
+                                            color: lawyer['isCorporate'] == 'true'
+                                                ? const Color(0xFF1D4ED8)
+                                                : const Color(0xFF2E7D32),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -338,11 +368,18 @@ class _DispatchLawyerDialogState extends State<DispatchLawyerDialog> {
                       ),
                       onPressed: () {
                         final selectedLawyer = lawyers[selectedLawyerIndex]['name']!;
-                        Get.find<LegalCenterController>().dispatchLawyer(
-                          widget.caseItem.id,
-                          selectedLawyer,
-                          arrivalMinutes,
-                        );
+                        final isCorporate = lawyers[selectedLawyerIndex]['isCorporate'] == 'true';
+                        if (isCorporate || selectedLawyer.contains('Grupo Ecuador Total')) {
+                          Get.find<LegalCenterController>().dispatchToCorporateGroup(
+                            widget.caseItem.id,
+                          );
+                        } else {
+                          Get.find<LegalCenterController>().dispatchLawyer(
+                            widget.caseItem.id,
+                            selectedLawyer,
+                            arrivalMinutes,
+                          );
+                        }
                         Get.back();
                       },
                     ),

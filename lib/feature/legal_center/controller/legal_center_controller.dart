@@ -48,7 +48,7 @@ class LegalCenterController extends GetxController {
 
   final Map<String, List<String>> cantonsByProvince = {
     'Todas': ['Todos'],
-    'Imbabura': ['Todos', 'Otavalo', 'Ibarra', 'Cotacachi'],
+    'Imbabura': ['Todos', 'Ibarra', 'Otavalo', 'Cotacachi'],
     'Pichincha': ['Todos', 'Quito', 'Cayambe', 'Rumiñahui'],
   };
 
@@ -62,7 +62,7 @@ class LegalCenterController extends GetxController {
   ];
 
   String _selectedProvince = 'Imbabura';
-  String _selectedCanton = 'Todos';
+  String _selectedCanton = 'Ibarra'; // Piloto Ibarra como vista predeterminada
   String _selectedCooperative = 'Todas';
 
   String get selectedCountry => fixedCountry;
@@ -109,9 +109,10 @@ class LegalCenterController extends GetxController {
   }
 
   // --- ESTADO Y CONTROL DEL MAPA INTERACTIVO (DISPATCH MAP) ---
-  double? _targetMapLat = 0.2800;
-  double? _targetMapLng = -78.2000;
-  double _targetMapZoom = 12.0;
+  // Centro neurálgico del Piloto Ibarra (Parque Pedro Moncayo / Av. Mariano Acosta)
+  double? _targetMapLat = 0.3517;
+  double? _targetMapLng = -78.1223;
+  double _targetMapZoom = 13.0;
   int _mapMoveCounter = 0;
 
   double? get targetMapLat => _targetMapLat;
@@ -178,11 +179,43 @@ class LegalCenterController extends GetxController {
     animateMapToCoordinates(caseItem.lat, caseItem.lng, zoom: zoom);
   }
 
+  void focusCaseRoute(LegalCase caseItem) {
+    _selectedCase = caseItem;
+    _selectedLawyer = null;
+    final lawyer = getAssignedLawyerForCase(caseItem);
+    if (lawyer != null && _showRoutesLayer) {
+      animateMapToRouteBetween(caseItem, lawyer);
+    } else {
+      animateMapToCoordinates(caseItem.lat, caseItem.lng, zoom: 14.8);
+    }
+  }
+
+  void animateMapToRouteBetween(LegalCase caseItem, TerritoryLawyer lawyer) {
+    final midLat = (caseItem.lat + lawyer.lat) / 2;
+    final midLng = (caseItem.lng + lawyer.lng) / 2;
+    final distKm = calculateDistanceKm(caseItem.lat, caseItem.lng, lawyer.lat, lawyer.lng);
+
+    double optimalZoom;
+    if (distKm < 1.0) {
+      optimalZoom = 15.2;
+    } else if (distKm < 2.5) {
+      optimalZoom = 14.2;
+    } else if (distKm < 5.0) {
+      optimalZoom = 13.2;
+    } else if (distKm < 10.0) {
+      optimalZoom = 12.2;
+    } else {
+      optimalZoom = 11.2;
+    }
+
+    animateMapToCoordinates(midLat, midLng, zoom: optimalZoom);
+  }
+
   void resetMapToDefaultBounds() {
-    // Centro geográfico de Imbabura (Otavalo - Ibarra)
-    _targetMapLat = 0.2800;
-    _targetMapLng = -78.2000;
-    _targetMapZoom = 11.8;
+    // Centro geográfico de Ibarra (Sede Piloto Laboratorio)
+    _targetMapLat = 0.3517;
+    _targetMapLng = -78.1223;
+    _targetMapZoom = 13.0;
     _mapMoveCounter++;
     update();
   }
@@ -242,6 +275,22 @@ class LegalCenterController extends GetxController {
 
   void _loadInitialLawyers() {
     _lawyers = [
+      TerritoryLawyer(
+        id: 'CORP-01',
+        nombre: 'Grupo Ecuador Total Abogados',
+        canton: 'Ibarra',
+        provincia: 'Imbabura',
+        telefono: '+593 6 295 1000',
+        unidadMovil: 'Central Jurídica Corporativa (Sede Ibarra)',
+        estadoGuardia: LawyerGuardStatus.enLinea,
+        casosRecibidos: 45,
+        casosAtendidosATiempo: 44,
+        tiempoPromedioRespuestaMin: 5,
+        especialidad: 'Despacho Corporativo Central • Tránsito, Civil y Laboral',
+        lat: 0.3530,
+        lng: -78.1210,
+        casosActivos: 1,
+      ),
       TerritoryLawyer(
         id: 'ABG-01',
         nombre: 'Dr. Marcelo Dávila',
@@ -359,6 +408,121 @@ class LegalCenterController extends GetxController {
 
   void _loadInitialCases() {
     _cases = [
+      LegalCase(
+        id: '#CASO-1045',
+        taxistaNombre: 'Esteban R. Benavides',
+        taxistaCedula: '1004523891',
+        taxistaTelefono: '+593 99 332 4455',
+        cooperativa: 'Coop. 24 de Mayo',
+        unidad: 'Unidad 33',
+        placa: 'IBX-3301',
+        vehiculoModelo: 'Kia Soluto 1.4 (2022)',
+        estadoSeguro: 'Póliza Activa • Seguros Equinoccial',
+        tipoIncidente: 'Otro problema: Conflicto Laboral y Despido Intempestivo',
+        tipoAlertaCaso: TipoAlertaCaso.otroProblema,
+        urgencia: UrgencyLevel.media,
+        estado: CaseStatus.pendiente,
+        ubicacionDireccion: 'Calle Bolívar y García Moreno, Los Ceibos, Ibarra',
+        provincia: 'Imbabura',
+        canton: 'Ibarra',
+        tieneHeridosORetencion: false,
+        alertaNivel: AlertaNivel.menor,
+        lat: 0.3490,
+        lng: -78.1235,
+        horaReporte: 'Hace 4 min',
+        dictamenIaCorto:
+            'Art. 188 Código Trabajo: Procede liquidación por despido intempestivo más desahucio • Mediación laboral.',
+        relatoConductor:
+            'Terminación intempestiva de contrato de conducción y retención de depósito de garantía.',
+        descripcionOtroProblema:
+            'El dueño del taxi me notificó verbalmente la terminación del turno sin liquidación ni aviso previo tras 3 años de servicio continuo. Requiero asesoría jurídica laboral urgente para calcular el acta de finiquito y exigir la devolución de mi depósito en el Ministerio de Trabajo.',
+        articuloCoip: 'Código del Trabajo Art. 188 • Despido Intempestivo y Liquidación Legal',
+        dictamenIaRecomendacion:
+            '1. No firmar finiquito en blanco ni desistimiento sin patrocinio legal.\n2. Concurrir a Inspectoría del Trabajo de Imbabura (Ibarra) para solicitar boleta única.\n3. Caso atendido bajo cobertura de Prueba Gratuita (7 de 10 consultas disponibles).',
+        abogadoAsignado: null,
+        horaDespacho: null,
+        esPruebaGratuita: true,
+        consultasGratuitasRestantes: 7,
+        consultasGratuitasTotales: 10,
+        esPlanVip: false,
+        suscripcionPlan: 'Prueba Gratuita Piloto Ibarra (7/10 consultas)',
+        evidencias: [
+          DriverEvidence(
+            type: 'doc',
+            title: 'Contrato de Conducción y Rol',
+            detail: 'PDF • Antigüedad 3 años',
+            icon: Icons.description_rounded,
+          ),
+        ],
+        timeline: [
+          CaseTimelineEvent(
+            time: '10:20',
+            title: 'Consulta Laboral Ingresada en Ibarra',
+            description: 'Conductor reportó despido intempestivo desde la app.',
+            icon: Icons.work_outline_rounded,
+            color: const Color(0xFF7C3AED),
+          ),
+          CaseTimelineEvent(
+            time: '10:21',
+            title: 'Dictamen Preliminar IA Generado',
+            description: 'Tipificación Art. 188 Código del Trabajo: procedencia de liquidación.',
+            icon: Icons.auto_awesome,
+            color: const Color(0xFF056AB4),
+          ),
+        ],
+      ),
+      LegalCase(
+        id: '#CASO-1046',
+        taxistaNombre: 'Germán D. Cárdenas',
+        taxistaCedula: '1003928174',
+        taxistaTelefono: '+593 98 776 1122',
+        cooperativa: 'Flota Imbabura',
+        unidad: 'Unidad 05',
+        placa: 'IAA-2099',
+        vehiculoModelo: 'Chevrolet Sail 1.5 (2021)',
+        estadoSeguro: 'Póliza Activa • Seguros Equinoccial',
+        tipoIncidente: 'Agresión Física por Pasajero en Estado Etílico',
+        tipoAlertaCaso: TipoAlertaCaso.agresionFisica,
+        urgencia: UrgencyLevel.alta,
+        estado: CaseStatus.pendiente,
+        ubicacionDireccion: 'Av. Atahualpa y Teodoro Gómez, Ibarra',
+        provincia: 'Imbabura',
+        canton: 'Ibarra',
+        tieneHeridosORetencion: true,
+        alertaNivel: AlertaNivel.critico,
+        lat: 0.3420,
+        lng: -78.1280,
+        horaReporte: 'Hace 6 min',
+        dictamenIaCorto:
+            'Art. 396 COIP: Contravención flagrante con agresión física • Fijación médica SIAT inmediata.',
+        relatoConductor:
+            'Pasajero en estado etílico me agredió físicamente con golpes en el rostro tras negarse a cancelar la tarifa de carrera reglamentaria. Se encuentra retenido con apoyo de otros compañeros taxistas en la Av. Atahualpa. Requiero presencia policial y auxilio legal urgente.',
+        articuloCoip: 'Art. 396 COIP • Contravenciones de cuarta clase por agresión física y lesiones',
+        dictamenIaRecomendacion:
+            '1. Solicitar aprehensión flagrante del agresor por Policía Nacional.\n2. Traslado a médico legista de Fiscalía en Ibarra.\n3. Despachar abogado penal de guardia en Ibarra para audiencia contravencional.',
+        abogadoAsignado: null,
+        horaDespacho: null,
+        esPruebaGratuita: false,
+        esPlanVip: true,
+        suscripcionPlan: 'Plan VIP Cobertura Total 24/7',
+        evidencias: [
+          DriverEvidence(
+            type: 'photo',
+            title: 'Foto Daño Físico y Retención',
+            detail: 'JPG • Evidencia en Av. Atahualpa',
+            icon: Icons.camera_alt_rounded,
+          ),
+        ],
+        timeline: [
+          CaseTimelineEvent(
+            time: '10:18',
+            title: '🚨 Alerta Roja por Agresión Física',
+            description: 'Conductor activó botón de emergencia ante agresión física en Ibarra.',
+            icon: Icons.emergency_rounded,
+            color: const Color(0xFFD32F2F),
+          ),
+        ],
+      ),
       LegalCase(
         id: '#CASO-1042',
         taxistaNombre: 'Carlos M. Mendoza',
@@ -784,10 +948,46 @@ class LegalCenterController extends GetxController {
     ];
   }
 
-  // --- FILTRADO EN CASCADA ---
+  // --- FILTRADO EN CASCADA Y ACCESOS RÁPIDOS PILOTO IBARRA ---
+  void selectPilotIbarra() {
+    _selectedProvince = 'Imbabura';
+    _selectedCanton = 'Ibarra';
+    _selectedCooperative = 'Todas';
+    _ensureValidCaseSelection();
+    animateMapToCoordinates(0.3517, -78.1223, zoom: 13.5);
+    update();
+  }
+
+  void selectProvinceImbaburaAll() {
+    _selectedProvince = 'Imbabura';
+    _selectedCanton = 'Todos';
+    _selectedCooperative = 'Todas';
+    _ensureValidCaseSelection();
+    animateMapToCoordinates(0.3517, -78.1223, zoom: 11.5);
+    update();
+  }
+
+  void selectProvincePichincha() {
+    _selectedProvince = 'Pichincha';
+    _selectedCanton = 'Todos';
+    _selectedCooperative = 'Todas';
+    _ensureValidCaseSelection();
+    animateMapToCoordinates(-0.1807, -78.4678, zoom: 11.5);
+    update();
+  }
+
   void selectProvince(String province) {
     _selectedProvince = province;
-    _selectedCanton = 'Todos';
+    if (province == 'Imbabura') {
+      _selectedCanton = 'Ibarra';
+      animateMapToCoordinates(0.3517, -78.1223, zoom: 13.5);
+    } else if (province == 'Pichincha') {
+      _selectedCanton = 'Todos';
+      animateMapToCoordinates(-0.1807, -78.4678, zoom: 11.5);
+    } else {
+      _selectedCanton = 'Todos';
+      resetMapToDefaultBounds();
+    }
     _ensureValidCaseSelection();
     update();
   }
@@ -825,7 +1025,7 @@ class LegalCenterController extends GetxController {
 
   void resetFilters() {
     _selectedProvince = 'Imbabura';
-    _selectedCanton = 'Todos';
+    _selectedCanton = 'Ibarra';
     _selectedCooperative = 'Todas';
     _searchQuery = '';
     _activeKpiFilter = null;
@@ -1465,6 +1665,48 @@ class LegalCenterController extends GetxController {
     }
   }
 
+  // --- ASIGNACIÓN AL DESPACHO CORPORATIVO (GRUPO ECUADOR TOTAL ABOGADOS) ---
+  void dispatchToCorporateGroup(String caseId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.estado = CaseStatus.abogadoDespachado;
+      c.abogadoAsignado = 'Grupo Ecuador Total Abogados';
+      c.assignedLawyerId = 'CORP-01';
+      c.despachoCorporativo = 'Grupo Ecuador Total Abogados';
+      c.horaDespacho = 'En gestión central corporativa (24/7)';
+      c.fueAsignadoAutomaticamente = false;
+      c.motivoAsignacion =
+          'Asignación directa a Despacho Corporativo Central: Grupo Ecuador Total Abogados';
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '⚖️ Asignado al Despacho Corporativo',
+          description:
+              'Caso asignado formalmente a la central jurídica corporativa Grupo Ecuador Total Abogados para atención integral.',
+          icon: Icons.business_rounded,
+          color: const Color(0xFF0D47A1),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '⚖️ Despacho Corporativo Asignado',
+          'El caso ${c.id} fue asignado al Grupo Ecuador Total Abogados con éxito.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF0D47A1),
+          colorText: Colors.white,
+          icon: const Icon(Icons.business_rounded, color: Colors.amber, size: 28),
+          duration: const Duration(seconds: 4),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
+
   // --- BOTÓN DE SIMULACIÓN PARA DEMOS EN VIVO ---
   void simulateIncomingDriverAlert({bool notifySnackbar = true}) {
     final newCase = LegalCase(
@@ -1472,36 +1714,39 @@ class LegalCenterController extends GetxController {
       taxistaNombre: 'Patricio Guanoluisa',
       taxistaCedula: '1004928172',
       taxistaTelefono: '+593 99 777 8899',
-      cooperativa: 'Los Lagos',
+      cooperativa: 'Flota Imbabura',
       unidad: 'Unidad 99',
       placa: 'IBX-9012',
       vehiculoModelo: 'Chevrolet Sail 1.5 (2023)',
       estadoSeguro: 'Póliza Activa • Seguros Equinoccial',
       tipoIncidente: 'Colisión Frontal con Intento de Fuga y Agresión',
+      tipoAlertaCaso: TipoAlertaCaso.transitoChoque,
       urgencia: UrgencyLevel.alta,
       estado: CaseStatus.pendiente,
-      ubicacionDireccion: 'Panamericana Norte Km 3, Salida a Cotacachi, Otavalo',
+      ubicacionDireccion: 'Av. Mariano Acosta y Fray Vacas Galindo, Ibarra',
       provincia: 'Imbabura',
-      canton: 'Otavalo',
+      canton: 'Ibarra',
       tieneHeridosORetencion: true,
       alertaNivel: AlertaNivel.critico,
-      lat: 0.2412,
-      lng: -78.2690,
+      lat: 0.3510,
+      lng: -78.1220,
       horaReporte: '¡Hace 15 segundos!',
       dictamenIaCorto:
           'Art. 380 COIP: Riesgo de fuga del tercero • Solicitar SIAT y acta de custodia inmediata.',
       relatoConductor:
-          '¡Alerta desde la vía! Vehículo particular impactó de frente y el conductor pretende darse a la fuga. Hay presencia de agentes de tránsito. Necesito auxilio de abogado urgente en sitio.',
+          '¡Alerta desde la vía! Vehículo particular impactó de frente en Ibarra y el conductor pretende darse a la fuga. Hay presencia de agentes civiles de Movidelnor. Necesito auxilio de abogado urgente en sitio.',
       articuloCoip: 'Art. 380 COIP • Flagrancia con riesgo de fuga y retención de bienes',
       dictamenIaRecomendacion:
-          '1. Proceder con fijación fotográfica de placas del vehículo en fuga.\n2. Exigir prueba de alcoholemia SIAT.\n3. Despachar abogado penal/tránsito de guardia en Otavalo.',
+          '1. Proceder con fijación fotográfica de placas del vehículo en fuga.\n2. Exigir prueba de alcoholemia SIAT.\n3. Despachar abogado penal/tránsito de guardia en Ibarra.',
       abogadoAsignado: null,
       horaDespacho: null,
+      esPruebaGratuita: false,
+      esPlanVip: true,
       evidencias: [
         DriverEvidence(
           type: 'audio',
           title: 'Audio SOS Conductor en Vivo',
-          detail: 'Duración: 0:18 seg • SOS activado en Otavalo',
+          detail: 'Duración: 0:18 seg • SOS activado en Ibarra',
           icon: Icons.mic_rounded,
         ),
       ],
@@ -1509,7 +1754,7 @@ class LegalCenterController extends GetxController {
         CaseTimelineEvent(
           time: '¡Ahora mismo!',
           title: '🚨 Alerta SOS desde la App Taxista',
-          description: 'El conductor presionó el botón de auxilio legal en la Panamericana Norte.',
+          description: 'El conductor presionó el botón de auxilio legal en la Av. Mariano Acosta.',
           icon: Icons.warning_rounded,
           color: const Color(0xFFD32F2F),
         ),
@@ -1521,7 +1766,7 @@ class LegalCenterController extends GetxController {
     _selectedLawyer = null;
     _lastAlertedCaseId = newCase.id;
     _selectedProvince = 'Imbabura';
-    _selectedCanton = 'Todos';
+    _selectedCanton = 'Ibarra';
     _selectedCooperative = 'Todas';
     _activeKpiFilter = null;
     _dashboardTab = 0; // Mostrar tabla de incidentes
@@ -1534,7 +1779,7 @@ class LegalCenterController extends GetxController {
       if (notifySnackbar && Get.key.currentState?.overlay != null) {
         Get.snackbar(
           '🚨 ¡SOS ENTRADA + ⚡ DESPACHO GPS AUTOMÁTICO!',
-          'Conductor ${newCase.taxistaNombre} (Los Lagos • Otavalo). Asignado de inmediato a ${newCase.abogadoAsignado} (${newCase.distanciaAbogadoKm} km • ${newCase.horaDespacho}).',
+          'Conductor ${newCase.taxistaNombre} (Flota Imbabura • Ibarra). Asignado de inmediato a ${newCase.abogadoAsignado} (${newCase.distanciaAbogadoKm} km • ${newCase.horaDespacho}).',
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFFC62828),
           colorText: Colors.white,
@@ -1548,8 +1793,8 @@ class LegalCenterController extends GetxController {
 
       if (notifySnackbar && Get.key.currentState?.overlay != null) {
         Get.snackbar(
-          '🚨 ¡NUEVA ALERTA CÓDIGO ROJO EN OTAVALO (MODO MANUAL)!',
-          'Conductor Patricio Guanoluisa (Unidad 99 - Los Lagos). En espera de asignación manual por el operador.',
+          '🚨 ¡NUEVA ALERTA CÓDIGO ROJO EN IBARRA (MODO MANUAL)!',
+          'Conductor Patricio Guanoluisa (Unidad 99 - Flota Imbabura). En espera de asignación manual por el operador.',
           snackPosition: SnackPosition.TOP,
           backgroundColor: const Color(0xFFC62828),
           colorText: Colors.white,
