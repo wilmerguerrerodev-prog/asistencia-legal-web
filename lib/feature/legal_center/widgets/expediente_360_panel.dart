@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getdash/core/auth/controller/auth_mock_controller.dart';
+import 'package:getdash/core/auth/model/mock_user.dart';
 import 'package:getdash/core/helper/responsive_helper.dart';
 import 'package:getdash/utils/dimensions.dart';
 import 'package:getdash/utils/styles.dart';
@@ -278,11 +280,31 @@ class Expediente360Panel extends StatelessWidget {
     );
   }
 
-  // --- BOTONES DE ACCIÓN INMEDIATA (SOLICITUD CLAVE) ---
+  // --- BOTONES DE ACCIÓN INMEDIATA SEGÚN ROL (RBAC) ---
   Widget _buildActionButtons(BuildContext context, bool isMobile) {
     final controller = Get.find<LegalCenterController>();
     final isApproved = caseItem.estado == CaseStatus.dictamenAprobado;
     final isDispatched = caseItem.estado == CaseStatus.abogadoDespachado;
+
+    // Control de roles RBAC
+    final auth = Get.isRegistered<AuthMockController>()
+        ? Get.find<AuthMockController>()
+        : null;
+    final isDirector = auth == null || auth.isAdminLawyer || auth.isItAdmin;
+    final isAssociate = auth != null && auth.isAssociateLawyer;
+    final isDriver = auth != null && auth.isClientDriver;
+
+    final currentLawyerName = auth?.user.name.toLowerCase() ?? '';
+    final currentLawyerId = auth?.user.id ?? '';
+    final isAssignedToMe = isAssociate &&
+        ((caseItem.assignedLawyerId != null && caseItem.assignedLawyerId == currentLawyerId) ||
+            (caseItem.abogadoAsignado != null &&
+                (caseItem.abogadoAsignado!.toLowerCase().contains(currentLawyerName) ||
+                    currentLawyerName.contains(caseItem.abogadoAsignado!.toLowerCase()))));
+    final isUnassigned = caseItem.abogadoAsignado == null;
+
+    final isAtScene = caseItem.horaDespacho?.contains('escena') == true ||
+        caseItem.horaDespacho?.contains('Atendiendo') == true;
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -296,11 +318,21 @@ class Expediente360Panel extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.flash_on_rounded, size: 18, color: Colors.amber.shade800),
+              Icon(
+                isDirector
+                    ? Icons.admin_panel_settings_rounded
+                    : (isAssociate ? Icons.shield_rounded : Icons.person_pin_circle_rounded),
+                size: 18,
+                color: isDirector
+                    ? const Color(0xFF1565C0)
+                    : (isAssociate ? const Color(0xFF16A34A) : const Color(0xFFD97706)),
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Acciones Inmediatas del Abogado:',
+                  isDirector
+                      ? 'Acciones de Despacho (Director Legal):'
+                      : (isAssociate ? 'Operatividad en Vía (Abogado):' : 'Estado de Asistencia Legal:'),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: ubuntuBold.copyWith(
@@ -309,83 +341,259 @@ class Expediente360Panel extends StatelessWidget {
                   ),
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isDirector
+                      ? const Color(0xFFEFF6FF)
+                      : (isAssociate ? const Color(0xFFF0FDF4) : const Color(0xFFFEF3C7)),
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: isDirector
+                        ? const Color(0xFF3B82F6).withValues(alpha: 0.3)
+                        : (isAssociate
+                            ? const Color(0xFF22C55E).withValues(alpha: 0.3)
+                            : const Color(0xFFF59E0B).withValues(alpha: 0.3)),
+                  ),
+                ),
+                child: Text(
+                  auth?.user.role.shortBadge ?? 'Director Legal',
+                  style: ubuntuMedium.copyWith(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: isDirector
+                        ? const Color(0xFF1D4ED8)
+                        : (isAssociate ? const Color(0xFF15803D) : const Color(0xFFB45309)),
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              // BOTÓN 1: APROBAR DICTAMEN
-              Expanded(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isApproved ? const Color(0xFF1B5E20) : const Color(0xFF2E7D32),
-                    foregroundColor: Colors.white,
-                    elevation: isApproved ? 0 : 3,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  icon: Icon(
-                    isApproved ? Icons.check_circle : Icons.gavel_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                  label: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      isApproved ? 'Dictamen Aprobado ✓' : 'Aprobar Dictamen',
-                      style: ubuntuBold.copyWith(
-                        fontSize: Dimensions.fontSizeSmall,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                    ),
-                  ),
-                  onPressed: () {
-                    controller.approveDictamen(caseItem.id);
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
 
-              // BOTÓN 2: DESPACHAR ABOGADO
-              Expanded(
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isDispatched ? const Color(0xFF0D47A1) : const Color(0xFF1565C0),
-                    foregroundColor: Colors.white,
-                    elevation: isDispatched ? 0 : 3,
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+          // VISTA 1: DIRECTOR GENERAL / ADMIN TI (Exclusividad de Despacho y Dictamen)
+          if (isDirector) ...[
+            Row(
+              children: [
+                // BOTÓN 1: APROBAR DICTAMEN
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isApproved ? const Color(0xFF1B5E20) : const Color(0xFF2E7D32),
+                      foregroundColor: Colors.white,
+                      elevation: isApproved ? 0 : 3,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
+                    icon: Icon(
+                      isApproved ? Icons.check_circle : Icons.gavel_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        isApproved ? 'Dictamen Aprobado ✓' : 'Aprobar Dictamen',
+                        style: ubuntuBold.copyWith(
+                          fontSize: Dimensions.fontSizeSmall,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
+                    ),
+                    onPressed: () {
+                      controller.approveDictamen(caseItem.id);
+                    },
                   ),
-                  icon: Icon(
-                    isDispatched ? Icons.check_circle : Icons.directions_car_rounded,
-                    size: 18,
-                    color: Colors.white,
+                ),
+                const SizedBox(width: 10),
+
+                // BOTÓN 2: DESPACHAR ABOGADO (Solo Director General)
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDispatched ? const Color(0xFF0D47A1) : const Color(0xFF1565C0),
+                      foregroundColor: Colors.white,
+                      elevation: isDispatched ? 0 : 3,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: Icon(
+                      isDispatched ? Icons.check_circle : Icons.directions_car_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        isDispatched ? 'Abogado en Camino ✓' : 'Despachar Abogado',
+                        style: ubuntuBold.copyWith(
+                          fontSize: Dimensions.fontSizeSmall,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.dialog(DispatchLawyerDialog(caseItem: caseItem));
+                    },
                   ),
-                  label: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      isDispatched ? 'Abogado en Camino ✓' : 'Despachar Abogado',
-                      style: ubuntuBold.copyWith(
-                        fontSize: Dimensions.fontSizeSmall,
+                ),
+              ],
+            ),
+          ]
+
+          // VISTA 2: ABOGADO ASOCIADO EN VÍA
+          else if (isAssociate) ...[
+            if (isAssignedToMe) ...[
+              // Siniestro asignado formalmente a este abogado
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isAtScene ? const Color(0xFF166534) : const Color(0xFF15803D),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: Icon(
+                        isAtScene ? Icons.verified_user_rounded : Icons.location_on_rounded,
+                        size: 18,
                         color: Colors.white,
                       ),
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          isAtScene ? 'En Escena (Atendiendo) ✓' : 'Reportar Llegada a Escena',
+                          style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeSmall, color: Colors.white),
+                        ),
+                      ),
+                      onPressed: isAtScene
+                          ? null
+                          : () => controller.reportLawyerArrived(caseItem.id),
                     ),
                   ),
-                  onPressed: () {
-                    Get.dialog(DispatchLawyerDialog(caseItem: caseItem));
-                  },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFC2410C),
+                        side: const BorderSide(color: Color(0xFFEA580C)),
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: const Icon(Icons.shield_outlined, size: 18),
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'Solicitar Refuerzo',
+                          style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeSmall),
+                        ),
+                      ),
+                      onPressed: () => _showRequestSupportDialog(context, controller, caseItem.id),
+                    ),
+                  ),
+                ],
+              ),
+            ] else if (isUnassigned) ...[
+              // Caso en espera de asignación: el abogado en patrullaje puede tomarlo
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2563EB),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      icon: const Icon(Icons.front_hand_rounded, size: 18, color: Colors.white),
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'Tomar Caso (Auto-asignación)',
+                          style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeSmall, color: Colors.white),
+                        ),
+                      ),
+                      onPressed: () {
+                        controller.selfAssignCase(
+                          caseItem.id,
+                          auth.user.name,
+                          auth.user.id,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ] else ...[
+              // Caso asignado a otro colega
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blueGrey.shade200),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.lock_clock_rounded, size: 20, color: Color(0xFF475569)),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Caso asignado a ${caseItem.abogadoAsignado}. Solo el Director General o el abogado asignado pueden gestionar la intervención.',
+                        style: ubuntuMedium.copyWith(fontSize: Dimensions.fontSizeSmall, color: const Color(0xFF334155)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
+          ]
+
+          // VISTA 3: CLIENTE CONDUCTOR SOS
+          else if (isDriver) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF16A34A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    icon: const Icon(Icons.phone_in_talk_rounded, size: 18, color: Colors.white),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        caseItem.abogadoAsignado != null ? 'Llamar a mi Abogado Asignado' : 'Llamar a la Central 24/7',
+                        style: ubuntuBold.copyWith(fontSize: Dimensions.fontSizeSmall, color: Colors.white),
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.snackbar(
+                        '📞 Enlace Telefónico Seguro',
+                        caseItem.abogadoAsignado != null
+                            ? 'Conectando con ${caseItem.abogadoAsignado} (Línea prioritaria)...'
+                            : 'Conectando con la Central de Despacho Jurídico...',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: const Color(0xFF15803D),
+                        colorText: Colors.white,
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (isDispatched && caseItem.abogadoAsignado != null) ...[
             const SizedBox(height: 8),
             Container(
@@ -1510,6 +1718,71 @@ class Expediente360Panel extends StatelessWidget {
             );
           }),
         ],
+      ),
+    );
+  }
+
+  void _showRequestSupportDialog(BuildContext context, LegalCenterController controller, String caseId) {
+    final textController = TextEditingController(text: 'Se requiere peritaje SIAT / apoyo penal urgente');
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          width: 420,
+          padding: const EdgeInsets.all(18),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.shield_outlined, color: Color(0xFFEA580C), size: 22),
+                  const SizedBox(width: 8),
+                  Text('Solicitar Refuerzo a Central', style: ubuntuBold.copyWith(fontSize: 14)),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Indica el motivo por el cual solicitas que el Director Legal despache una unidad o perito de apoyo:',
+                style: ubuntuRegular.copyWith(fontSize: 11, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: textController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  contentPadding: const EdgeInsets.all(10),
+                  hintText: 'Ej. Presencia de fiscalía, peritaje SIAT, flagrancia...',
+                ),
+                style: ubuntuRegular.copyWith(fontSize: 12),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: () => Get.back(), child: const Text('Cancelar')),
+                  const SizedBox(width: 8),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFEA580C),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    ),
+                    icon: const Icon(Icons.send_rounded, size: 14, color: Colors.white),
+                    label: const Text('Enviar Alerta', style: TextStyle(color: Colors.white, fontSize: 12)),
+                    onPressed: () {
+                      final reason = textController.text.trim();
+                      if (reason.isNotEmpty) {
+                        controller.requestLawyerSupport(caseId, reason);
+                        Get.back();
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

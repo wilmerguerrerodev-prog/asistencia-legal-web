@@ -1805,4 +1805,149 @@ class LegalCenterController extends GetxController {
       }
     }
   }
+
+  // =========================================================================
+  // ACCIONES OPERATIVAS SEGÚN ROL (ABOGADO ASOCIADO EN VÍA)
+  // =========================================================================
+
+  /// Iniciar traslado hacia la ubicación del siniestro
+  void startLawyerTransit(String caseId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.horaDespacho = 'En traslado activo (GPS en vivo)';
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '🚗 Traslado Iniciado',
+          description:
+              'El abogado ${c.abogadoAsignado ?? "de guardia"} inició la ruta hacia la escena del siniestro.',
+          icon: Icons.navigation_rounded,
+          color: const Color(0xFF0284C7),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '🚗 En Ruta hacia el Siniestro',
+          'Has iniciado el traslado. La Central y el conductor visualizan tu ruta.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF0284C7),
+          colorText: Colors.white,
+          icon: const Icon(Icons.navigation_rounded, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
+
+  /// Reportar llegada a la escena del siniestro
+  void reportLawyerArrived(String caseId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.horaDespacho = 'En escena (Atendiendo)';
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '🛡️ Abogado en Escena',
+          description:
+              'El abogado arribó al lugar del siniestro y toma contacto directo con el conductor y las autoridades.',
+          icon: Icons.location_on_rounded,
+          color: const Color(0xFF16A34A),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '📍 Arribo a Escena Confirmado',
+          'Se notificó a la Central de Despacho y al conductor que estás presente en el lugar.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF16A34A),
+          colorText: Colors.white,
+          icon: const Icon(Icons.verified_rounded, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
+
+  /// Solicitar refuerzo o apoyo de la Central / Director General
+  void requestLawyerSupport(String caseId, String reason) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '⚠️ Solicitud de Refuerzo a Central',
+          description:
+              'El abogado en vía solicitó apoyo urgente al Director General: "$reason".',
+          icon: Icons.warning_rounded,
+          color: const Color(0xFFEA580C),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '⚠️ Solicitud de Refuerzo Enviada',
+          'Se notificó al Director General: "$reason". La Central gestionará la unidad de apoyo.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFFEA580C),
+          colorText: Colors.white,
+          icon: const Icon(Icons.shield_outlined, color: Colors.white),
+          duration: const Duration(seconds: 5),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
+
+  /// Auto-asignarse un caso no asignado (disponible para abogados asociados)
+  void selfAssignCase(String caseId, String lawyerName, String lawyerId) {
+    final index = _cases.indexWhere((c) => c.id == caseId);
+    if (index != -1) {
+      final c = _cases[index];
+      c.estado = CaseStatus.abogadoDespachado;
+      c.abogadoAsignado = lawyerName;
+      c.assignedLawyerId = lawyerId;
+      c.horaDespacho = 'Auto-asignado por abogado en vía';
+      c.fueAsignadoAutomaticamente = false;
+      c.motivoAsignacion = 'Auto-asignación directa por patrullaje en zona';
+      c.timeline.insert(
+        0,
+        CaseTimelineEvent(
+          time: 'Ahora',
+          title: '✋ Caso Tomado por Abogado en Vía',
+          description:
+              '$lawyerName se auto-asignó el caso para atención inmediata en sitio.',
+          icon: Icons.front_hand_rounded,
+          color: const Color(0xFF2563EB),
+        ),
+      );
+      _selectedCase = c;
+      update();
+
+      if (Get.key.currentState?.overlay != null) {
+        Get.snackbar(
+          '✋ Caso Auto-asignado',
+          'Has tomado el caso $caseId. Dirígete a la escena y reporta tu llegada.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF2563EB),
+          colorText: Colors.white,
+          icon: const Icon(Icons.check_circle_outline, color: Colors.white),
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    }
+  }
 }
