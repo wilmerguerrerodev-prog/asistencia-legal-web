@@ -1700,11 +1700,11 @@ class SosConductorView extends StatelessWidget {
           children: [
             // Badge blanco/oscuro grande con icono institucional azul
             Container(
-              width: 48,
-              height: 48,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.08),
@@ -1715,59 +1715,61 @@ class SosConductorView extends StatelessWidget {
               ),
               child: const Center(
                 child: Icon(Icons.balance_rounded,
-                    color: Color(0xFF2563EB), size: 26),
+                    color: Color(0xFF2563EB), size: 24),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          "Conoce más sobre Grupo Ecuador Total",
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w800,
-                            color:
-                                isDark ? Colors.white : const Color(0xFF0F172A),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      const Icon(Icons.verified,
-                          size: 15, color: Color(0xFF10B981)),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2563EB),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 7),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      elevation: 0,
-                    ),
-                    onPressed: () =>
-                        _mostrarConoceMasModal(context, isDark, controller),
-                    icon: const Icon(Icons.visibility_rounded, size: 15),
-                    label: const Text(
-                      "Ver",
+                  Flexible(
+                    child: Text(
+                      "Conoce más sobre nosotros",
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontSize: 12,
+                        fontSize: 13.5,
                         fontWeight: FontWeight.w800,
+                        color:
+                            isDark ? Colors.white : const Color(0xFF0F172A),
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
+                  const SizedBox(width: 5),
+                  const Icon(Icons.verified,
+                      size: 15, color: Color(0xFF10B981)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2563EB),
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () =>
+                  _mostrarConoceMasModal(context, isDark, controller),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Ver más",
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(Icons.arrow_forward_ios_rounded, size: 11),
                 ],
               ),
             ),
