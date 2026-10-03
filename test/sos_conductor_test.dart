@@ -379,11 +379,14 @@ void main() {
     expect(find.textContaining('17-2010-415 Pichincha'), findsOneWidget);
     expect(find.text('Tránsito y Flagrancias (COIP)'), findsOneWidget);
     expect(find.text('Defensa Laboral y Liquidaciones'), findsOneWidget);
-    expect(find.text('Plan Piloto Ibarra y Sede Quito'), findsOneWidget);
-    expect(find.byKey(const Key('btn_llamar_firma_modal')), findsOneWidget);
-    expect(find.byKey(const Key('btn_whatsapp_firma_modal')), findsOneWidget);
+    expect(find.text('Plan Piloto Ibarra y Sede Quito'), findsNothing);
+    expect(find.textContaining('Consejo Legal'), findsNothing);
+    expect(find.byKey(const Key('btn_llamar_firma_modal')), findsNothing);
+    expect(find.byKey(const Key('btn_whatsapp_firma_modal')), findsNothing);
+    expect(find.byKey(const Key('btn_cerrar_modal_bottom')), findsOneWidget);
 
-    final btnCerrar = find.byKey(const Key('btn_cerrar_conoce_mas_modal'));
+    final btnCerrar = find.byKey(const Key('btn_cerrar_modal_bottom'));
+    await tester.ensureVisible(btnCerrar);
     await tester.tap(btnCerrar);
     await tester.pumpAndSettle();
 

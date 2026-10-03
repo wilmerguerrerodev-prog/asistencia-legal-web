@@ -2166,117 +2166,27 @@ class SosConductorView extends StatelessWidget {
                     descripcion:
                         "Patrocinio ante despidos intempestivos, cobro de finiquitos y mediación en cooperativas sin firmar documentos en blanco.",
                   ),
-                  const SizedBox(height: 6),
-                  _buildEspecialidadItem(
-                    isDark: isDark,
-                    emoji: "📍",
-                    titulo: "Plan Piloto Ibarra y Sede Quito",
-                    descripcion:
-                        "Atención prioritaria y despliegue rápido para taxistas de Ibarra, con respaldo de la firma central en Quito.",
-                  ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 20),
 
-                  // 5. Garantía institucional para el conductor
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFEF3C7),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFFFDE68A),
-                        width: 1.0,
+                  // 5. Botón Cerrar
+                  ElevatedButton(
+                    key: const Key('btn_cerrar_modal_bottom'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0F172A),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      elevation: 0,
                     ),
-                    child: const Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("💡", style: TextStyle(fontSize: 16)),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            "Consejo Legal: Ante cualquier operativo o accidente, no admitas culpas ni firmes hojas en blanco. Comunícate de inmediato con tu abogado.",
-                            style: TextStyle(
-                              fontFamily: 'Plus Jakarta Sans',
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF92400E),
-                              height: 1.35,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // 6. Botones de acción directa (Llamada + WhatsApp + Cerrar)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          key: const Key('btn_llamar_firma_modal'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF0F172A),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            controller.llamarAbogadoPorTelefono();
-                          },
-                          icon: const Icon(Icons.call_rounded, size: 16),
-                          label: const Text(
-                            "Llamar",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          key: const Key('btn_whatsapp_firma_modal'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF16A34A),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {
-                            controller.contactarAbogadoPorWhatsApp();
-                          },
-                          icon: const Icon(Icons.chat_bubble_outline_rounded,
-                              size: 16),
-                          label: const Text(
-                            "WhatsApp",
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextButton(
                     onPressed: () => Navigator.of(dialogContext).pop(),
-                    child: Text(
-                      "Entendido / Cerrar",
+                    child: const Text(
+                      "Cerrar",
                       style: TextStyle(
-                        fontFamily: 'Plus Jakarta Sans',
-                        color:
-                            isDark ? Colors.white60 : const Color(0xFF64748B),
+                        fontFamily: 'Montserrat',
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: 13,
                       ),
                     ),
                   ),
