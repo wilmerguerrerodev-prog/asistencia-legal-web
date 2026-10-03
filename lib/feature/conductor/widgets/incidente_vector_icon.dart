@@ -747,9 +747,6 @@ class OtroProblemaVectorPainter extends CustomPainter {
     final textLineColor = useModernColors
         ? const Color(0xFF94A3B8)
         : Colors.black.withValues(alpha: 0.3);
-    final badgeColor =
-        useModernColors ? const Color(0xFFF59E0B) : const Color(0xFFD97706);
-    const gavelColor = Colors.white;
 
     // --- 1. Pestaña y fondo de la carpeta (Folder back) ---
     final backPaint = Paint()
@@ -830,33 +827,6 @@ class OtroProblemaVectorPainter extends CustomPainter {
       ..quadraticBezierTo(14, 84, 14, 80)
       ..close();
     canvas.drawPath(frontPath, frontPaint);
-
-    // --- 4. Sello / Emblema dorado de Asesoría Jurídica (Gavel) ---
-    final badgePaint = Paint()
-      ..color = badgeColor
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-    canvas.drawCircle(const Offset(68, 64), 14, badgePaint);
-
-    final badgeBorder = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawCircle(const Offset(68, 64), 14, badgeBorder);
-
-    // Mini mazo blanco dentro del sello
-    final iconPaint = Paint()
-      ..color = gavelColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.4
-      ..strokeCap = StrokeCap.round;
-
-    // Cabeza del mazo inclinada
-    canvas.drawLine(const Offset(62, 59), const Offset(69, 54), iconPaint);
-    // Mango del mazo
-    canvas.drawLine(const Offset(65.5, 56.5), const Offset(74, 71), iconPaint);
-    // Base de madera
-    canvas.drawLine(const Offset(67, 73), const Offset(75, 73), iconPaint);
 
     canvas.restore();
   }
