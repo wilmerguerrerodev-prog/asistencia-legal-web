@@ -137,8 +137,8 @@ void main() {
     // -------------------------------------------------------------
     await tapVisible('Nuevo caso');
 
-    expect(find.text('Agresión física / Riña personal'), findsOneWidget);
-    await tapVisible('Agresión física / Riña personal');
+    expect(find.text('Agresión / Problema personal'), findsOneWidget);
+    await tapVisible('Agresión / Problema personal');
 
     // Validar opciones adaptadas para altercado personal
     expect(find.text('HAY AGRESIÓN FÍSICA O HERIDOS'), findsOneWidget);

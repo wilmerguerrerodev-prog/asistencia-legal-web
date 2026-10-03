@@ -274,9 +274,17 @@ class ConductorController extends GetxController {
   // Opciones de incidentes con alto contraste táctil fuertemente tipadas
   final List<OpcionIncidente> opcionesIncidentes = const [
     OpcionIncidente(
+      tipo: TipoIncidente.operativoTransito,
+      emoji: "👮",
+      titulo: "Operativo de Tránsito / Retención Ilegal",
+      descripcion: "Revisión documental o intento de grúa / retención",
+      color: Color(0xFF2563EB),
+      icono: Icons.fact_check_outlined,
+    ),
+    OpcionIncidente(
       tipo: TipoIncidente.agresionProblemaPersonal,
       emoji: "🥊",
-      titulo: "Agresión física / Riña personal",
+      titulo: "Agresión / Problema personal",
       descripcion: "Conflicto o altercado urgente en vía pública",
       color: Color(0xFF8B5CF6),
       icono: Icons.sports_mma_rounded,
@@ -296,14 +304,6 @@ class ConductorController extends GetxController {
       descripcion: "Impacto recibido por detrás o lateral",
       color: Color(0xFFF59E0B),
       icono: Icons.directions_car_rounded,
-    ),
-    OpcionIncidente(
-      tipo: TipoIncidente.operativoTransito,
-      emoji: "👮",
-      titulo: "Operativo de Tránsito / Retención Ilegal",
-      descripcion: "Revisión documental o intento de grúa / retención",
-      color: Color(0xFF2563EB),
-      icono: Icons.fact_check_outlined,
     ),
     OpcionIncidente(
       tipo: TipoIncidente.otroProblema,
