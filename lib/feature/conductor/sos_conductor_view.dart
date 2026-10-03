@@ -1780,36 +1780,25 @@ class SosConductorView extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
             width: 1.0,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
         child: Row(
           children: [
-            // Badge institucional con balanza jurídica
+            // Badge blanco/oscuro grande con icono institucional azul
             Container(
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF1E3A8A), Color(0xFF0F172A)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                color: isDark ? const Color(0xFF1E293B) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF1E3A8A).withValues(alpha: 0.25),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -1817,7 +1806,7 @@ class SosConductorView extends StatelessWidget {
               ),
               child: const Center(
                 child: Icon(Icons.balance_rounded,
-                    color: Color(0xFFFBBF24), size: 24),
+                    color: Color(0xFF2563EB), size: 26),
               ),
             ),
             const SizedBox(width: 12),
@@ -1833,7 +1822,7 @@ class SosConductorView extends StatelessWidget {
                           "Conoce más sobre Grupo Ecuador Total",
                           style: TextStyle(
                             fontFamily: 'Montserrat',
-                            fontSize: 13,
+                            fontSize: 13.5,
                             fontWeight: FontWeight.w800,
                             color:
                                 isDark ? Colors.white : const Color(0xFF0F172A),
@@ -1841,9 +1830,9 @@ class SosConductorView extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 5),
                       const Icon(Icons.verified,
-                          size: 14, color: Color(0xFF10B981)),
+                          size: 15, color: Color(0xFF10B981)),
                     ],
                   ),
                   const SizedBox(height: 2),
@@ -1851,8 +1840,8 @@ class SosConductorView extends StatelessWidget {
                     "Firma Jurídica y Respaldo 24/7 · Dr. Emir Vásquez",
                     style: TextStyle(
                       fontFamily: 'Plus Jakarta Sans',
-                      fontSize: 11,
-                      color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                      fontSize: 11.5,
+                      color: isDark ? Colors.white60 : const Color(0xFF64748B),
                       fontWeight: FontWeight.w600,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -1860,24 +1849,24 @@ class SosConductorView extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0F172A),
+                backgroundColor: const Color(0xFF2563EB),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 elevation: 0,
               ),
               onPressed: () =>
                   _mostrarConoceMasModal(context, isDark, controller),
-              icon: const Icon(Icons.info_outline_rounded, size: 15),
+              icon: const Icon(Icons.info_outline_rounded, size: 16),
               label: const Text(
                 "Saber más",
                 style: TextStyle(
                   fontFamily: 'Montserrat',
-                  fontSize: 11.5,
+                  fontSize: 12,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -2168,25 +2157,29 @@ class SosConductorView extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // 5. Botón Cerrar
-                  ElevatedButton(
+                  // 5. Botón Cerrar idéntico al sistema de modales
+                  OutlinedButton(
                     key: const Key('btn_cerrar_modal_bottom'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0F172A),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:
+                          isDark ? Colors.white70 : const Color(0xFF475569),
+                      side: BorderSide(
+                        color: isDark
+                            ? const Color(0xFF334155)
+                            : const Color(0xFFCBD5E1),
                       ),
-                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 11),
                     ),
                     onPressed: () => Navigator.of(dialogContext).pop(),
                     child: const Text(
                       "Cerrar",
                       style: TextStyle(
                         fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
                       ),
                     ),
                   ),
